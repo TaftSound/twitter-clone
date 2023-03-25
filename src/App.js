@@ -1,10 +1,15 @@
-import './App.css';
+
+import PageLayout from './components/page-layout/page-layout';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-      
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<PageLayout/>}/>
+        <Route path="/user-profile" element={<PageLayout/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
