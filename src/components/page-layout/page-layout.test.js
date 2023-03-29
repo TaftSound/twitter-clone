@@ -1,0 +1,23 @@
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import PageLayout from "./page-layout";
+
+
+jest.mock('../left-sidebar/left-sidebar.js', () => () => <div data-testid="left-sidebar">Mocked Left Sidebar</div> )
+jest.mock('../right-sidebar/right-sidebar.js', () => () => <div data-testid="right-sidebar">Mocked Right Sidebar</div> )
+
+describe("PageLayout component", () => {
+  it('renders without crashing', () => {
+    render(<PageLayout centerContent={ <div>Center Content</div> } />)
+  })
+  it('renders center content passed by props', () => {
+    render(<PageLayout centerContent={ <div>Center Content</div> } />)
+    expect(screen.getByText('Center Content')).toBeInTheDocument()
+  })
+  it('renders left and right sidebars', () => {
+    render(<PageLayout centerContent={ <div>Center Content</div> } />)
+    expect(screen.getByTestId('left-sidebar')).toBeInTheDocument();
+    expect(screen.getByTestId('right-sidebar')).toBeInTheDocument();
+  })
+})
