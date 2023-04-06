@@ -1,9 +1,17 @@
+import PropTypes from 'prop-types'
 import LeftSidebar from "../left-sidebar/left-sidebar"
 import RightSidebar from "../right-sidebar/right-sidebar"
+import uniqid from 'uniqid'
 
-import { PageLayoutContainer, LeftContainer, RightContainer, CenterContainer } from "./styled-containers"
+import { PageLayoutContainer, LeftContainer, RightContainer, CenterContainer, SubContainer } from "./styled-containers"
 
 
+const structureCenterContent = (elementArray) => {
+  const structuredElements = elementArray.map((element) => {
+    return <SubContainer key={uniqid()}>{element}</SubContainer>
+  })
+  return structuredElements
+}
 
 const PageLayout = (props) => {
   return (
@@ -11,12 +19,16 @@ const PageLayout = (props) => {
       <LeftContainer>{<LeftSidebar/>}</LeftContainer>
       <RightContainer>
         <CenterContainer>
-          {props.centerContent}
+          {structureCenterContent(props.centerContent)}
         </CenterContainer>
-        {<RightSidebar/>}
+        <RightSidebar/>
       </RightContainer>
     </PageLayoutContainer>
   )
+}
+
+PageLayout.propTypes = {
+  centerContent: PropTypes.array
 }
 
 export default PageLayout
