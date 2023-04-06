@@ -1,14 +1,21 @@
-import "./page-layout.css"
 import LeftSidebar from "../left-sidebar/left-sidebar"
 import RightSidebar from "../right-sidebar/right-sidebar"
 
+import { PageLayoutContainer, LeftContainer, RightContainer, CenterContainer } from "./styled-containers"
+
+
+
 const PageLayout = (props) => {
   return (
-    <div className="page-layout-component" data-testid="page-layout">
-      <div className="sidebar-left">{<LeftSidebar/>}</div>
-      <div className="center-content">{props.centerContent}</div>
-      <div className="sidebar-right">{<RightSidebar/>}</div>
-    </div>
+    <PageLayoutContainer>
+      <LeftContainer>{<LeftSidebar/>}</LeftContainer>
+      <RightContainer>
+        <CenterContainer>
+          {props.centerContent}
+        </CenterContainer>
+        {<RightSidebar/>}
+      </RightContainer>
+    </PageLayoutContainer>
   )
 }
 
