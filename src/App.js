@@ -1,13 +1,13 @@
-
-import PageLayout from './components/page-layout/page-layout';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import HomePage from "./components/home-page/home-page"
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<PageLayout/>}/>
-        <Route path="/user-profile" element={<PageLayout/>}/>
+        <Route path="/" element={<HomePage/>}/>
+        <Route path="/user-profile" element={<HomePage/>}/>
       </Routes>
     </BrowserRouter>
   );
