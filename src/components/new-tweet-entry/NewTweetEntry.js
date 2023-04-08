@@ -8,12 +8,13 @@ import { WhoCanReply } from "./WhoCanReply";
 import { ButtonBar } from "./ButtonBar";
 
 const NewTweetContainer = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 4px 16px;
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  padding: 4px 16px 8px;
 `
 const UserAccountContainer = styled.div`
   width: min-content;
+  height: 100%;
   margin: 0px 12px 0px 0px;
   padding: 4px 0px 0px;
 `
@@ -28,6 +29,7 @@ const NewTweetEntry = (props) => {
   const userAccountInitial = props.userName[0]
 
   const [currentTextState, setCurrentTextState] = useState('')
+  const [inputExpandedState, setInputExpandedState] = useState(false)
 
   const updateValue = (event) => {
     const newValue = event.target.value
@@ -38,16 +40,25 @@ const NewTweetEntry = (props) => {
     console.log(currentTextState)
   }
 
+  const expandTweetInput = () => {
+    setInputExpandedState(true)
+  }
+  const collapseTweetInput = () => {
+    setInputExpandedState(false)
+  }
+
   return (
     <NewTweetContainer>
       <UserAccountContainer>
         <UserCircle data-testid="user-initial">{userAccountInitial}</UserCircle>
       </UserAccountContainer>
       <NewTweetForm>
-        <AudienceSelector/>
-        <TweetInput value={currentTextState} updateValue={updateValue}/>
-        <WhoCanReply/>
-        <ButtonBar submitTweet={submitTweet}/>
+        <AudienceSelector expanded={inputExpandedState}/>
+        <TweetInput value={currentTextState} 
+          updateValue={updateValue}
+          expandTweetInput={expandTweetInput} />
+        <WhoCanReply expanded={inputExpandedState}/>
+        <ButtonBar submitTweet={submitTweet} tweetText={currentTextState}/>
       </NewTweetForm>
     </NewTweetContainer>
   );

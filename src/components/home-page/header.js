@@ -62,10 +62,10 @@ const HeaderContainer = styled.div`
   grid-template-columns: 1fr 1fr;
   align-items: center;
   height: 53px;
-  padding: 0px 16px;
 `
 const H1 = styled.h1`
   margin: 0px;
+  padding: 0px 16px;
   font-size: 20px;
   color: ${MAIN_FONT_COLOR};
 `

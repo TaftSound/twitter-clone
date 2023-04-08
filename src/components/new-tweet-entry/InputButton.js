@@ -1,19 +1,28 @@
 import styled from "styled-components";
+import { StyledLogo } from "../styled-components";
 
-const Container = styled.div`
+const ContainerButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 34px;
   width: 34px;
+  padding: 0px;
+  border: none;
+  background-color: transparent;
 `;
 
+const StyledButtonLogo = styled(StyledLogo)`
+  opacity: ${props => props.onClick ? "100%" : "60%"};
+  height: 20px;
+  width: 20px;
+`
+
 export const InputButton = (props) => {
-  const Svg = props.svg;
 
   return (
-    <Container>
-      <Svg color="blue" height="20px" />
-    </Container>
+    <ContainerButton type="button">
+      <StyledButtonLogo onClick={props.onClick} path={props.path} />
+    </ContainerButton>
   );
 };
