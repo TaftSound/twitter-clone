@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import { NavButtons, TwitterHomeButton } from "./nav-buttons"
 import NewTweetButton from "./new-tweet-button"
+import UserAccountButton from "./user-account"
 
 
 
@@ -36,6 +37,7 @@ const LeftSidebar = (props) => {
       <TwitterHomeButton></TwitterHomeButton>
       <NavButtons></NavButtons>
       <NewTweetButton></NewTweetButton>
+      <UserAccountButton userName={props.userName}></UserAccountButton>
     </Container>
   )
 }

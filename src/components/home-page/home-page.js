@@ -7,7 +7,7 @@ import Header from "./header"
 const HomePage = (props) => {
   return (
     <div className="home-page">
-      <PageLayout centerContent={[
+      <PageLayout userName="Guest" centerContent={[
         <Header/>,
         <NewTweetEntry userName="Guest"/>
       ]}/>

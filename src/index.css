@@ -21,6 +21,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.4px;
+}
+
+button, input {
+  letter-spacing: -0.4px;
 }
 
 code {
