@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import { NavButtons, TwitterHomeButton } from "./nav-buttons"
+import NewTweetButton from "./new-tweet-button"
 
 
 
@@ -34,6 +35,7 @@ const LeftSidebar = (props) => {
     <Container>
       <TwitterHomeButton></TwitterHomeButton>
       <NavButtons></NavButtons>
+      <NewTweetButton></NewTweetButton>
     </Container>
   )
 }

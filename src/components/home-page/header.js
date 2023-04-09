@@ -66,7 +66,7 @@ const HeaderContainer = styled.div`
 const H1 = styled.h1`
   margin: 0px;
   padding: 0px 16px;
-  font-size: 20px;
+  font-size: 21px;
   color: ${MAIN_FONT_COLOR};
 `
 
