@@ -91,5 +91,5 @@ export const SubContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
   border-bottom: solid 1px ${DIVIDER_COLOR};
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
 `

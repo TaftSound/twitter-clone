@@ -9,19 +9,25 @@ import { ButtonBar } from "./ButtonBar";
 
 const NewTweetContainer = styled.div`
   display: grid;
+  position: relative;
   grid-template-columns: min-content 1fr;
   padding: 4px 16px 8px;
+  overflow: visible;
 `
 const UserAccountContainer = styled.div`
   width: min-content;
+  position: relative;
   height: 100%;
   margin: 0px 12px 0px 0px;
   padding: 4px 0px 0px;
+  overflow: visible;
 `
 const NewTweetForm = styled.form`
   display: flex;
+  position: relative;
   flex-direction: column;
   padding: 4px 0px 0px;
+  overflow: visible;
 `
 
 const NewTweetEntry = (props) => {

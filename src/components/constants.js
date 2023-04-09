@@ -7,6 +7,7 @@ export const SECONDARY_FONT_COLOR = "rgb(113, 118, 123)"
 export const USER_ICON_COLOR = "rgb(236,64,122)"
 export const BUTTON_HOVER_BACKGROUND = "rgb(250, 250, 250, .1)"
 export const BUTTON_BORDER_COLOR = "rgb(83, 100, 113)"
+export const BUTTON_TOOLTIP_BACKGROUND = "rgb(93, 110, 123, .8)"
 
 export const FONT_FAMILY = `'GT-America', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',

@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { StyledLogo } from "../styled-components";
+import { TooltipContainer } from "../styled-components";
 
-const ContainerButton = styled.button`
+const ContainerButton = styled(TooltipContainer)`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,6 +11,7 @@ const ContainerButton = styled.button`
   padding: 0px;
   border: none;
   background-color: transparent;
+  cursor: pointer;
 `;
 
 const StyledButtonLogo = styled(StyledLogo)`
@@ -21,8 +23,8 @@ const StyledButtonLogo = styled(StyledLogo)`
 export const InputButton = (props) => {
 
   return (
-    <ContainerButton type="button">
-      <StyledButtonLogo onClick={props.onClick} path={props.path} />
-    </ContainerButton>
+      <ContainerButton type="button" linkTitle={props.linkTitle}>
+        <StyledButtonLogo onClick={props.onClick} path={props.path} />
+      </ContainerButton>
   );
 };
