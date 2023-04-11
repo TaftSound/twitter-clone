@@ -50,6 +50,7 @@ export const TweetInput = (props) => {
         value={props.value}
         onChange={props.updateValue}
         onFocus={props.expandTweetInput}
+        role="textbox"
         id="tweetInput"
         ref={textareaRef}
          />

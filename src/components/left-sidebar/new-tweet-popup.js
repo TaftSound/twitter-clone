@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { PAGE_OVERLAY_COLOR, BACKGROUND_COLOR } from "../constants"
 import { CloseButton } from "../styled-components"
-import NewTweetEntry from "../new-tweet-entry/NewTweetEntry"
+import NewTweetEntry from "../new-tweet-entry/new-tweet-entry"
 
 const PopupPageOverlay = styled.div`
   position: fixed;

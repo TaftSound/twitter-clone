@@ -5,7 +5,7 @@ import HomePage from './home-page.js';
 jest.mock('../page-layout/page-layout', () => {
   return (props) => <div data-testid="mocked-page-layout">{props.centerContent}</div>;
 });
-jest.mock('./new-tweet-entry', () => () => (
+jest.mock('../new-tweet-entry/new-tweet-entry', () => () => (
   <div data-testid="mocked-new-tweet-entry">Mocked NewTweetEntry</div>
 ));
 jest.mock('./header', () => () => (

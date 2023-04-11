@@ -1,10 +1,11 @@
 /* eslint-disable testing-library/no-unnecessary-act */
 import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import NewTweetEntry from "./NewTweetEntry";
+import NewTweetEntry from "./new-tweet-entry";
 import userEvent from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
+import { click } from "@testing-library/user-event/dist/click";
 
 describe("NewTweetEntry", () => {
   test("renders the user's initial correctly", () => {
@@ -13,8 +14,13 @@ describe("NewTweetEntry", () => {
     expect(screen.getByTestId("user-initial").textContent).toBe('J');
   });
 
-  test("renders the AudienceSelector button", () => {
+  test("renders the AudienceSelector button when focused", () => {
     render(<NewTweetEntry userName="John Doe" />);
+    const input = screen.getByRole('textbox')
+
+    act(() => {
+      userEvent.click(input)
+    })
 
     expect(screen.getByTestId("audience-selector")).toBeInTheDocument();
   });
@@ -25,8 +31,14 @@ describe("NewTweetEntry", () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
-  test("renders the WhoCanReply element", () => {
+  test("renders the WhoCanReply element when focused", () => {
     render(<NewTweetEntry userName="John Doe" />);
+
+    const input = screen.getByRole('textbox')
+
+    act(() => {
+      userEvent.click(input)
+    })
 
     expect(screen.getByTestId("who-can-reply")).toBeInTheDocument();
   });

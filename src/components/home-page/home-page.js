@@ -1,6 +1,6 @@
 import "./home-page.css"
 import PageLayout from "../page-layout/page-layout"
-import NewTweetEntry from "../new-tweet-entry/NewTweetEntry"
+import NewTweetEntry from "../new-tweet-entry/new-tweet-entry"
 import Header from "./header"
 
 

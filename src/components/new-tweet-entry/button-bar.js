@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { InputButton } from "./InputButton";
+import { InputButton } from "./input-button";
 import { PRIMARY_COLOR, FONT_FAMILY } from "../constants";
 
 const Container = styled.div`

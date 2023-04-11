@@ -9,14 +9,19 @@ jest.mock('../right-sidebar/right-sidebar.js', () => () => <div data-testid="rig
 
 describe("PageLayout component", () => {
   it('renders without crashing', () => {
-    render(<PageLayout centerContent={ <div>Center Content</div> } />)
+    render(<PageLayout centerContent={ [<div>Center Content</div>] } />)
   })
   it('renders center content passed by props', () => {
-    render(<PageLayout centerContent={ <div>Center Content</div> } />)
+    render(<PageLayout centerContent={ [<div>Center Content</div>] } />)
     expect(screen.getByText('Center Content')).toBeInTheDocument()
   })
+  it('renders multiple centerContent items', () => {
+    render(<PageLayout centerContent={ [<div>Center Content</div>, <div>Next Center Content</div>] } />)
+    expect(screen.getByText('Center Content')).toBeInTheDocument()
+    expect(screen.getByText('Next Center Content')).toBeInTheDocument()
+  })
   it('renders left and right sidebars', () => {
-    render(<PageLayout centerContent={ <div>Center Content</div> } />)
+    render(<PageLayout centerContent={ [<div>Center Content</div>] } />)
     expect(screen.getByTestId('left-sidebar')).toBeInTheDocument();
     expect(screen.getByTestId('right-sidebar')).toBeInTheDocument();
   })
