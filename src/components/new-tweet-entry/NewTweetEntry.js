@@ -1,7 +1,7 @@
 import PropTypes from "prop-types"
 import { UserCircle } from "../styled-components";
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AudienceSelector } from "./AudienceSelector";
 import { TweetInput } from "./TweetInput";
 import { WhoCanReply } from "./WhoCanReply";
@@ -37,6 +37,10 @@ const NewTweetEntry = (props) => {
   const [currentTextState, setCurrentTextState] = useState('')
   const [inputExpandedState, setInputExpandedState] = useState(false)
 
+  useEffect(() => {
+    if (props.popup) { setInputExpandedState(true) }
+  }, [props.popup])
+
   const updateValue = (event) => {
     const newValue = event.target.value
     setCurrentTextState(newValue)
@@ -62,7 +66,8 @@ const NewTweetEntry = (props) => {
         <AudienceSelector expanded={inputExpandedState}/>
         <TweetInput value={currentTextState} 
           updateValue={updateValue}
-          expandTweetInput={expandTweetInput} />
+          expandTweetInput={expandTweetInput}
+          popup={props.popup} />
         <WhoCanReply expanded={inputExpandedState}/>
         <ButtonBar submitTweet={submitTweet} tweetText={currentTextState}/>
       </NewTweetForm>

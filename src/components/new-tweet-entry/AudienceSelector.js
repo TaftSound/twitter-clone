@@ -9,7 +9,7 @@ const Container = styled.div`
 const Button = styled.button`
   border: solid 1px ${BUTTON_BORDER_COLOR};
   border-radius: 25px;
-  padding: 0px 12px 0px 12px;
+  padding: 0px 12px 2px 12px;
   margin: 2px;
   margin-bottom: 0px;
   height: 24px;
@@ -19,7 +19,7 @@ const Button = styled.button`
   color: ${PRIMARY_COLOR};
   background-color: transparent;
   font-family: ${FONT_FAMILY};
-  font-size: 14px;
+  font-size: 15px;
   line-height: 22px;
   font-weight: 700;
 `;

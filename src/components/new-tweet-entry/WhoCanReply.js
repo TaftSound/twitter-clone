@@ -24,7 +24,7 @@ const Button = styled.button`
   color: ${PRIMARY_COLOR};
   background-color: transparent;
   border: none;
-  font-size: 14px;
+  font-size: 15px;
   font-family: ${FONT_FAMILY};
   font-weight: 700;
 `;

@@ -36,7 +36,7 @@ const LeftSidebar = (props) => {
     <Container>
       <TwitterHomeButton></TwitterHomeButton>
       <NavButtons></NavButtons>
-      <NewTweetButton></NewTweetButton>
+      <NewTweetButton userName={props.userName}></NewTweetButton>
       <UserAccountButton userName={props.userName}></UserAccountButton>
     </Container>
   )
