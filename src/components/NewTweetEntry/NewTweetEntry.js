@@ -2,10 +2,10 @@ import PropTypes from "prop-types"
 import { UserCircle } from "../styled-components";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { AudienceSelector } from "./audience-selector";
-import { TweetInput } from "./tweet-input";
-import { WhoCanReply } from "./who-can-reply";
-import { ButtonBar } from "./button-bar";
+import { AudienceSelector } from "./AudienceSelector";
+import { TweetInput } from "./TweetInput";
+import { WhoCanReply } from "./WhoCanReply";
+import { ButtonBar } from "./ButtonBar";
 
 const NewTweetContainer = styled.div`
   display: grid;

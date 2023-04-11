@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
-import LeftSidebar from "../left-sidebar/left-sidebar"
-import RightSidebar from "../right-sidebar/right-sidebar"
+import LeftSidebar from "../LeftSidebar/LeftSidebar"
+import RightSidebar from "../RightSidebar/RightSidebar"
 import uniqid from 'uniqid'
 
-import { PageLayoutContainer, LeftContainer, RightContainer, CenterContainer, SubContainer } from "./styled-containers"
+import { PageLayoutContainer, LeftContainer, RightContainer, CenterContainer, SubContainer } from "./StyledContainers"
 
 
 const structureCenterContent = (elementArray) => {

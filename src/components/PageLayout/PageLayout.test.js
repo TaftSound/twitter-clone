@@ -1,11 +1,11 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import PageLayout from "./page-layout";
+import PageLayout from "./PageLayout";
 
 
-jest.mock('../left-sidebar/left-sidebar.js', () => () => <div data-testid="left-sidebar">Mocked Left Sidebar</div> )
-jest.mock('../right-sidebar/right-sidebar.js', () => () => <div data-testid="right-sidebar">Mocked Right Sidebar</div> )
+jest.mock('../LeftSidebar/LeftSidebar.js', () => () => <div data-testid="left-sidebar">Mocked Left Sidebar</div> )
+jest.mock('../RightSidebar/RightSidebar.js', () => () => <div data-testid="right-sidebar">Mocked Right Sidebar</div> )
 
 describe("PageLayout component", () => {
   it('renders without crashing', () => {

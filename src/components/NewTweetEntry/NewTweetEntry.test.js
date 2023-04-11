@@ -2,10 +2,9 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import NewTweetEntry from "./new-tweet-entry";
+import NewTweetEntry from "./NewTweetEntry";
 import userEvent from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
-import { click } from "@testing-library/user-event/dist/click";
 
 describe("NewTweetEntry", () => {
   test("renders the user's initial correctly", () => {

@@ -1,7 +1,7 @@
 import styled from "styled-components"
-import { NavButtons, TwitterHomeButton } from "./nav-buttons"
-import NewTweetButton from "./new-tweet-button"
-import UserAccountButton from "./user-account"
+import { NavButtons, TwitterHomeButton } from "./NavButtons"
+import NewTweetButton from "./NewTweetButton"
+import UserAccountButton from "./UserAccount"
 
 
 

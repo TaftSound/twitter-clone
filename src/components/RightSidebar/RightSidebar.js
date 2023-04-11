@@ -1,4 +1,3 @@
-import "./right-sidebar.css"
 
 const RightSidebar = (props) => {
   return (

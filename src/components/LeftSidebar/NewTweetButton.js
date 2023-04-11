@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { MAIN_FONT_COLOR, PRIMARY_COLOR } from "../constants";
 import { TooltipContainer, StyledLogo } from "../styled-components";
-import NewTweetPopup from "./new-tweet-popup";
+import NewTweetPopup from "./NewTweetPopup";
 
 const TweetButtonContainer = styled(TooltipContainer)`
   display: flex;

@@ -1,14 +1,22 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import HomePage from './home-page.js';
+import HomePage from './HomePage.js';
 
-jest.mock('../page-layout/page-layout', () => {
-  return (props) => <div data-testid="mocked-page-layout">{props.centerContent}</div>;
+jest.mock("../PageLayout/PageLayout", () => {
+  return ({ centerContent }) => (
+    <div data-testid="mocked-page-layout">
+      {centerContent.map((content, index) => (
+        <div key={index} data-testid={`center-content-${index}`}>
+          {content}
+        </div>
+      ))}
+    </div>
+  );
 });
-jest.mock('../new-tweet-entry/new-tweet-entry', () => () => (
+jest.mock('../NewTweetEntry/NewTweetEntry', () => () => (
   <div data-testid="mocked-new-tweet-entry">Mocked NewTweetEntry</div>
 ));
-jest.mock('./header', () => () => (
+jest.mock('../Header/Header', () => () => (
   <div data-testid="mocked-header">Mocked Header</div>
 ));
 

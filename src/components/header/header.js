@@ -44,7 +44,7 @@ function NavButton(props) {
   return (
     <NavButtonOuter data-testid={props.title} role="button" onClick={() => props.setCurrentViewState(props.title)} >
       <NavButtonInner>
-        {props.currentViewState === props.title ? <H2 $focused>{props.title}</H2> : <H2>{props.title}</H2>}
+        {props.currentViewState === props.title ? <H2 $focused data-testid="focused-tab">{props.title}</H2> : <H2>{props.title}</H2>}
         {props.currentViewState === props.title ? <ButtonUnderline data-testid="underline"></ButtonUnderline> : false}
       </NavButtonInner>
     </NavButtonOuter>

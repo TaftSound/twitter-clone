@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { BUTTON_BORDER_COLOR, FONT_FAMILY, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants";
+import { BUTTON_BORDER_COLOR, FONT_FAMILY, PRIMARY_COLOR } from "../constants";
 import { StyledLogo } from "../styled-components";
 
 

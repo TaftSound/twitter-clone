@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Header from "./header.js";
+import Header from "./Header";
 import { act } from "react-dom/test-utils";
 
 describe("Header component", () => {
@@ -20,9 +20,8 @@ describe("Header component", () => {
 
   it("shows 'for you' as current user location by default", () => {
     render(<Header />)
-    const navButtons = screen.getAllByTestId("underline")
-    expect(navButtons[0]).toHaveClass('visible')
-    expect(navButtons[1]).not.toHaveClass('visible')
+    const focusedNavButton = screen.getByTestId("focused-tab")
+    expect(focusedNavButton.textContent).toBe("For you")
   });
 
   it("switches to 'following' as current user location when 'following' button clicked", () => {
@@ -33,9 +32,8 @@ describe("Header component", () => {
       userEvent.click(followingButton)
     })
     
-    const navButtons = screen.getAllByTestId("underline")
-    expect(navButtons[0]).not.toHaveClass('visible')
-    expect(navButtons[1]).toHaveClass('visible')
+    const focusedNavButton = screen.getByTestId("focused-tab")
+    expect(focusedNavButton.textContent).toBe("Following")
   });
   it("switches back to 'for you' as current user location when 'for you' button clicked", () => {
     render(<Header />)
@@ -47,8 +45,7 @@ describe("Header component", () => {
       userEvent.click(forYouButton)
     })
     
-    const navButtons = screen.getAllByTestId("underline")
-    expect(navButtons[0]).toHaveClass('visible')
-    expect(navButtons[1]).not.toHaveClass('visible')
+    const focusedNavButton = screen.getByTestId("focused-tab")
+    expect(focusedNavButton.textContent).toBe("For you")
   });
 });
