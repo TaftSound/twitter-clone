@@ -7,7 +7,7 @@ const HomePage = (props) => {
   return (
     <div className="home-page">
       <PageLayout userName="Guest" centerContent={[
-        <Header/>,
+        <Header titleHeader="Home" defaultTab="For you" tabsArray={["For you", "Following"]} />,
         <NewTweetEntry userName="Guest"/>
       ]}/>
     </div>
