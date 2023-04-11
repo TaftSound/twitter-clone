@@ -5,7 +5,7 @@ const LoginPage = (props) => {
 
   return (
     <div className="home-page">
-      <PageLayout userName="Guest" centerContent={[
+      <PageLayout userName={null} centerContent={[
         <div></div>
       ]}/>
     </div>

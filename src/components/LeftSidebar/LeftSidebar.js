@@ -32,14 +32,23 @@ const Container = styled.div`
 
 const LeftSidebar = (props) => {
 
-  return (
-    <Container>
-      <TwitterHomeButton></TwitterHomeButton>
-      <NavButtons></NavButtons>
-      <NewTweetButton userName={props.userName}></NewTweetButton>
-      <UserAccountButton userName={props.userName}></UserAccountButton>
-    </Container>
-  )
+  if (!props.userName) {
+    return (
+      <Container>
+        <TwitterHomeButton></TwitterHomeButton>
+        <NavButtons loggedIn={false}></NavButtons>
+      </Container>
+    )
+  } else {
+    return (
+      <Container>
+        <TwitterHomeButton></TwitterHomeButton>
+        <NavButtons loggedIn={true}></NavButtons>
+        <NewTweetButton userName={props.userName}></NewTweetButton>
+        <UserAccountButton userName={props.userName}></UserAccountButton>
+      </Container>
+    )
+  }
 }
 
 export default LeftSidebar
