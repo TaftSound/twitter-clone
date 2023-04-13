@@ -77,7 +77,7 @@ width: 16px;
 fill: ${PRIMARY_COLOR};
 `
 
-const CloseButtonContainer = styled(TooltipContainer)`
+export const CloseButtonContainer = styled(TooltipContainer)`
   height: 34px;
   width: 34px;
   border-radius: 50px;
@@ -154,7 +154,7 @@ const SmallButtonContainer = styled(TooltipContainer)`
 `
 const SmallMenuButton = (props) => {
   return (
-    <SmallButtonContainer linkTitle={props.title} >
+    <SmallButtonContainer linkTitle={props.title} onClick={props.onClick}>
       <a href={props.url} aria-label={props.title} name={props.title} >
         <svg viewBox="0 0 24 24" className={props.className}>
           <path d={props.path}></path>
@@ -170,3 +170,4 @@ export const StyledSmallMenuButton = styled(SmallMenuButton)`
   width: 20px;
   margin-bottom: -4px;
 `
+

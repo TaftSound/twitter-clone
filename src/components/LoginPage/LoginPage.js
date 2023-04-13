@@ -1,5 +1,6 @@
 import Header from "../Header/Header"
 import PageLayout from "../PageLayout/PageLayout"
+import UserLoginPopup from "../UserLoginPopup/UserLoginPopup"
 
 
 const LoginPage = (props) => {
@@ -12,6 +13,7 @@ const LoginPage = (props) => {
                 tabsArray={["For you", "Trending", "News", "Sports", "Entertainment"]}>
         </Header>
       ]}/>
+      <UserLoginPopup/>
     </div>
   )
 }
