@@ -67,6 +67,7 @@ export const RightContainer = styled.div`
 export const CenterContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
   border-right: solid 1px ${DIVIDER_COLOR};
+  box-sizing: border-box;
   min-height: 100vh;
   width: 100%;
 
@@ -90,6 +91,7 @@ export const CenterContainer = styled.div`
 export const SubContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
   border-bottom: solid 1px ${DIVIDER_COLOR};
+  box-sizing: border-box;
   max-width: 100%;
   overflow: visible;
 `
