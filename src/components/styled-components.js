@@ -103,3 +103,70 @@ export const CloseButton = (props) => {
     </CloseButtonContainer>
   )
 }
+
+const ButtonContainer = styled(TooltipContainer)`
+  height: 50.25px;
+  width: 50.25px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 200ms;
+
+  &:hover {
+    background-color: ${BUTTON_HOVER_BACKGROUND};
+  }
+`
+const MenuButton = (props) => {
+  return (
+    <ButtonContainer linkTitle={props.title} >
+      <a href={props.url} aria-label={props.title} name={props.title} >
+        <svg viewBox="0 0 24 24" className={props.className}>
+          <path d={props.path}></path>
+        </svg>
+      </a>
+    </ButtonContainer>
+  )
+}
+
+export const StyledMenuButton = styled(MenuButton)`
+  fill: ${MAIN_FONT_COLOR};
+  height: 26.25px;
+  width: 26.25px;
+  margin-bottom: -4px;
+  padding: 12px;
+  opacity: ${props => props.url ? "100%" : "60%" };
+`
+
+const SmallButtonContainer = styled(TooltipContainer)`
+  height: 34px;
+  width: 34px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 200ms;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${BUTTON_HOVER_BACKGROUND};
+  }
+`
+const SmallMenuButton = (props) => {
+  return (
+    <SmallButtonContainer linkTitle={props.title} >
+      <a href={props.url} aria-label={props.title} name={props.title} >
+        <svg viewBox="0 0 24 24" className={props.className}>
+          <path d={props.path}></path>
+        </svg>
+      </a>
+    </SmallButtonContainer>
+  )
+}
+
+export const StyledSmallMenuButton = styled(SmallMenuButton)`
+  fill: ${MAIN_FONT_COLOR};
+  height: 20px;
+  width: 20px;
+  margin-bottom: -4px;
+`

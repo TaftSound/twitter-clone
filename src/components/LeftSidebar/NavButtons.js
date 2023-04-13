@@ -1,52 +1,17 @@
-import { BUTTON_HOVER_BACKGROUND, MAIN_FONT_COLOR, PRIMARY_COLOR } from "../constants"
+import { PRIMARY_COLOR } from "../constants"
 import { useLocation } from "react-router-dom"
 import { useEffect } from "react"
-import { TooltipContainer } from "../styled-components"
+import { TooltipContainer, StyledMenuButton } from "../styled-components"
 import styled from "styled-components"
 
-const ButtonContainer = styled(TooltipContainer)`
-  height: 50.25px;
-  height: 50.25px;
+const TwitterButtonContainer = styled(TooltipContainer)`
+  height: 52px;
+  width: 52px;
+  padding: 2px 0px;
   border-radius: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: background-color 200ms;
-
-  &:hover {
-    background-color: ${BUTTON_HOVER_BACKGROUND};
-  }
-`
-
-const TwitterButtonContainer = styled(ButtonContainer)`
-  height: 52px;
-  width: 52px;
-  padding: 2px 0px;
-
-  &:hover {
-    background-color: transparent;
-  }
-`
-
-const MenuButton = (props) => {
-  return (
-    <ButtonContainer linkTitle={props.title} >
-      <a href={props.url} aria-label={props.title} name={props.title} >
-        <svg viewBox="0 0 24 24" className={props.className}>
-          <path d={props.path}></path>
-        </svg>
-      </a>
-    </ButtonContainer>
-  )
-}
-
-const StyledMenuButton = styled(MenuButton)`
-  fill: ${MAIN_FONT_COLOR};
-  height: 26.25px;
-  width: 26.25px;
-  margin-bottom: -4px;
-  padding: 12px;
-  opacity: ${props => props.url ? "100%" : "60%" };
 `
 
 const TwitterButton = styled(StyledMenuButton)`

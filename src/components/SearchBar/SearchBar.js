@@ -9,6 +9,7 @@ import SearchSuggestionBox from "./SearchSuggestionBox"
 
 const OuterSearchBarContainer = styled.div`
   position: relative;
+  margin: 0px 4px;
   width: 100%;
 `
 
