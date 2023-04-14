@@ -1,15 +1,18 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { BACKGROUND_COLOR, BUTTON_BORDER_COLOR, MAIN_FONT_COLOR, USER_ICON_COLOR } from "../constants";
+import { BACKGROUND_COLOR, BUTTON_BORDER_COLOR, FONT_FAMILY, MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR, USER_ICON_COLOR } from "./constants";
 
-const FormButton = styled.button`
+const Button = styled.button`
   position: relative;
   height: ${props => props.small ? "36px" : "40px"};
   padding: 0px 16px;
   margin: 12px 0px;
   background-color: ${props => props.dark ? `${BACKGROUND_COLOR}` : 'white'};
+  ${props => props.colorButton ? `background-color: ${PRIMARY_COLOR};` : ''}
   color: ${props => props.dark ? `${MAIN_FONT_COLOR}` : `${BACKGROUND_COLOR}`};
-  border: solid 1px ${props => props.dark ? `${BUTTON_BORDER_COLOR}` : `${BACKGROUND_COLOR}`};
+  ${props => props.colorButton ? `color: white;` : ''}
+  border: solid 1px ${props => props.dark ? `${BUTTON_BORDER_COLOR}` : `transparent`};
+  ${props => props.colorButton ? `border: solid 1px rgb(255, 255, 255, .35);` : ''}
   border-radius: 1000px;
   cursor: pointer;
 `;
@@ -20,6 +23,7 @@ const FormButtonInnerContainer = styled.div`
   height: 100%;
   font-size: 16px;
   font-weight: 700;
+  font-family: ${FONT_FAMILY};
 `;
 
 const AnimateElement = styled.div`
@@ -92,7 +96,7 @@ const GoogleUserIcon = (props) => {
   )
 }
 
-export const LoginFormButton = (props) => {
+export const FormButton = (props) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isClicked, setIsClicked] = useState(false)
 
@@ -106,14 +110,17 @@ export const LoginFormButton = (props) => {
   const endClick = () => { setIsClicked(false) }
 
   return (
-    <FormButton dark={props.dark} 
-                onMouseOver={startHover} 
-                onMouseOut={endHover}
-                onMouseDown={startClick}
-                onMouseUp={endClick}
-                small={props.small}
-                className={props.className}>
+    <Button dark={props.dark}
+            colorButton={props.colorButton}
+            onMouseOver={startHover} 
+            onMouseOut={endHover}
+            onMouseDown={startClick}
+            onMouseUp={endClick}
+            onClick={props.onClick}
+            small={props.small}
+            className={props.className}>
       <AnimateElement dark={props.dark}
+                      color={props.color}
                       google={props.google}
                       isHovered={isHovered}
                       isClicked={isClicked}>
@@ -124,6 +131,6 @@ export const LoginFormButton = (props) => {
         {props.google ? <GoogleUserIcon isHovered={isHovered}/> : ''}
         {props.google ? <GoogleIcon/> : ''}
       </FormButtonInnerContainer>
-    </FormButton>
+    </Button>
   );
 };

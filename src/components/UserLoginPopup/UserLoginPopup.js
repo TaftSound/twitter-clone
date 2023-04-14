@@ -5,7 +5,7 @@ import PubSub from "pubsub-js"
 import { MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 
 import PopupModal from "../PopupModal/PopupModal"
-import { LoginFormButton } from "./LoginFormButton"
+import { FormButton } from "../FormButton"
 import { OrDivider } from "./OrDivider"
 import { UserNameInput } from "./UserNameInput"
 
@@ -40,7 +40,7 @@ const SignUpFooter = (props) => {
   return (
     <SignUpSpanContainer>
       <QuestionSpan>Don't have an account?</QuestionSpan>
-      <SignUpButtonSpan>Sign up</SignUpButtonSpan>
+      <SignUpButtonSpan role="button">Sign up</SignUpButtonSpan>
     </SignUpSpanContainer>
   )
 }
@@ -69,12 +69,12 @@ const UserLoginPopup = (props) => {
       <PopupModal removePopup={removePopup} >
         <LoginFormContainer>
           <LoginHeader>Sign in to Tweeter</LoginHeader>
-          <LoginFormButton google={true}>Sign in with Google</LoginFormButton>
-          <LoginFormButton apple={true}>Sign in with Apple</LoginFormButton>
+          <FormButton google={true}>Sign in with Google</FormButton>
+          <FormButton apple={true}>Sign in with Apple</FormButton>
           <OrDivider></OrDivider>
           <UserNameInput guest={true} value={userNameText} onChange={updateUsernameText} ></UserNameInput>
-          <LoginFormButton small={true}>Sign in as guest</LoginFormButton>
-          <LoginFormButton dark={true} small={true}>What's the difference?</LoginFormButton>
+          <FormButton small={true}>Sign in as guest</FormButton>
+          <FormButton dark={true} small={true}>What's the difference?</FormButton>
           <SignUpFooter></SignUpFooter>
         </LoginFormContainer>
       </PopupModal>

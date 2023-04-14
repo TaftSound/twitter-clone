@@ -68,7 +68,10 @@ export const CenterContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
   border-right: solid 1px ${DIVIDER_COLOR};
   box-sizing: border-box;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: scroll;
+  overflow-x: hidden;
+  padding-bottom: 72px;
   width: 100%;
 
   @media (min-width: 600px) {

@@ -104,12 +104,12 @@ const displayLogin = () => {
 const SettingsButton = styled(StyledSmallMenuButton)`
 `
 
-const Header = (props) => {
+const HeaderComponent = (props) => {
 
   const [currentViewState, setCurrentViewState] = useState(props.defaultTab)
 
   return (
-    <div data-testid="home-header">
+    <div data-testid="home-header" className={props.className}>
       {props.titleHeader ? <HeaderContainer><H1>{props.titleHeader}</H1></HeaderContainer> : false }
       {props.searchBar
         ? <HeaderContainer>
@@ -130,5 +130,9 @@ const Header = (props) => {
     </div>
   )
 }
+const Header = styled(HeaderComponent)`
+  position: sticky;
+  top: 0;
+`
 
 export default Header
