@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { useEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import PubSub from "pubsub-js"
 
 import { MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants"
@@ -35,19 +35,34 @@ const QuestionSpan = styled.span`
 `
 const SignUpButtonSpan = styled.span`
   color: ${PRIMARY_COLOR};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `
 const SignUpFooter = (props) => {
   return (
     <SignUpSpanContainer>
       <QuestionSpan>Don't have an account?</QuestionSpan>
-      <SignUpButtonSpan role="button">Sign up</SignUpButtonSpan>
+      <SignUpButtonSpan onClick={props.onClick} role="button">Sign up</SignUpButtonSpan>
     </SignUpSpanContainer>
   )
 }
 
-const UserLoginPopup = (props) => {
+const SignInFooter = (props) => {
+  return (
+    <SignUpSpanContainer>
+      <QuestionSpan>Have an account already?</QuestionSpan>
+      <SignUpButtonSpan onClick={props.onClick} role="button">Sign in</SignUpButtonSpan>
+    </SignUpSpanContainer>
+  )
+}
+
+export const UserLoginPopup = (props) => {
   const [popupDisplayed, setPopupDisplayed] = useState(false)
   const [userNameText, setUserNameText] = useState("")
+  const [userNameInputFocused, setUserNameInputFocused] = useState(false)
 
   const updateUsernameText = (event) => {
     const newUsernameText = event.target.value
@@ -56,13 +71,29 @@ const UserLoginPopup = (props) => {
   
   useEffect(() => {
     const displayPopup = () => { setPopupDisplayed(true) }
+    const guestLogin = () => {
+      setPopupDisplayed(true)
+      setUserNameInputFocused(true)
+    }
 
     const loginToken = PubSub.subscribe('login user', displayPopup)
+    const guestLoginToken = PubSub.subscribe('guest login', guestLogin)
 
-    return () => { PubSub.unsubscribe(loginToken) }
+    return () => {
+      PubSub.unsubscribe(loginToken)
+      PubSub.unsubscribe(guestLoginToken)
+    }
   })
   
-  const removePopup = () => { setPopupDisplayed(false) }
+  const removePopup = () => {
+    setPopupDisplayed(false)
+    setUserNameInputFocused(false)
+  }
+  const openSignUp = () => {
+    setPopupDisplayed(false)
+    setUserNameInputFocused(false)
+    PubSub.publish('signup user')
+  }
 
   return popupDisplayed 
   ? (  
@@ -72,14 +103,50 @@ const UserLoginPopup = (props) => {
           <FormButton google={true}>Sign in with Google</FormButton>
           <FormButton apple={true}>Sign in with Apple</FormButton>
           <OrDivider></OrDivider>
-          <UserNameInput guest={true} value={userNameText} onChange={updateUsernameText} ></UserNameInput>
+          <UserNameInput inputFocused={userNameInputFocused} guest={true} value={userNameText} onChange={updateUsernameText} ></UserNameInput>
           <FormButton small={true}>Sign in as guest</FormButton>
           <FormButton dark={true} small={true}>What's the difference?</FormButton>
-          <SignUpFooter></SignUpFooter>
+          <SignUpFooter onClick={openSignUp}></SignUpFooter>
         </LoginFormContainer>
       </PopupModal>
   )
   : false
 }
 
-export default UserLoginPopup
+export const UserSignupPopup = (props) => {
+  const [popupDisplayed, setPopupDisplayed] = useState(false)
+  
+  useEffect(() => {
+    const displayPopup = () => { setPopupDisplayed(true) }
+
+    const loginToken = PubSub.subscribe('signup user', displayPopup)
+
+    return () => { PubSub.unsubscribe(loginToken) }
+  })
+  
+  const removePopup = () => { setPopupDisplayed(false) }
+  const openLogin = () => {
+    setPopupDisplayed(false)
+    PubSub.publish('login user')
+  }
+  const openGuestLogin = () => {
+    setPopupDisplayed(false)
+    PubSub.publish('guest login')
+  }
+
+  return popupDisplayed 
+  ? (  
+      <PopupModal removePopup={removePopup} >
+        <LoginFormContainer>
+          <LoginHeader>Join Tweeter today</LoginHeader>
+          <FormButton google={true}>Sign up with Google</FormButton>
+          <FormButton apple={true}>Sign up with Apple</FormButton>
+          <OrDivider></OrDivider>
+          <FormButton onClick={openGuestLogin} small={true}>Sign in as guest</FormButton>
+          <FormButton dark={true} small={true}>What's the difference?</FormButton>
+          <SignInFooter onClick={openLogin}></SignInFooter>
+        </LoginFormContainer>
+      </PopupModal>
+  )
+  : false
+}

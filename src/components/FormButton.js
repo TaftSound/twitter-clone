@@ -82,6 +82,9 @@ const GoogleUserIconContainer = styled.div`
   left: 10px;
   top: 50%;
   transform: translate(0%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 20px;
   width: 20px;
   font-size: 18px;
@@ -90,9 +93,14 @@ const GoogleUserIconContainer = styled.div`
   border-radius: 1000px;
   transition: color 200ms;
 ` 
+const GoogleUserIconSpan = styled.span`
+  margin-top: -3px;
+`
 const GoogleUserIcon = (props) => {
   return (
-    <GoogleUserIconContainer isHovered={props.isHovered}>+</GoogleUserIconContainer>
+    <GoogleUserIconContainer isHovered={props.isHovered}>
+      <GoogleUserIconSpan>+</GoogleUserIconSpan>
+    </GoogleUserIconContainer>
   )
 }
 

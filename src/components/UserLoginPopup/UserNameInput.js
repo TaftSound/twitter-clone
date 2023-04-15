@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { useState } from "react";
 import { DIVIDER_COLOR, MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants";
 import { useRef } from "react";
+import { useEffect } from "react";
+import PubSub from "pubsub-js";
 
 const NameInputContainer = styled.div`
   position: relative;
@@ -57,6 +59,7 @@ const Input = styled.input`
   padding: 0px;
   color: ${MAIN_FONT_COLOR};
 `;
+
 export const UserNameInput = (props) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null);
@@ -66,7 +69,12 @@ export const UserNameInput = (props) => {
     input.focus();
     setIsFocused(true);
   };
+
   const defocusInput = () => { setIsFocused(false); };
+
+  useEffect(() => {
+    if (props.inputFocused) { focusInput() }
+  }, [props.inputFocused])
 
   return (
     <NameInputContainer onFocus={focusInput} isFocused={isFocused}>

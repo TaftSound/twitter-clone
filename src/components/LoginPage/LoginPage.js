@@ -3,7 +3,7 @@ import CallToAction from "../CallToAction/CallToAction"
 
 import Header from "../Header/Header"
 import PageLayout from "../PageLayout/PageLayout"
-import UserLoginPopup from "../UserLoginPopup/UserLoginPopup"
+import { UserLoginPopup, UserSignupPopup } from "../UserLoginPopup/UserLoginPopup"
 
 
 const LoginPageContainer = styled.div`
@@ -22,6 +22,7 @@ const LoginPage = (props) => {
         </Header>
       ]} />
       <UserLoginPopup/>
+      <UserSignupPopup/>
       <CallToAction></CallToAction>
     </LoginPageContainer>
   )
