@@ -1,6 +1,7 @@
 import styled from "styled-components"
-import { useEffect, useLayoutEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import PubSub from "pubsub-js"
+import autoAnimate from "@formkit/auto-animate"
 
 import { MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 
@@ -8,6 +9,11 @@ import PopupModal from "../PopupModal/PopupModal"
 import { FormButton } from "../FormButton"
 import { OrDivider } from "./OrDivider"
 import { UserNameInput } from "./UserNameInput"
+
+import { googlePopupSignin, googlePopupSignup } from "../../google-auth"
+import { anonymousGuestSignin } from "../../guest-signin"
+import { checkUserNameAvailability } from '../../firestore'
+
 
 const LoginFormContainer = styled.div`
   display: flex;
@@ -59,94 +65,129 @@ const SignInFooter = (props) => {
   )
 }
 
+
+// open user login
+// open user signup
+// open guest login
+// alert username required
+// alert username taken
+
+
 export const UserLoginPopup = (props) => {
-  const [popupDisplayed, setPopupDisplayed] = useState(false)
+  const [loginDisplayed, setLoginDisplayed] = useState(false)
+  const [signupDisplayed, setSignupDisplayed] = useState(false)
   const [userNameText, setUserNameText] = useState("")
   const [userNameInputFocused, setUserNameInputFocused] = useState(false)
+
+  const parent = useRef(null)
 
   const updateUsernameText = (event) => {
     const newUsernameText = event.target.value
     setUserNameText(newUsernameText)
   }
   
-  useEffect(() => {
-    const displayPopup = () => { setPopupDisplayed(true) }
-    const guestLogin = () => {
-      setPopupDisplayed(true)
-      setUserNameInputFocused(true)
-    }
+  const displayLoginPopup = () => {
+    setSignupDisplayed(false)
+    setUserNameInputFocused(false)
+    setLoginDisplayed(true)
+  }
+  const displaySignupPopup = () => {
+    setLoginDisplayed(false)
+    setSignupDisplayed(true)
+    setUserNameInputFocused(true)
+  }
+  const removePopup = () => {
+    setLoginDisplayed(false)
+    setSignupDisplayed(false)
+    setUserNameInputFocused(false)
+  }
+  const displayGuestLogin = () => {
+    setSignupDisplayed(false)
+    setLoginDisplayed(true)
+    setUserNameInputFocused(true)
+  }
 
-    const loginToken = PubSub.subscribe('login user', displayPopup)
-    const guestLoginToken = PubSub.subscribe('guest login', guestLogin)
+  const checkValidUserName = async () => {
+    try {
+      if (!userNameText) {
+        PubSub.publish('alert username required')
+        return false
+      }
+      const nameAvailable = await checkUserNameAvailability(userNameText)
+      if (!nameAvailable) {
+        PubSub.publish('alert username taken')
+        return false
+      }
+      return true
+    } catch (error) {
+      console.log("Failure to validate username entry:", error)
+    }
+  }
+
+  const signUpWithGoogle = async () => {
+    try {
+      if (checkValidUserName()) {
+        await googlePopupSignup(userNameText)
+      }
+    } catch (error) {
+      console.log("Failure to sign up with Google:", error)
+    }
+  }
+
+  const loginAsGuest = async () => {
+    try {
+      if (checkValidUserName()) {
+        await anonymousGuestSignin(userNameText)
+      }
+    } catch (error) {
+      console.error("Failure to login as guest:", error)
+    }
+  }
+
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current)
+
+    const loginToken = PubSub.subscribe('open user login', displayLoginPopup)
+    const userSignupToken = PubSub.subscribe('open user signup', displaySignupPopup)
+    const guestLoginToken = PubSub.subscribe('open guest login', displayGuestLogin)
 
     return () => {
       PubSub.unsubscribe(loginToken)
       PubSub.unsubscribe(guestLoginToken)
+      PubSub.unsubscribe(userSignupToken)
     }
   })
-  
-  const removePopup = () => {
-    setPopupDisplayed(false)
-    setUserNameInputFocused(false)
-  }
-  const openSignUp = () => {
-    setPopupDisplayed(false)
-    setUserNameInputFocused(false)
-    PubSub.publish('signup user')
-  }
 
-  return popupDisplayed 
-  ? (  
-      <PopupModal removePopup={removePopup} >
-        <LoginFormContainer>
-          <LoginHeader>Sign in to Tweeter</LoginHeader>
-          <FormButton google={true}>Sign in with Google</FormButton>
-          <FormButton apple={true}>Sign in with Apple</FormButton>
-          <OrDivider></OrDivider>
-          <UserNameInput inputFocused={userNameInputFocused} guest={true} value={userNameText} onChange={updateUsernameText} ></UserNameInput>
-          <FormButton small={true}>Sign in as guest</FormButton>
-          <FormButton dark={true} small={true}>What's the difference?</FormButton>
-          <SignUpFooter onClick={openSignUp}></SignUpFooter>
-        </LoginFormContainer>
-      </PopupModal>
+  return (
+    <div ref={parent}>
+      {loginDisplayed 
+      ? <PopupModal removePopup={removePopup} >
+          <LoginFormContainer>
+            <LoginHeader>Sign in to Tweeter</LoginHeader>
+            <FormButton google={true} onClick={googlePopupSignin}>Sign in with Google</FormButton>
+            <FormButton apple={true}>Sign in with Apple</FormButton>
+            <OrDivider></OrDivider>
+            <UserNameInput inputFocused={userNameInputFocused} guest={true} value={userNameText} onChange={updateUsernameText} ></UserNameInput>
+            <FormButton small={true} onClick={loginAsGuest}>Sign in as guest</FormButton>
+            <FormButton dark={true} small={true}>What's the difference?</FormButton>
+            <SignUpFooter onClick={displaySignupPopup}></SignUpFooter>
+          </LoginFormContainer>
+        </PopupModal>
+      : false }
+      {signupDisplayed
+      ? <PopupModal removePopup={removePopup} >
+          <LoginFormContainer>
+            <LoginHeader>Join Tweeter today</LoginHeader>
+            <UserNameInput inputFocused={true} value={userNameText} onChange={updateUsernameText}></UserNameInput>
+            <FormButton google={true} onClick={signUpWithGoogle}>Sign up with Google</FormButton>
+            <FormButton apple={true}>Sign up with Apple</FormButton>
+            <OrDivider></OrDivider>
+            <FormButton onClick={loginAsGuest} small={true}>Sign in as guest</FormButton>
+            <FormButton dark={true} small={true}>What's the difference?</FormButton>
+            <SignInFooter onClick={displayLoginPopup}></SignInFooter>
+          </LoginFormContainer>
+        </PopupModal>
+      : false }
+    </div>
   )
-  : false
-}
-
-export const UserSignupPopup = (props) => {
-  const [popupDisplayed, setPopupDisplayed] = useState(false)
-  
-  useEffect(() => {
-    const displayPopup = () => { setPopupDisplayed(true) }
-
-    const loginToken = PubSub.subscribe('signup user', displayPopup)
-
-    return () => { PubSub.unsubscribe(loginToken) }
-  })
-  
-  const removePopup = () => { setPopupDisplayed(false) }
-  const openLogin = () => {
-    setPopupDisplayed(false)
-    PubSub.publish('login user')
-  }
-  const openGuestLogin = () => {
-    setPopupDisplayed(false)
-    PubSub.publish('guest login')
-  }
-
-  return popupDisplayed 
-  ? (  
-      <PopupModal removePopup={removePopup} >
-        <LoginFormContainer>
-          <LoginHeader>Join Tweeter today</LoginHeader>
-          <FormButton google={true}>Sign up with Google</FormButton>
-          <FormButton apple={true}>Sign up with Apple</FormButton>
-          <OrDivider></OrDivider>
-          <FormButton onClick={openGuestLogin} small={true}>Sign in as guest</FormButton>
-          <FormButton dark={true} small={true}>What's the difference?</FormButton>
-          <SignInFooter onClick={openLogin}></SignInFooter>
-        </LoginFormContainer>
-      </PopupModal>
-  )
-  : false
 }

@@ -48,7 +48,7 @@ const ActionFormButton = styled(FormButton)`
 `
 
 const CallToAction = (props) => {
-  const loginUser = () => { PubSub.publish('login user') }
+  const loginUser = () => { PubSub.publish('open user login') }
 
   return (
     <CallToActionContainer>

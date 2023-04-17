@@ -74,6 +74,18 @@ export const UserNameInput = (props) => {
 
   useEffect(() => {
     if (props.inputFocused) { focusInput() }
+
+    const userNameRequiredToken = PubSub.subscribe('alert username required', () => {
+
+    })
+    const userNameTakenToken = PubSub.subscribe('alert username taken', () => {
+
+    })
+
+    return () => {
+      PubSub.unsubscribe(userNameRequiredToken)
+      PubSub.unsubscribe(userNameTakenToken)
+    }
   }, [props.inputFocused])
 
   return (
@@ -83,7 +95,7 @@ export const UserNameInput = (props) => {
         <LabelInnerContainer isFocused={isFocused} textContent={props.value}>
           {props.guest
             ? <Label isFocused={isFocused} textContent={props.value} htmlFor="username-input">Guest Username</Label>
-            : false}
+            : <Label isFocused={isFocused} textContent={props.value} htmlFor="username-input">Choose username:</Label>}
         </LabelInnerContainer>
       </LabelOuterContainer>
       <InputContainer>
