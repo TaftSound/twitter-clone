@@ -22,8 +22,7 @@ const PopupContainer = styled.div`
   border-radius: 16px;
   width: 100%;
   max-height: 90vh;
-  overflow: scroll;
-  overflow: auto;
+  overflow: ${props => props.scroll ? 'scroll' : 'visible'};
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -37,8 +36,10 @@ const PopupContainer = styled.div`
 `;
 const StickyHeader = styled.div`
   position: sticky;
+  z-index: 5;
   top: 0;
   padding: 0px 16px;
+  border-radius: 16px;
   background-color: ${BACKGROUND_COLOR};
 `;
 const CloseButtonContainer = styled.div`
@@ -55,7 +56,7 @@ const PopupModal = (props) => {
 
   return (
     <PopupPageOverlay> 
-      <PopupContainer>
+      <PopupContainer scroll={props.scroll}>
         <StickyHeader>
           <CloseButtonContainer>
             <CloseButton onClick={props.removePopup} />

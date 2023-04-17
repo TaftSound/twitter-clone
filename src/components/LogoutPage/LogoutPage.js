@@ -6,6 +6,7 @@ import { TwitterLogoLarge } from '../TwitterLogo'
 import { FormButton } from '../FormButton'
 import { useEffect } from "react"
 import { useRef } from "react"
+import { useNavigate } from "react-router-dom"
 
 const BackgroundDiv = styled.div`
   position: fixed;
@@ -62,17 +63,14 @@ const LogoutFormButton = styled(FormButton)`
 `
 
 const LogoutPage = (props) => {
+  const navigate = useNavigate()
+
   const logoutButtonRef = useRef(null)
   const cancelButtonRef = useRef(null)
   
   useEffect(() => {
-    const logout = () => {
-      getAuth().signOut()
-      console.log('logged out')
-    }
-    const cancelLogout = () => {
-      console.log('cancel logout')
-    }
+    const logout = () => { getAuth().signOut() }
+    const cancelLogout = () => { navigate(-1) }
 
     const logoutButton = logoutButtonRef.current
     const cancelButton = cancelButtonRef.current
@@ -84,7 +82,7 @@ const LogoutPage = (props) => {
       logoutButton.removeEventListener('click', logout)
       cancelButton.removeEventListener('click', cancelLogout)
     }
-  })
+  }, [navigate])
 
   return (
     <BackgroundDiv>

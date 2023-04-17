@@ -38,9 +38,10 @@ export const TooltipContainer = styled.div`
   position: relative;
 
   &::after {
+    ${props => !props.linkTitle ? 'display: none;' : ''}
     content: '${props => props.linkTitle}';
     position: absolute;
-    z-index: 9999;
+    z-index: 5;
     width: max-content;
     padding: 2px 4px;
     border-radius: 2px;
@@ -61,8 +62,8 @@ export const TooltipContainer = styled.div`
   &:hover::after {
     visibility: ${props => props.linkTitle ? 'visible' : 'hidden' };
     opacity: 100%;
-    transition: opacity 150ms .8s;
-    transition: visibility 0ms .7s;
+    transition: opacity 150ms .7s;
+    transition: visibility 0ms .6s;
   }
 `
 

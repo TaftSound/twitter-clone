@@ -1,22 +1,53 @@
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { createContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { auth } from './auth';
 
 import HomePage from "./components/HomePage/HomePage"
 import LoginPage from "./components/LoginPage/LoginPage"
 import LogoutPage from './components/LogoutPage/LogoutPage';
 
+import { getUserData } from './firestore';
+
+export const UserContext = createContext()
+export const AuthContext = createContext()
+
+const ContextProvider = (props) => {
+  const [value, setValue] = useState(null)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userData = await getUserData(user)
+        setValue(userData)
+      } else {
+        setValue(null)
+      }
+    })
+
+    return unsubscribe
+  }, [])
+
+  return (
+    <UserContext.Provider value={value}>
+      {props.children}
+    </UserContext.Provider>
+  )
+}
 
 const PageRoutes = (props) => {
 
   const navigate = useNavigate()
-
+  
   useEffect(() => {
-    const auth = getAuth()
-    onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) { navigate('/') }
-    }, [])
-  })
+    })
+
+    return unsubscribe
+  }, [navigate])
+
+
 
   return (
     <Routes>
@@ -31,9 +62,11 @@ const PageRoutes = (props) => {
 function App() {
 
   return (
-    <BrowserRouter>
-      <PageRoutes></PageRoutes>
-    </BrowserRouter>
+    <ContextProvider>
+      <BrowserRouter>
+        <PageRoutes></PageRoutes>
+      </BrowserRouter>
+    </ContextProvider>
   );
 }
 

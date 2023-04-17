@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useContext } from "react";
 import autoAnimate from "@formkit/auto-animate";
 
 import { SmallUserCircle, TooltipContainer } from "../styled-components";
 import { BACKGROUND_COLOR, BUTTON_HOVER_BACKGROUND, DIVIDER_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../App";
 
 const RearContainer = styled.div`
   position: absolute;
@@ -18,7 +19,7 @@ const RearContainer = styled.div`
 `
 const FrontContainer = styled.div`
   position: relative;
-  z-index: 2;
+  z-index: 6;
   padding: 12px 0px;
   border-radius: 15px;
   background-color: ${BACKGROUND_COLOR};
@@ -56,8 +57,26 @@ const InnerContainer = styled.div`
 `
 
 const UserAccountMenu = (props) => {
+  const logoutButtonRef = useRef(null)
+  const userObject = useContext(UserContext)
   const navigate = useNavigate()
-  const directToLogout = () => { navigate('/logout') }
+  const [userName, setUserName] = useState('')
+
+  useEffect(() => {
+    const logoutButton = logoutButtonRef.current
+
+    const directToLogout = () => {
+      navigate('/logout')
+    }
+
+    logoutButton.addEventListener('click', directToLogout)
+
+    return () => { logoutButton.removeEventListener('click', directToLogout) }
+  }, [navigate])
+
+  useEffect(() => {
+    if (userObject) { setUserName(userObject.userName) }
+  }, [userObject])
 
   return (
     <RearContainer>
@@ -66,8 +85,8 @@ const UserAccountMenu = (props) => {
         <InnerContainer inactive={true} >
           Add an existing account
         </InnerContainer>
-        <InnerContainer onClick={directToLogout}>
-          Log out @{props.userName.toLowerCase()}
+        <InnerContainer ref={logoutButtonRef}>
+          Log out @{userName}
         </InnerContainer>
       </FrontContainer>
       <TalkBubbleTriangle/>
@@ -75,11 +94,16 @@ const UserAccountMenu = (props) => {
   )
 }
 
+const OuterContainer = styled.div`
+  position: relative;
+  margin: 16px 0px;
+`
 const ButtonContainer = styled(TooltipContainer)`
   padding: 12px;
-  margin: 16px 0px;
   border-radius: 1000px;
   transition: background-color 200ms;
+
+  ${props => props.clickable ? '' : 'pointer-events: none;'}
   
   &:hover {
     transition: background-color 200ms;
@@ -89,33 +113,42 @@ const ButtonContainer = styled(TooltipContainer)`
 
 const UserAccountButton = (props) => {
   const parent = useRef(null)
-  const userAccountInitial = props.displayName[0]
+  const userObject = useContext(UserContext)
 
+  const [accountInitial, setAccountInitial] = useState('')
   const [menuDisplayed, setMenuDisplayed] = useState(false)
+  const [clickable, setClickable] = useState(true)
 
   const toggleAccountMenu = (event) => {
     if (!menuDisplayed) {
       event.stopPropagation()
       setMenuDisplayed(true)
+      setClickable(false)
       return
     }
     setMenuDisplayed(false)
+    setClickable(true)
   }
   
 
-  useEffect(() => { parent.current && autoAnimate(parent.current) }, [parent])
+  useEffect(() => { parent.current && autoAnimate(parent.current, { duration: 100 }) }, [parent])
   useEffect(() => {
     if (menuDisplayed) {
       window.addEventListener('click', toggleAccountMenu)
       return () => { window.removeEventListener('click', toggleAccountMenu) }
     }
   })
+  useEffect(() => {
+    if (userObject) { setAccountInitial(userObject.displayName[0]) }
+  }, [userObject])
 
   return (
-    <ButtonContainer linkTitle={menuDisplayed ? "" : "Account"} displayAbove={true} ref={parent}>
-      <SmallUserCircle onClick={toggleAccountMenu}>{userAccountInitial}</SmallUserCircle>
-      {menuDisplayed ? <UserAccountMenu userName={props.userName}></UserAccountMenu> : false }
-    </ButtonContainer>
+    <OuterContainer>
+      <ButtonContainer clickable={clickable} linkTitle={menuDisplayed ? "" : "Accounts"} displayAbove={true} ref={parent}>
+        <SmallUserCircle onClick={toggleAccountMenu}>{accountInitial}</SmallUserCircle>
+      </ButtonContainer>
+      {menuDisplayed ? <UserAccountMenu></UserAccountMenu> : false }
+    </OuterContainer>
   )
 }
 

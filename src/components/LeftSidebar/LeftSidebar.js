@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom"
 import styled from "styled-components"
 import { NavButtons, TwitterHomeButton } from "./NavButtons"
 import NewTweetButton from "./NewTweetButton"
@@ -31,8 +32,9 @@ const Container = styled.div`
 `
 
 const LeftSidebar = (props) => {
+  const location = useLocation()
 
-  if (!props.displayName) {
+  if (location.pathname === '/') {
     return (
       <Container>
         <TwitterHomeButton></TwitterHomeButton>
@@ -44,8 +46,8 @@ const LeftSidebar = (props) => {
       <Container>
         <TwitterHomeButton></TwitterHomeButton>
         <NavButtons loggedIn={true}></NavButtons>
-        <NewTweetButton displayName={props.displayName}></NewTweetButton>
-        <UserAccountButton displayName={props.displayName} userName={props.userName}></UserAccountButton>
+        <NewTweetButton></NewTweetButton>
+        <UserAccountButton></UserAccountButton>
       </Container>
     )
   }

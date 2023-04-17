@@ -1,11 +1,11 @@
-import PropTypes from "prop-types"
 import { UserCircle } from "../styled-components";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AudienceSelector } from "./AudienceSelector";
 import { TweetInput } from "./TweetInput";
 import { WhoCanReply } from "./WhoCanReply";
 import { ButtonBar } from "./ButtonBar";
+import { UserContext } from "../../App";
 
 const NewTweetContainer = styled.div`
   display: grid;
@@ -31,15 +31,21 @@ const NewTweetForm = styled.form`
 `
 
 const NewTweetEntry = (props) => {
-
-  const userAccountInitial = props.displayName[0]
+  const userObject = useContext(UserContext)
 
   const [currentTextState, setCurrentTextState] = useState('')
   const [inputExpandedState, setInputExpandedState] = useState(false)
+  const [accountInitial, setAccountInitial] = useState('')
 
   useEffect(() => {
     if (props.popup) { setInputExpandedState(true) }
   }, [props.popup])
+
+  useEffect(() => {
+    if (userObject) {
+      setAccountInitial(userObject.displayName[0])
+    }
+  }, [userObject])
 
   const updateValue = (event) => {
     const newValue = event.target.value
@@ -60,7 +66,7 @@ const NewTweetEntry = (props) => {
   return (
     <NewTweetContainer>
       <UserAccountContainer>
-        <UserCircle data-testid="user-initial">{userAccountInitial}</UserCircle>
+        <UserCircle data-testid="user-initial">{accountInitial}</UserCircle>
       </UserAccountContainer>
       <NewTweetForm>
         <AudienceSelector expanded={inputExpandedState}/>
@@ -74,9 +80,5 @@ const NewTweetEntry = (props) => {
     </NewTweetContainer>
   );
 };
-
-NewTweetEntry.propTypes = {
-  userName: PropTypes.string.isRequired
-}
 
 export default NewTweetEntry

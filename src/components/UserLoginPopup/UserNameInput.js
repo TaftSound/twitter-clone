@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import { DIVIDER_COLOR, MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants";
 import { useRef } from "react";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import PubSub from "pubsub-js";
 
 const NameInputContainer = styled.div`
@@ -72,7 +72,7 @@ export const UserNameInput = (props) => {
 
   const defocusInput = () => { setIsFocused(false); };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (props.inputFocused) { focusInput() }
 
     const userNameRequiredToken = PubSub.subscribe('alert username required', () => {

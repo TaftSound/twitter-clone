@@ -10,8 +10,7 @@ import { FormButton } from "../FormButton"
 import { OrDivider } from "./OrDivider"
 import { UserNameInput } from "./UserNameInput"
 
-import { googlePopupSignin, googlePopupSignup } from "../../google-auth"
-import { anonymousGuestSignin } from "../../guest-signin"
+import { anonymousGuestSignin, googlePopupSignin, googlePopupSignup  } from "../../auth"
 import { checkUserNameAvailability } from '../../firestore'
 
 
@@ -94,7 +93,6 @@ export const UserLoginPopup = (props) => {
   const displaySignupPopup = () => {
     setLoginDisplayed(false)
     setSignupDisplayed(true)
-    setUserNameInputFocused(true)
   }
   const removePopup = () => {
     setLoginDisplayed(false)
@@ -114,11 +112,11 @@ export const UserLoginPopup = (props) => {
         return false
       }
       const nameAvailable = await checkUserNameAvailability(userNameText)
-      if (!nameAvailable) {
-        PubSub.publish('alert username taken')
-        return false
-      }
-      return true
+      if (nameAvailable) { return true }
+      
+      PubSub.publish('alert username taken')
+      return false
+
     } catch (error) {
       console.error("Failure to validate username entry:", error)
     }
@@ -126,7 +124,7 @@ export const UserLoginPopup = (props) => {
 
   const signUpWithGoogle = async () => {
     try {
-      if (checkValidUserName()) {
+      if (await checkValidUserName()) {
         await googlePopupSignup(userNameText)
       }
     } catch (error) {
@@ -136,7 +134,7 @@ export const UserLoginPopup = (props) => {
 
   const loginAsGuest = async () => {
     try {
-      if (checkValidUserName()) {
+      if (await checkValidUserName()) {
         await anonymousGuestSignin(userNameText)
       }
     } catch (error) {
@@ -161,7 +159,7 @@ export const UserLoginPopup = (props) => {
   return (
     <div ref={parent}>
       {loginDisplayed 
-      ? <PopupModal removePopup={removePopup} twitterLogo={true} >
+      ? <PopupModal removePopup={removePopup} twitterLogo={true} scroll={true} >
           <LoginFormContainer>
             <LoginHeader>Sign in to Tweeter</LoginHeader>
             <FormButton google={true} onClick={googlePopupSignin}>Sign in with Google</FormButton>
@@ -173,9 +171,9 @@ export const UserLoginPopup = (props) => {
             <SignUpFooter onClick={displaySignupPopup}></SignUpFooter>
           </LoginFormContainer>
         </PopupModal>
-      : false }
+      : '' }
       {signupDisplayed
-      ? <PopupModal removePopup={removePopup} twitterLogo={true} >
+      ? <PopupModal removePopup={removePopup} twitterLogo={true} scroll={true} >
           <LoginFormContainer>
             <LoginHeader>Join Tweeter today</LoginHeader>
             <UserNameInput inputFocused={true} value={userNameText} onChange={updateUsernameText}></UserNameInput>
@@ -187,7 +185,7 @@ export const UserLoginPopup = (props) => {
             <SignInFooter onClick={displayLoginPopup}></SignInFooter>
           </LoginFormContainer>
         </PopupModal>
-      : false }
+      : '' }
     </div>
   )
 }

@@ -9,6 +9,8 @@ const CallToActionContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 100vw;
+  max-height: 52px;
+  overflow: hidden;
   padding: 10px 0px;
   background-color: ${PRIMARY_COLOR};
 `
@@ -49,6 +51,7 @@ const ActionFormButton = styled(FormButton)`
 
 const CallToAction = (props) => {
   const loginUser = () => { PubSub.publish('open user login') }
+  const signupUser = () => { PubSub.publish('open user signup') }
 
   return (
     <CallToActionContainer>
@@ -59,7 +62,7 @@ const CallToAction = (props) => {
         </MessageContainer>
         <ButtonContainer>
           <ActionFormButton onClick={loginUser} small={true} colorButton={true}>Login</ActionFormButton>
-          <ActionFormButton small={true}>Sign Up</ActionFormButton>
+          <ActionFormButton onClick={signupUser} small={true}>Sign Up</ActionFormButton>
         </ButtonContainer>
       </CallToActionContent>
     </CallToActionContainer>
