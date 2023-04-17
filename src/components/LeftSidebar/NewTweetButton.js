@@ -40,7 +40,7 @@ const NewTweetButton = (props) => {
       </TweetButtonContainer>
       {popupDisplayed
         ? <PopupModal removePopup={removePopup}>
-            <NewTweetEntry userName={props.userName} popup={true}></NewTweetEntry>
+            <NewTweetEntry displayName={props.displayName} popup={true}></NewTweetEntry>
           </PopupModal>
         : false }
     </>

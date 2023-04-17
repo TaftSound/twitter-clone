@@ -16,7 +16,7 @@ const structureCenterContent = (elementArray) => {
 const PageLayout = (props) => {
   return (
     <PageLayoutContainer>
-      <LeftContainer>{<LeftSidebar userName={props.userName}/>}</LeftContainer>
+      <LeftContainer>{<LeftSidebar displayName={props.displayName} userName={props.userName} />}</LeftContainer>
       <RightContainer>
         <CenterContainer>
           {structureCenterContent(props.centerContent)}

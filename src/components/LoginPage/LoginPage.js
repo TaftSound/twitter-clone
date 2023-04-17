@@ -27,7 +27,6 @@ const LoginPage = (props) => {
     const auth = getAuth()
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log('logged in')
         navigate('/home')
       }
     }, [])

@@ -2,7 +2,6 @@ import firebaseApp from "./firebase";
 
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { createGuestUser } from "./firestore";
-import PubSub from "pubsub-js";
 
 
 export const anonymousGuestSignin = async (userName) => {
@@ -13,7 +12,6 @@ export const anonymousGuestSignin = async (userName) => {
       if (user) {
         createGuestUser(user, userName)
         console.log(user)
-        PubSub.publish('user logged in')
       }
     })
 

@@ -120,7 +120,7 @@ export const UserLoginPopup = (props) => {
       }
       return true
     } catch (error) {
-      console.log("Failure to validate username entry:", error)
+      console.error("Failure to validate username entry:", error)
     }
   }
 
@@ -130,7 +130,7 @@ export const UserLoginPopup = (props) => {
         await googlePopupSignup(userNameText)
       }
     } catch (error) {
-      console.log("Failure to sign up with Google:", error)
+      console.error("Failure to sign up with Google:", error)
     }
   }
 
@@ -161,7 +161,7 @@ export const UserLoginPopup = (props) => {
   return (
     <div ref={parent}>
       {loginDisplayed 
-      ? <PopupModal removePopup={removePopup} >
+      ? <PopupModal removePopup={removePopup} twitterLogo={true} >
           <LoginFormContainer>
             <LoginHeader>Sign in to Tweeter</LoginHeader>
             <FormButton google={true} onClick={googlePopupSignin}>Sign in with Google</FormButton>
@@ -175,7 +175,7 @@ export const UserLoginPopup = (props) => {
         </PopupModal>
       : false }
       {signupDisplayed
-      ? <PopupModal removePopup={removePopup} >
+      ? <PopupModal removePopup={removePopup} twitterLogo={true} >
           <LoginFormContainer>
             <LoginHeader>Join Tweeter today</LoginHeader>
             <UserNameInput inputFocused={true} value={userNameText} onChange={updateUsernameText}></UserNameInput>

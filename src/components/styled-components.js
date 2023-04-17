@@ -18,6 +18,7 @@ export const SmallUserCircle = styled(UserCircle)`
   font-size: 24px;
   height: 40px;
   width: 40px;
+  cursor: pointer;
 `
 
 export const DividerLine = styled.div`
@@ -43,7 +44,9 @@ export const TooltipContainer = styled.div`
     width: max-content;
     padding: 2px 4px;
     border-radius: 2px;
-    bottom: -21px;
+    ${props => props.displayAbove ? 'top: -21px;' : 'bottom: -21px;'}
+    left: 50%;
+    transform: translate(-50%, 0%);
     font-size: 12px;
     font-family: ${FONT_FAMILY};
     font-weight: 500;
@@ -58,8 +61,8 @@ export const TooltipContainer = styled.div`
   &:hover::after {
     visibility: ${props => props.linkTitle ? 'visible' : 'hidden' };
     opacity: 100%;
-    transition: opacity 200ms .6s;
-    transition: visibility 0ms .5s;
+    transition: opacity 150ms .8s;
+    transition: visibility 0ms .7s;
   }
 `
 

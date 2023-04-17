@@ -32,7 +32,7 @@ const Container = styled.div`
 
 const LeftSidebar = (props) => {
 
-  if (!props.userName) {
+  if (!props.displayName) {
     return (
       <Container>
         <TwitterHomeButton></TwitterHomeButton>
@@ -44,8 +44,8 @@ const LeftSidebar = (props) => {
       <Container>
         <TwitterHomeButton></TwitterHomeButton>
         <NavButtons loggedIn={true}></NavButtons>
-        <NewTweetButton userName={props.userName}></NewTweetButton>
-        <UserAccountButton userName={props.userName}></UserAccountButton>
+        <NewTweetButton displayName={props.displayName}></NewTweetButton>
+        <UserAccountButton displayName={props.displayName} userName={props.userName}></UserAccountButton>
       </Container>
     )
   }

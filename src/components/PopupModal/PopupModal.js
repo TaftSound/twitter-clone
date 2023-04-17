@@ -1,11 +1,7 @@
 import styled from "styled-components";
 import { CloseButton } from "../styled-components";
-import { TwitterLogo } from "./TwitterLogo";
+import { TwitterLogo } from "../TwitterLogo";
 import { PAGE_OVERLAY_COLOR, BACKGROUND_COLOR } from "../constants";
-import { useEffect } from "react";
-import { useRef } from "react";
-import autoAnimate from "@formkit/auto-animate";
-import { useState } from "react";
 
 const PopupPageOverlay = styled.div`
   position: fixed;
@@ -64,7 +60,7 @@ const PopupModal = (props) => {
           <CloseButtonContainer>
             <CloseButton onClick={props.removePopup} />
           </CloseButtonContainer>
-          <TwitterLogo></TwitterLogo>
+          {props.twitterLogo ? <TwitterLogo></TwitterLogo> : ""}
         </StickyHeader>
         {props.children}
       </PopupContainer>

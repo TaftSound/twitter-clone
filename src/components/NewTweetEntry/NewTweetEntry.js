@@ -32,7 +32,7 @@ const NewTweetForm = styled.form`
 
 const NewTweetEntry = (props) => {
 
-  const userAccountInitial = props.userName[0]
+  const userAccountInitial = props.displayName[0]
 
   const [currentTextState, setCurrentTextState] = useState('')
   const [inputExpandedState, setInputExpandedState] = useState(false)

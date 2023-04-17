@@ -126,7 +126,8 @@ export const FormButton = (props) => {
             onMouseUp={endClick}
             onClick={props.onClick}
             small={props.small}
-            className={props.className}>
+            className={props.className}
+            ref={props.reference}>
       <AnimateElement dark={props.dark}
                       color={props.color}
                       google={props.google}
