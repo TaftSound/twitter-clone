@@ -7,7 +7,7 @@ import HomePage from "./components/HomePage/HomePage"
 import LoginPage from "./components/LoginPage/LoginPage"
 import LogoutPage from './components/LogoutPage/LogoutPage';
 
-import { getUserData } from './firestore';
+import { getUserData } from "./firestore/user-functions";
 
 export const UserContext = createContext()
 export const AuthContext = createContext()

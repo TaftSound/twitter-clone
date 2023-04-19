@@ -5,7 +5,7 @@ import { getAuth,
         onAuthStateChanged,
         GoogleAuthProvider,
         signInWithPopup } from "firebase/auth";
-import { createGuestUser, confirmExistingUser, createNewUser } from "./firestore";
+import { createGuestUser, confirmExistingUser, createNewUser } from "./firestore/user-functions";
 
 export const auth = getAuth()
 
@@ -33,6 +33,8 @@ export const googlePopupSignin = async () => {
     if (!isUser) {
       await getAuth().signOut()
       PubSub.publish('open user signup')
+    } else {
+
     }
   } catch (error) {
     console.error('Google sign in failure:', error)

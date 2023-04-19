@@ -11,7 +11,8 @@ import { OrDivider } from "./OrDivider"
 import { UserNameInput } from "./UserNameInput"
 
 import { anonymousGuestSignin, googlePopupSignin, googlePopupSignup  } from "../../auth"
-import { checkUserNameAvailability } from '../../firestore'
+import { checkUserNameAvailability } from "../../firestore/user-functions"
+import { useNavigate } from "react-router-dom"
 
 
 const LoginFormContainer = styled.div`
@@ -79,6 +80,7 @@ export const UserLoginPopup = (props) => {
   const [userNameInputFocused, setUserNameInputFocused] = useState(false)
 
   const parent = useRef(null)
+  const navigate = useNavigate()
 
   const updateUsernameText = (event) => {
     const newUsernameText = event.target.value
@@ -126,9 +128,19 @@ export const UserLoginPopup = (props) => {
     try {
       if (await checkValidUserName()) {
         await googlePopupSignup(userNameText)
+        navigate('/home')
       }
     } catch (error) {
       console.error("Failure to sign up with Google:", error)
+    }
+  }
+
+  const logInWithGoogle = async () => {
+    try {
+      await googlePopupSignin()
+      navigate('/home')
+    } catch (error) {
+      console.error("Failure to sign in with Google:", error)
     }
   }
 
@@ -136,6 +148,7 @@ export const UserLoginPopup = (props) => {
     try {
       if (await checkValidUserName()) {
         await anonymousGuestSignin(userNameText)
+        navigate('/home')
       }
     } catch (error) {
       console.error("Failure to login as guest:", error)
@@ -162,7 +175,7 @@ export const UserLoginPopup = (props) => {
       ? <PopupModal removePopup={removePopup} twitterLogo={true} scroll={true} >
           <LoginFormContainer>
             <LoginHeader>Sign in to Tweeter</LoginHeader>
-            <FormButton google={true} onClick={googlePopupSignin}>Sign in with Google</FormButton>
+            <FormButton google={true} onClick={logInWithGoogle}>Sign in with Google</FormButton>
             <FormButton apple={true}>Sign in with Apple</FormButton>
             <OrDivider></OrDivider>
             <UserNameInput inputFocused={userNameInputFocused} guest={true} value={userNameText} onChange={updateUsernameText} ></UserNameInput>

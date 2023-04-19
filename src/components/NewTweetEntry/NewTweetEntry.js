@@ -6,6 +6,7 @@ import { TweetInput } from "./TweetInput";
 import { WhoCanReply } from "./WhoCanReply";
 import { ButtonBar } from "./ButtonBar";
 import { UserContext } from "../../App";
+import { createNewTweet } from "../../firestore/create-new-tweet";
 
 const NewTweetContainer = styled.div`
   display: grid;
@@ -52,9 +53,7 @@ const NewTweetEntry = (props) => {
     setCurrentTextState(newValue)
   }
 
-  const submitTweet = () => {
-    console.log(currentTextState)
-  }
+  const submitTweet = () => { createNewTweet(currentTextState, userObject) }
 
   const expandTweetInput = () => {
     setInputExpandedState(true)
