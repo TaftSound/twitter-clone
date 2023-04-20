@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { CloseButton } from "../styled-components";
+import { CloseButton } from "../StyledButtons/CloseButton";
 import { TwitterLogo } from "../TwitterLogo";
 import { PAGE_OVERLAY_COLOR, BACKGROUND_COLOR } from "../constants";
 

@@ -6,7 +6,7 @@ import autoAnimate from "@formkit/auto-animate"
 import { MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 
 import PopupModal from "../PopupModal/PopupModal"
-import { FormButton } from "../FormButton"
+import { FormButton } from "../StyledButtons/FormButton"
 import { OrDivider } from "./OrDivider"
 import { UserNameInput } from "./UserNameInput"
 

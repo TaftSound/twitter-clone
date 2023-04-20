@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { PRIMARY_COLOR } from "../constants";
-import { FormButton } from "../FormButton";
+import { FormButton } from "../StyledButtons/FormButton";
 import PubSub from "pubsub-js";
 
 const CallToActionContainer = styled.div`

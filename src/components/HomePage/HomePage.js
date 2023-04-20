@@ -1,6 +1,7 @@
 import PageLayout from "../PageLayout/PageLayout"
 import NewTweetEntry from "../NewTweetEntry/NewTweetEntry"
 import Header from "../Header/Header"
+import TweetDisplay from "../TweetDisplay/TweetDisplay"
 
 const HomePage = (props) => {
 
@@ -8,7 +9,8 @@ const HomePage = (props) => {
     <div className="home-page">
       <PageLayout centerContent={[
         <Header titleHeader="Home" defaultTab="For you" tabsArray={["For you", "Following"]} />,
-        <NewTweetEntry />
+        <NewTweetEntry />,
+        <TweetDisplay></TweetDisplay>
       ]}/>
     </div>
   )

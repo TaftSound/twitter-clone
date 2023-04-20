@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom"
 import styled from "styled-components"
 import { NavButtons, TwitterHomeButton } from "./NavButtons"
-import NewTweetButton from "./NewTweetButton"
+import NewTweetButton from "../StyledButtons/NewTweetButton"
 import UserAccountButton from "./UserAccount"
 
 

@@ -20,7 +20,7 @@ const StyledButton = styled(StyledLogo)`
   width: 20px;
 `
 
-export const InputButton = (props) => {
+export const TweetInputButton = (props) => {
 
   return (
       <ButtonContainer type="button" linkTitle={props.linkTitle}>

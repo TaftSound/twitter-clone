@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { BACKGROUND_COLOR, BUTTON_BORDER_COLOR, FONT_FAMILY, MAIN_FONT_COLOR, PRIMARY_COLOR, USER_ICON_COLOR } from "./constants";
+import { BACKGROUND_COLOR, BUTTON_BORDER_COLOR, FONT_FAMILY, MAIN_FONT_COLOR, PRIMARY_COLOR, USER_ICON_COLOR } from "../constants";
 
 const Button = styled.button`
   position: relative;

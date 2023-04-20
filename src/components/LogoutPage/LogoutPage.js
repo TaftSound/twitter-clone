@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth'
 
 import { BACKGROUND_COLOR, MAIN_FONT_COLOR, PAGE_OVERLAY_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 import { TwitterLogoLarge } from '../TwitterLogo'
-import { FormButton } from '../FormButton'
+import { FormButton } from '../StyledButtons/FormButton'
 import { useEffect } from "react"
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
