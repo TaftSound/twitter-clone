@@ -8,9 +8,9 @@ position: absolute;
 top: 0px;
 left: 50%;
 transform: translate(-50%, 0%);
+fill: ${MAIN_FONT_COLOR};
 `;
 const TwitterLogoPath = styled.path`
- fill: ${MAIN_FONT_COLOR};
 `;
 export const TwitterLogo = (props) => {
   return (
