@@ -29,11 +29,14 @@ const StyledSvg = styled.svg`
 
 export const SmallMenuButton = (props) => {
   let hoverColor = null
-  if (props.color) { hoverColor = `${props.color.slice(0, -1)}, .1)` }
-  console.log(hoverColor)
+  if (props.color) { hoverColor = `${props.color.slice(0, -1)}, .15)` }
 
   return (
-    <SmallButtonContainer color={props.color} hoverColor={hoverColor} linkTitle={props.title} onClick={props.onClick}>
+    <SmallButtonContainer color={props.color}
+                          hoverColor={hoverColor}
+                          className={props.className}
+                          linkTitle={props.title}
+                          onClick={props.onClick}>
       <a href={props.url} aria-label={props.title} name={props.title}>
         <StyledSvg miniture={props.mini} viewBox="0 0 24 24">
           <path d={props.path}></path>
