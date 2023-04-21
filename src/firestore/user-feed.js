@@ -1,4 +1,4 @@
-import { doc, getDoc, query } from "firebase/firestore";
+import { collection, doc, getDoc, query, getDocs, limit } from "firebase/firestore";
 import { db } from "./firestore";
 import { auth } from "../auth";
 
@@ -57,8 +57,8 @@ const mergeTweetAndUserData = (tweetKeys, tweetData, userData) => {
 }
 
 const getUserFeedChunk = async (keysList, loadCount) => {
-  const startIndex = loadCount * 5
-  const tweetKeys = keysList.slice(startIndex, startIndex + 5)
+  const startIndex = loadCount * 10
+  const tweetKeys = keysList.slice(startIndex, startIndex + 10)
   
   const tweetDataDocRefs = tweetKeys.map((key) => { return doc(db, 'tweets', key) })
   const tweetDataArray = await retrieveBatchData(tweetDataDocRefs)
@@ -73,9 +73,44 @@ const getUserFeedChunk = async (keysList, loadCount) => {
   return finalTweetData
 }
 
+const getForYouChunk = async (loadCount) => {
+  // get tweet Ledger
+  // randomize order of ledger
+  
+  const startIndex = loadCount * 5
+  const docQuery = query(collection(db, 'tweets'), limit(3))
+  const docsnaps = await getDocs(docQuery)
+
+  console.log(docsnaps.docs[2].data())
+
+}
+
 export const getMainFeed = async (loadCount) => {
   const tweetReferences = await getTweetReferences()
   const mergedReferences = mergeTweetReferences(tweetReferences)
   const sortedKeys = convertToSortedArray(mergedReferences)
   return getUserFeedChunk(sortedKeys, loadCount)
+}
+
+let randomizedTweetKeys = []
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+const storeRandomizedTweetLedger = async () => {
+  const tweetLedgerDocRef = doc(db, 'tweets', 'tweetLedger')
+  const tweetLedgerSnap = await getDoc(tweetLedgerDocRef)
+  randomizedTweetKeys = Object.keys(tweetLedgerSnap.data().tweetReferenceArray)
+  shuffleArray(randomizedTweetKeys)
+}
+
+export const getForYouFeed = async (loadCount) => {
+  if (loadCount === 0) { await storeRandomizedTweetLedger() }
+  const tweetData = await getUserFeedChunk(randomizedTweetKeys, loadCount)
+  
+  return tweetData
 }

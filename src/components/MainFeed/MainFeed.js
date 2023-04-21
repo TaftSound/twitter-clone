@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
-import { getMainFeed } from "../../firestore/user-feed";
+import { getForYouFeed, getMainFeed } from "../../firestore/user-feed";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import TweetDisplay from "../TweetDisplay/TweetDisplay";
 
@@ -19,7 +19,8 @@ const MainFeed = (props) => {
     if (!newLoad.current) { return }
     newLoad.current = false
 
-    getMainFeed(loadCount)
+    getForYouFeed(loadCount)
+    // getMainFeed(loadCount)
     .then((newTweets) => {
       setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
     }).catch((error) => {

@@ -14,9 +14,12 @@ export const createNewTweet = async (newTweetText, userObject) => {
 };
 
 const batchWriteTweet = async (data, followers) => {
+  const tweetLedgerRef = doc(db, 'tweets', 'tweetLedger');
+  
   const batch = writeBatch(db);
   batch.set(data.tweet.docRef, data.tweet.data);
   batch.set(data.reference.docRef, { userTweets: data.reference.data }, { merge: true });
+  batch.set(tweetLedgerRef, { tweetReferenceArray: data.reference.data }, { merge: true });
 
   followers.forEach((followerId) => {
     const docRef = doc(db, `tweetReferences/${followerId}`);
