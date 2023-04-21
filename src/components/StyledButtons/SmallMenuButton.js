@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { MAIN_FONT_COLOR, BUTTON_HOVER_BACKGROUND, SECONDARY_FONT_COLOR, PRIMARY_COLOR } from "../constants";
+import { MAIN_FONT_COLOR, BUTTON_HOVER_BACKGROUND, SECONDARY_FONT_COLOR } from "../constants";
 import { TooltipContainer } from "../styled-components";
 
 const SmallButtonContainer = styled(TooltipContainer)`

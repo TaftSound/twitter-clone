@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { PRIMARY_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR, BUTTON_HOVER_BACKGROUND } from "../constants";
+import { PRIMARY_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR, BUTTON_HOVER_BACKGROUND, DIVIDER_COLOR } from "../constants";
 import { SmallMenuButton } from "../StyledButtons/SmallMenuButton";
 import PubSub from "pubsub-js";
 
@@ -133,6 +133,7 @@ const HeaderComponent = (props) => {
 const Header = styled(HeaderComponent)`
   position: sticky;
   top: 0;
+  border-bottom: solid 1px ${DIVIDER_COLOR};
 `
 
 export default Header

@@ -7,6 +7,7 @@ import { WhoCanReply } from "./WhoCanReply";
 import { ButtonBar } from "./ButtonBar";
 import { UserContext } from "../../App";
 import { createNewTweet } from "../../firestore/create-new-tweet";
+import { DIVIDER_COLOR } from "../constants";
 
 const NewTweetContainer = styled.div`
   display: grid;
@@ -14,6 +15,7 @@ const NewTweetContainer = styled.div`
   grid-template-columns: min-content 1fr;
   padding: 4px 16px 8px;
   overflow: visible;
+  ${props => props.popup ? '' : `border-bottom: solid 1px ${DIVIDER_COLOR};`}
 `
 const UserAccountContainer = styled.div`
   width: min-content;
@@ -63,7 +65,7 @@ const NewTweetEntry = (props) => {
   }
 
   return (
-    <NewTweetContainer>
+    <NewTweetContainer popup={props.popup}>
       <UserAccountContainer>
         <UserCircle data-testid="user-initial">{accountInitial}</UserCircle>
       </UserAccountContainer>

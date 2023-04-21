@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { DividerLine } from "../styled-components";
 import { TweetButtonBar } from "./TweetButtonBar";
 
 import { TweetHeader } from "./TweetHeader";
@@ -10,6 +11,7 @@ const OuterContainer = styled.div`
   position: relative;
   grid-template-columns: min-content 1fr;
   padding: 0px 16px;
+  box-sizing: border-box;
   overflow: visible;
 `
 const PaddingDiv = styled.div`
@@ -24,9 +26,15 @@ const InnerContainer = styled.div`
   overflow: visible;
 `
 
-const TweetDisplay = ({ userData, tweetData }) => {
-  const { timestamp, text, likes } = tweetData
-  const { userName, displayName } = userData
+const BottomDividerLine = styled(DividerLine)`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`
+
+const TweetDisplay = ({ tweetData }) => {
+  const { timestamp, text, likes, userName, displayName, userId, tweetId } = tweetData
   return (
     <OuterContainer>
       <PaddingDiv></PaddingDiv>
@@ -36,6 +44,7 @@ const TweetDisplay = ({ userData, tweetData }) => {
         <TweetText>{text}</TweetText>
         <TweetButtonBar likes={likes}/>
       </InnerContainer>
+      <BottomDividerLine></BottomDividerLine>
     </OuterContainer>
   )
 }

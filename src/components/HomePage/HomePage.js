@@ -7,12 +7,9 @@ import { useContext, useEffect, useState } from "react"
 import { UserContext } from "../../App"
 import LoadingPage from "../LoadingPage/LoadingPage"
 
-const fakeUserData = {
+const fakeTweetData = {
   userName: "GeorgeTakei69",
   displayName: "George Takei",
-}
-
-const fakeTweetData = {
   timestamp: 1681935135861,
   text: "Herro mah bros",
   likes: {
@@ -36,7 +33,6 @@ const HomePage = (props) => {
       <PageLayout centerContent={[
         <Header titleHeader="Home" defaultTab="For you" tabsArray={["For you", "Following"]} />,
         <NewTweetEntry />,
-        <TweetDisplay userData={fakeUserData} tweetData={fakeTweetData} ></TweetDisplay>,
         pageDisplayed ? <MainFeed></MainFeed> : ''
       ]}/>
     </div>

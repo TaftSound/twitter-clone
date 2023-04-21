@@ -60,7 +60,7 @@ const Button = (props) => {
 };
 
 export const TweetButtonBar = ({ likes }) => {
-  const likeCount = Object.keys(likes).length;
+  const likeCount = likes ? Object.keys(likes).length : false;
 
   return (
     <ButtonBarOuter>

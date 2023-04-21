@@ -93,7 +93,7 @@ export const CenterContainer = styled.div`
 
 export const SubContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
-  border-bottom: solid 1px ${DIVIDER_COLOR};
+  /* border-bottom: solid 1px ${DIVIDER_COLOR}; */
   box-sizing: border-box;
   max-width: 100%;
   overflow: visible;

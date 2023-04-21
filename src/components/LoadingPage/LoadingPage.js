@@ -30,8 +30,8 @@ const LoadingPage = (props) => {
   }, [])
 
   return (
-    <PageContainer>
-      {logoDisplayed 
+    <PageContainer className={props.className}>
+      {logoDisplayed
       ? <BlueTwitterLogo></BlueTwitterLogo>
       : <LoadingCircle></LoadingCircle>}
     </PageContainer>
