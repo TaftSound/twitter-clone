@@ -12,12 +12,12 @@ const Input = styled.textarea`
   border: none;
   padding: 2px 0px;
   margin: 0px 2px 2px 2px;
-  height: 24px;
   width: calc(100% - 16px);
   resize: none;
   font-size: 21px;
   font-weight: 400;
   font-family: ${FONT_FAMILY};
+  height: 24px;
 
   &:focus {
     border: none;
@@ -31,7 +31,7 @@ export const TweetInput = (props) => {
   useEffect(() => {
     const textarea = textareaRef.current
     textarea.style.height = '24px'
-    const height = textarea.scrollHeight
+    const height = textarea.scrollHeight - 7
     textarea.style.height = `${height}px`
   }, [props.value])
 
