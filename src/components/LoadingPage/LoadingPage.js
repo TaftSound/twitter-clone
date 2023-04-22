@@ -20,14 +20,15 @@ const BlueTwitterLogo = styled(TwitterLogo)`
 `
 
 const LoadingPage = (props) => {
-  const [logoDisplayed, setLogoDisplayed] = useState(true)
+  const [logoDisplayed, setLogoDisplayed] = useState(false)
 
   const startLoadingAnimation = () => { setLogoDisplayed(false) }
 
   useEffect(() => {
+    if (!props.logo) { return }
     setLogoDisplayed(true)
     setTimeout(startLoadingAnimation, 100)
-  }, [])
+  }, [props.logo])
 
   return (
     <PageContainer className={props.className}>

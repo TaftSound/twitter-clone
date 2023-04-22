@@ -37,7 +37,7 @@ const HomePage = (props) => {
       ]}/>
     </div>
   )
-  : <LoadingPage></LoadingPage>
+  : <LoadingPage logo={true}></LoadingPage>
 }
 
 export default HomePage

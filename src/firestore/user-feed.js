@@ -57,8 +57,8 @@ const mergeTweetAndUserData = (tweetKeys, tweetData, userData) => {
 }
 
 const getUserFeedChunk = async (keysList, loadCount) => {
-  const startIndex = loadCount * 10
-  const tweetKeys = keysList.slice(startIndex, startIndex + 10)
+  const startIndex = loadCount * 5
+  const tweetKeys = keysList.slice(startIndex, startIndex + 5)
   
   const tweetDataDocRefs = tweetKeys.map((key) => { return doc(db, 'tweets', key) })
   const tweetDataArray = await retrieveBatchData(tweetDataDocRefs)

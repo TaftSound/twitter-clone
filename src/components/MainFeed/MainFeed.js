@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
-import { getForYouFeed, getMainFeed } from "../../firestore/user-feed";
+import { getForYouFeed, getFollowingFeed } from "../../firestore/user-feed";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import TweetDisplay from "../TweetDisplay/TweetDisplay";
 
@@ -11,39 +11,52 @@ const LoadingContainer = styled(LoadingPage)`
 
 const MainFeed = (props) => {
   const [tweetFeed, setTweetFeed] = useState([])
-  const [loadCount, setLoadCount] = useState(0)
+  const [hasLoaded, setHasLoaded] = useState(false)
+  
+  const sentinelRef = useRef(null)
+  const loadCount = useRef(0)
 
-  const newLoad = useRef(true)
+  const startLoadCycle = async (observer) => {
+    setHasLoaded(false)
+    observer.disconnect()
+    return await getForYouFeed(loadCount.current)
+    // getMainFeed(loadCount)
+  }
+
+  const finishLoadCycle = (newTweets, observer) => {
+    setHasLoaded(true)
+    if (!newTweets[0]) { return }
+    loadCount.current = loadCount.current + 1
+    setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
+    observer.observe(sentinelRef.current)
+  } 
 
   useEffect(() => { 
-    if (!newLoad.current) { return }
-    newLoad.current = false
+    const observer = new IntersectionObserver(async (entries) => {
+      if (entries[0].isIntersecting) {
+        startLoadCycle(observer)
+        .then((newTweets) => { finishLoadCycle(newTweets, observer) })
+        .catch((error) => {
+          console.log("Failure to fetch new tweets for feed:", error)
+        })
+      }
+    }, {threshold: 1})
 
-    getForYouFeed(loadCount)
-    // getMainFeed(loadCount)
-    .then((newTweets) => {
-      setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
-    }).catch((error) => {
-      console.log("Failure to fetch new tweets for feed:", error)
-    })
-  }, [loadCount])
+    if (sentinelRef.current) { observer.observe(sentinelRef.current) }
 
-  const triggerNextLoad = () => {
-    const newCount = loadCount + 1
-    newLoad.current = true
-    setLoadCount(newCount)
-  }
+    return () => { observer.disconnect() }
+  }, [])
   
   return (
-    tweetFeed[0]
-    ? <>
+    <>
     {tweetFeed.map((tweetData) => {
       return (
           <TweetDisplay key={tweetData.tweetId} tweetData={tweetData}></TweetDisplay>
       )
     })}
+    {hasLoaded ? '' : <LoadingContainer></LoadingContainer>}
+    <div ref={sentinelRef}>herro</div>
     </>
-    : <LoadingContainer></LoadingContainer>
   )
 }
 
