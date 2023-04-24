@@ -20,12 +20,12 @@ const fakeTweetData = {
 }
 
 const HomePage = (props) => {
-  const userData = useContext(UserContext)
+  const userContext = useContext(UserContext)
   const [pageDisplayed, setPageDisplayed] = useState(false)
 
   useEffect(() => {
-    userData ? setPageDisplayed(true) : setPageDisplayed(false)
-  }, [userData])
+    userContext ? setPageDisplayed(true) : setPageDisplayed(false)
+  }, [userContext])
 
   return pageDisplayed
   ? (

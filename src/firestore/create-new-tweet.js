@@ -1,11 +1,11 @@
 import { doc, collection, writeBatch } from "firebase/firestore";
 import { db } from "./firestore";
-import { getFollowerList } from "./get-follower-list";
+import { getFollowerList } from "./follower-list-functions";
 
 
 export const createNewTweet = async (newTweetText, userObject) => {
   try {
-    const followers = await getFollowerList(userObject);
+    const followers = await getFollowerList();
     const tweetDataObject = prepareTweetData(userObject, newTweetText);
     await batchWriteTweet(tweetDataObject, followers);
   } catch (error) {
@@ -19,7 +19,12 @@ const batchWriteTweet = async (data, followers) => {
   const batch = writeBatch(db);
   batch.set(data.tweet.docRef, data.tweet.data);
   batch.set(data.reference.docRef, { userTweets: data.reference.data }, { merge: true });
-  batch.set(tweetLedgerRef, { tweetReferenceArray: data.reference.data }, { merge: true });
+  batch.set(tweetLedgerRef, { tweetReferenceMap: {
+    [data.tweetId]: {
+      timestamp: data.timestamp,
+      userId: data.userId
+    }
+  } }, { merge: true });
 
   followers.forEach((followerId) => {
     const docRef = doc(db, `tweetReferences/${followerId}`);
@@ -45,8 +50,11 @@ const prepareTweetData = (userObject, newTweetText) => {
     },
     reference: {
       docRef: tweetReferenceDocRef,
-      data: { [tweetDocRef.id]: timestamp }
-    }
+      data: { [tweetDocRef.id]: timestamp },
+    },
+    tweetId: tweetDocRef.id,
+    userId: userObject.userId,
+    timestamp: timestamp
   };
 };
 

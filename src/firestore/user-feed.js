@@ -56,7 +56,7 @@ const mergeTweetAndUserData = (tweetKeys, tweetData, userData) => {
   })
 }
 
-const getUserFeedChunk = async (keysList, loadCount) => {
+const getFeedChunk = async (keysList, loadCount) => {
   const startIndex = loadCount * 5
   const tweetKeys = keysList.slice(startIndex, startIndex + 5)
   
@@ -67,29 +67,18 @@ const getUserFeedChunk = async (keysList, loadCount) => {
     const userId = tweetData.userId
     return doc(db, 'users', userId)
   })
+
   const userDataArray = await retrieveBatchData(userDataDocRefs)
   const finalTweetData = mergeTweetAndUserData(tweetKeys, tweetDataArray, userDataArray)
   
   return finalTweetData
 }
 
-const getForYouChunk = async (loadCount) => {
-  // get tweet Ledger
-  // randomize order of ledger
-  
-  const startIndex = loadCount * 5
-  const docQuery = query(collection(db, 'tweets'), limit(3))
-  const docsnaps = await getDocs(docQuery)
-
-  console.log(docsnaps.docs[2].data())
-
-}
-
 export const getMainFeed = async (loadCount) => {
   const tweetReferences = await getTweetReferences()
   const mergedReferences = mergeTweetReferences(tweetReferences)
   const sortedKeys = convertToSortedArray(mergedReferences)
-  return getUserFeedChunk(sortedKeys, loadCount)
+  return getFeedChunk(sortedKeys, loadCount)
 }
 
 let randomizedTweetKeys = []
@@ -110,7 +99,6 @@ const storeRandomizedTweetLedger = async () => {
 
 export const getForYouFeed = async (loadCount) => {
   if (loadCount === 0) { await storeRandomizedTweetLedger() }
-  const tweetData = await getUserFeedChunk(randomizedTweetKeys, loadCount)
-  
+  const tweetData = await getFeedChunk(randomizedTweetKeys, loadCount)
   return tweetData
 }

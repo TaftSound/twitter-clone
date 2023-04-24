@@ -113,7 +113,7 @@ const ButtonContainer = styled(TooltipContainer)`
 
 const UserAccountButton = (props) => {
   const parent = useRef(null)
-  const userObject = useContext(UserContext)
+  const userObject = useContext(UserContext).userData
 
   const [accountInitial, setAccountInitial] = useState('')
   const [menuDisplayed, setMenuDisplayed] = useState(false)

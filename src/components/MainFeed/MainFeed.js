@@ -28,7 +28,7 @@ const MainFeed = (props) => {
     if (!newTweets[0]) { return }
     loadCount.current = loadCount.current + 1
     setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
-    observer.observe(sentinelRef.current)
+    if (sentinelRef.current) observer.observe(sentinelRef.current)
   } 
 
   useEffect(() => { 
@@ -50,6 +50,7 @@ const MainFeed = (props) => {
   return (
     <>
     {tweetFeed.map((tweetData) => {
+      if (!tweetData) { return '' }
       return (
           <TweetDisplay key={tweetData.tweetId} tweetData={tweetData}></TweetDisplay>
       )

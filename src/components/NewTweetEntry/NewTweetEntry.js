@@ -34,7 +34,7 @@ const NewTweetForm = styled.form`
 `
 
 const NewTweetEntry = (props) => {
-  const userObject = useContext(UserContext)
+  const userObject = useContext(UserContext).userData
 
   const [currentTextState, setCurrentTextState] = useState('')
   const [inputExpandedState, setInputExpandedState] = useState(false)

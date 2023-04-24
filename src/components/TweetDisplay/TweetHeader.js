@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants";
-import { SmallMenuButton } from "../StyledButtons/SmallMenuButton";
+import { MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants";
+import FeedMenuButton from '../FeedPopupMenu/FeedPopupMenu'
 
 const TweetHeaderContainer = styled.div`
   display: flex;
@@ -38,15 +38,9 @@ const DotDivider = styled.div`
   margin: 0px 1px;
   transform: translateY(60%);
 `;
-const StyledSmallMenuButton = styled(SmallMenuButton)`
-  margin-right: -8px;
-`;
-const FeedMenuButton = (props) => {
-  return (
-    <StyledSmallMenuButton mini={true} color={PRIMARY_COLOR} onClick={props.onClick} title="more" path="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></StyledSmallMenuButton>
-  );
-};
-export const TweetHeader = ({ displayName, userName, timestamp }) => {
+
+export const TweetHeader = (props) => {
+  const { displayName, userName, timestamp } = props.tweetData
   const secondsElapsed = (Date.now() - timestamp) / 1000;
 
   const timeSinceTweet = secondsElapsed < 3600
@@ -66,7 +60,7 @@ export const TweetHeader = ({ displayName, userName, timestamp }) => {
         <DotDivider></DotDivider>
         <SecondaryHeader>{timeSinceTweet}</SecondaryHeader>
       </TweetInfoContainer>
-      <FeedMenuButton></FeedMenuButton>
+      <FeedMenuButton tweetData={props.tweetData}></FeedMenuButton>
     </TweetHeaderContainer>
   );
 };
