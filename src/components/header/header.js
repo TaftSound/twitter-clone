@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { PRIMARY_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR, BUTTON_HOVER_BACKGROUND, DIVIDER_COLOR } from "../constants";
 import { SmallMenuButton } from "../StyledButtons/SmallMenuButton";
@@ -49,13 +49,19 @@ const ButtonUnderline = styled.div`
 `
 
 function NavButton(props) {
+
+  const changeTab = () => {
+    props.setCurrentTab(props.title)
+    PubSub.publish('set current tab', props.title)
+  }
+
   return (
-    <NavButtonOuter data-testid={props.title} role="button" onClick={() => props.setCurrentViewState(props.title)} >
+    <NavButtonOuter data-testid={props.title} role="button" onClick={changeTab} >
       <NavButtonInner tabMargin={props.tabMargin}>
-        { props.currentViewState === props.title 
+        { props.currentTab === props.title 
             ? <H2 $focused data-testid="focused-tab">{props.title}</H2>
             : <H2>{props.title}</H2> }
-        { props.currentViewState === props.title
+        { props.currentTab === props.title
             ? <ButtonUnderline data-testid="underline"></ButtonUnderline> 
             : false }
       </NavButtonInner>
@@ -65,8 +71,8 @@ function NavButton(props) {
 
 NavButton.propTypes = {
   title: PropTypes.string.isRequired,
-  currentViewState: PropTypes.string.isRequired,
-  setCurrentViewState: PropTypes.func.isRequired
+  currentTab: PropTypes.string.isRequired,
+  setCurrentTab: PropTypes.func.isRequired
 }
 
 const HeaderContainer = styled.div`
@@ -106,7 +112,7 @@ const displayLogin = () => {
 
 const HeaderComponent = (props) => {
 
-  const [currentViewState, setCurrentViewState] = useState(props.defaultTab)
+  const [currentTab, setCurrentTab] = useState(props.defaultTab)
 
   return (
     <div data-testid="home-header" className={props.className}>
@@ -123,8 +129,8 @@ const HeaderComponent = (props) => {
         {props.tabsArray.map((tab) => {
           return <NavButton title={tab} 
                             key={uniqid()} 
-                            currentViewState={currentViewState} 
-                            setCurrentViewState={setCurrentViewState} />
+                            currentTab={currentTab} 
+                            setCurrentTab={setCurrentTab} />
         })}
       </TabContainer>
     </div>

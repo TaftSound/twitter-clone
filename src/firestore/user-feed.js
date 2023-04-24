@@ -1,30 +1,15 @@
-import { collection, doc, getDoc, query, getDocs, limit } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firestore";
 import { auth } from "../auth";
 
-// What do I need to retrieve?
-    // need to first retrieve user's "tweetReferences" document - done
-    // integrate "userFeed" array with "userTweets" array - done
-    // sort combined array by timestamp - done
-    // retrieve first five followed tweet:
-      // Retrieve tweet data
-      // retrieve tweet user info
-    // retrieve first five unfollowed tweet
-      // get first five follow data where you are not in their follower list
-        // ordered by their userId
-      // store their userId
-      // get their most recent tweet
-      // get their user data
-    // render WhoToFollow component
-      // who to follow component goes in threes, should use a counter
-    // put a sentinal obsever right before who to follow
-    // when sentinal enters view, load the next batch
-    // TweetDisplay needs to sense when it is within view, and needs to write a view
 
-const getTweetReferences = async () => {
+let tweetReferences = {}
+let sortedKeys = []
+
+const storeTweetReferences = async () => {
   const docRef = doc(db, 'tweetReferences', auth.currentUser.uid)
   const docSnap = await getDoc(docRef)
-  return docSnap.data()
+  tweetReferences = docSnap.data()
 }
 
 const mergeTweetReferences = (tweetReferences) => {
@@ -74,14 +59,10 @@ const getFeedChunk = async (keysList, loadCount) => {
   return finalTweetData
 }
 
-export const getMainFeed = async (loadCount) => {
-  const tweetReferences = await getTweetReferences()
-  const mergedReferences = mergeTweetReferences(tweetReferences)
-  const sortedKeys = convertToSortedArray(mergedReferences)
-  return getFeedChunk(sortedKeys, loadCount)
-}
 
+let tweetLedger = {}
 let randomizedTweetKeys = []
+let forYouTweetKeys = []
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -90,15 +71,38 @@ function shuffleArray(array) {
   }
 }
 
-const storeRandomizedTweetLedger = async () => {
+const storeTweetLedger = async () => {
   const tweetLedgerDocRef = doc(db, 'tweets', 'tweetLedger')
   const tweetLedgerSnap = await getDoc(tweetLedgerDocRef)
-  randomizedTweetKeys = Object.keys(tweetLedgerSnap.data().tweetReferenceArray)
+  tweetLedger = tweetLedgerSnap.data().tweetReferenceMap
+}
+
+const storeRandomizedTweetKeys = () => {
+  randomizedTweetKeys = Object.keys(tweetLedger)
   shuffleArray(randomizedTweetKeys)
 }
 
+const filterUserFromTweetKeys = (userIdToRemove) => {
+  return randomizedTweetKeys.filter((value) => {
+    return !(tweetLedger[value].userId === userIdToRemove)
+  })
+}
+
 export const getForYouFeed = async (loadCount) => {
-  if (loadCount === 0) { await storeRandomizedTweetLedger() }
-  const tweetData = await getFeedChunk(randomizedTweetKeys, loadCount)
+  if (loadCount === 0) {
+    await storeTweetLedger()
+    storeRandomizedTweetKeys()
+    forYouTweetKeys = filterUserFromTweetKeys(auth.currentUser.uid)
+  }
+  const tweetData = await getFeedChunk(forYouTweetKeys, loadCount)
   return tweetData
+}
+
+export const getFollowingFeed = async (loadCount) => {
+  if (loadCount === 0) {
+    await storeTweetReferences()
+    const mergedReferences = mergeTweetReferences(tweetReferences)
+    sortedKeys = convertToSortedArray(mergedReferences)
+  }
+  return getFeedChunk(sortedKeys, loadCount)
 }

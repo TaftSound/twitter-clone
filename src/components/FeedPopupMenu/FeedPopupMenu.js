@@ -111,7 +111,6 @@ const MenuButton = (props) => {
 
 const FeedMenuButton = (props) => {
   const parent = useRef(null)
-  const userObject = useContext(UserContext)
 
   const [menuDisplayed, setMenuDisplayed] = useState(false)
   const [clickable, setClickable] = useState(true)

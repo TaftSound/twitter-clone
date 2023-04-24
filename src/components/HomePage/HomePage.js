@@ -1,7 +1,7 @@
+
 import PageLayout from "../PageLayout/PageLayout"
 import NewTweetEntry from "../NewTweetEntry/NewTweetEntry"
 import Header from "../Header/Header"
-import TweetDisplay from "../TweetDisplay/TweetDisplay"
 import MainFeed from "../MainFeed/MainFeed"
 import { useContext, useEffect, useState } from "react"
 import { UserContext } from "../../App"
