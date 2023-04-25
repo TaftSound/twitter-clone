@@ -28,6 +28,7 @@ const InnerContainer = styled.div`
 
 const BottomDividerLine = styled(DividerLine)`
   position: absolute;
+  width: 100%;
   bottom: 0;
   left: 0;
   right: 0;

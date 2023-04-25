@@ -1,7 +1,7 @@
 import { doc, collection, writeBatch } from "firebase/firestore";
 import { db } from "./firestore";
-import { getFollowerList } from "./follower-list-functions";
 
+import { createFakeUser } from "./user-functions";
 
 export const createNewTweet = async (newTweetText, userObject, followers) => {
   try {
@@ -58,3 +58,10 @@ const prepareTweetData = (userObject, newTweetText) => {
   };
 };
 
+
+
+const fakeUserObject = { userId: 'MarkTwain' }
+const fakeTweetText = "It is better to keep your mouth closed and let people think you are a fool than to open it and remove all doubt"
+
+// createFakeUser('TheRock', 'Dwayne')
+// createNewTweet(fakeTweetText, fakeUserObject, []) 

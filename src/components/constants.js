@@ -10,8 +10,12 @@ export const BUTTON_BORDER_COLOR = "rgb(83, 100, 113)"
 export const BUTTON_TOOLTIP_BACKGROUND = "rgb(93, 110, 123, .8)"
 export const PAGE_OVERLAY_COLOR = "rgba(91, 112, 131, 0.4)"
 export const SEARCH_BAR_BACKGROUND = "rgb(32, 35, 39)"
+export const WHO_TO_FOLLOW_BACKGROUND = "rgb(22, 24, 28)"
 export const BUTTON_GREEN = "rgb(25, 207, 134)"
 export const BUTTON_PINK = "rgb(255, 32, 82)"
+export const ALERT_RED = "rgb(255, 10, 15)"
+export const ALERT_RED_DARK = "rgb(100, 10, 15)"
+export const ALERT_RED_TRANSPARENT = "rgb(180, 50, 65, 0.15)"
 
 export const FONT_FAMILY = `'GT-America', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',

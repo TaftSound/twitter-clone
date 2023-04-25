@@ -13,6 +13,38 @@ export const confirmExistingUser = async (uid) => {
   }
 };
 
+export const createFakeUser = async (userName, displayName) => {
+  try {
+    if (await confirmExistingUser(userName)) { return }
+    
+    const batch = writeBatch(db)
+
+    const userDocRef = doc(db, 'users', userName);
+    const userNameListRef = doc(db, 'users', 'userNameList');
+    const followerListRef = doc(db, 'followData', userName);
+    const tweetReferencesRef = doc(db, 'tweetReferences', userName)
+
+    batch.set(userNameListRef, { [userName]: true }, { merge: true });
+    batch.set(userDocRef, {
+      displayName: displayName,
+      userName: userName,
+      userId: userName
+    });
+    batch.set(followerListRef, {
+      following: [],
+      followers: []
+    });
+    batch.set(tweetReferencesRef, {
+      userFeed: {},
+      userTweets: {}
+    });
+
+    await batch.commit()
+  } catch (error) {
+    console.error("Failure to create fake user:", error)    
+  }
+}
+
 export const createNewUser = async (user, userName) => {
   try {
     const batch = writeBatch(db)

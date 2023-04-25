@@ -15,14 +15,14 @@ const Button = styled.button`
   ${props => props.colorButton ? `border: solid 1px rgb(255, 255, 255, .35);` : ''}
   border-radius: 1000px;
   cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
 `;
 const FormButtonInnerContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
-  font-size: 16px;
-  font-weight: 700;
   font-family: ${FONT_FAMILY};
 `;
 

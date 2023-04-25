@@ -4,6 +4,7 @@ import { getForYouFeed, getFollowingFeed } from "../../firestore/user-feed";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import TweetDisplay from "../TweetDisplay/TweetDisplay";
 import PubSub from "pubsub-js";
+import WhoToFollow from "../WhoToFollow/WhoToFollow";
 
 const LoadingContainer = styled(LoadingPage)`
   height: 100px;
@@ -90,6 +91,7 @@ const MainFeed = (props) => {
       )
     })}
     {hasLoaded ? '' : <LoadingContainer></LoadingContainer>}
+    <WhoToFollow mainFeed={true}></WhoToFollow>
     <div ref={sentinelRef}>herro</div>
     </>
   )
