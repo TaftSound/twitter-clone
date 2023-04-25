@@ -3,11 +3,11 @@ import { db } from "./firestore";
 import { getFollowerList } from "./follower-list-functions";
 
 
-export const createNewTweet = async (newTweetText, userObject) => {
+export const createNewTweet = async (newTweetText, userObject, followers) => {
   try {
-    const followers = await getFollowerList();
     const tweetDataObject = prepareTweetData(userObject, newTweetText);
     await batchWriteTweet(tweetDataObject, followers);
+
   } catch (error) {
     console.error("Failure to store new tweet in database", error);
   }

@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components"
-import { checkIfFollowing } from "../../firestore/follower-list-functions";
 import { DividerLine } from "../styled-components";
 import { TweetButtonBar } from "./TweetButtonBar";
 
@@ -36,7 +34,7 @@ const BottomDividerLine = styled(DividerLine)`
 `
 
 const TweetDisplay = ({ tweetData }) => {
-  const { timestamp, text, likes, userName, displayName, userId, tweetId } = tweetData
+  const { text, likes, userName, displayName, userId, tweetId } = tweetData
 
   return (
     <OuterContainer>

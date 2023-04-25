@@ -16,6 +16,7 @@ const MainFeed = (props) => {
   const [currentTab, setCurrentTab] = useState("For you")
   
   const sentinelRef = useRef(null)
+  const observer = useRef(null)
   const loadCount = useRef(0)
 
   // useEffect(() => {
@@ -26,46 +27,58 @@ const MainFeed = (props) => {
   // }, [currentTab])
 
   useEffect(() => {
-    const unsubToken = PubSub.subscribe('set current tab', (msg, data) => {
+    const reloadFeed = () => {
       loadCount.current = 0
-      setCurrentTab(data)
+      observer.current.observe(sentinelRef.current)
       setTweetFeed([])
+    }
+
+    const feedResetToken = PubSub.subscribe('reload feed', () => {
+      reloadFeed()
     })
 
-    return () => { PubSub.unsubscribe(unsubToken) }
+    const tabChangeToken = PubSub.subscribe('set current tab', (msg, data) => {
+      setCurrentTab(data)
+      reloadFeed()
+    })
+
+    return () => {
+      PubSub.unsubscribe(tabChangeToken)
+      PubSub.unsubscribe(feedResetToken)
+    }
   }, [])
 
-  const startLoadCycle = async (observer) => {
-    console.log('start tweet load')
-    setHasLoaded(false)
-    observer.disconnect()
-    return currentTab === "For you"
-    ? await getForYouFeed(loadCount.current)
-    : await getFollowingFeed(loadCount.current)
-  }
-
-  const finishLoadCycle = (newTweets, observer) => {
-    setHasLoaded(true)
-    if (!newTweets[0]) { return }
-    loadCount.current = loadCount.current + 1
-    setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
-    if (sentinelRef.current) observer.observe(sentinelRef.current)
-  } 
-
   useEffect(() => { 
-    const observer = new IntersectionObserver(async (entries) => {
+    const startLoadCycle = async () => {
+      console.log('start tweet load')
+      setHasLoaded(false)
+      observer.current.disconnect()
+      return currentTab === "For you"
+      ? await getForYouFeed(loadCount.current)
+      : await getFollowingFeed(loadCount.current)
+    }
+  
+    const finishLoadCycle = (newTweets) => {
+      setHasLoaded(true)
+      if (!newTweets[0]) { return }
+      loadCount.current = loadCount.current + 1
+      setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
+      if (sentinelRef.current) observer.current.observe(sentinelRef.current)
+    } 
+
+    observer.current = new IntersectionObserver(async (entries) => {
       if (entries[0].isIntersecting) {
         startLoadCycle(observer)
-        .then((newTweets) => { finishLoadCycle(newTweets, observer) })
+        .then((newTweets) => { finishLoadCycle(newTweets) })
         .catch((error) => {
           console.log("Failure to fetch new tweets for feed:", error)
         })
       }
     }, {threshold: 1})
 
-    if (sentinelRef.current) { observer.observe(sentinelRef.current) }
+    if (sentinelRef.current) { observer.current.observe(sentinelRef.current) }
 
-    return () => { observer.disconnect() }
+    return () => { observer.current.disconnect() }
   }, [currentTab])
   
   return (

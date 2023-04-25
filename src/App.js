@@ -15,16 +15,18 @@ export const AuthContext = createContext()
 
 const ContextProvider = (props) => {
   const [value, setValue] = useState(null)
+  const tempValue = useRef(null)
 
   useEffect(() => {
     const unsubToken = PubSub.subscribe('update follow list', async () => {
-      const contextData = value
+      const contextData = tempValue.current
       const followData = await getFollowerList()
       const followers = followData.followers ? followData.followers : []
       const following = followData.following ? followData.following : []
       contextData.followers = followers
       contextData.following = following
       setValue(contextData)
+      tempValue.current = contextData
     })
     
     return () => {
@@ -41,8 +43,10 @@ const ContextProvider = (props) => {
         const following = followData.following ? followData.following : []
         const contextData = { userData, followers, following }
         setValue(contextData)
+        tempValue.current = contextData
       } else {
         setValue(null)
+        tempValue.current = null
       }
     })
 

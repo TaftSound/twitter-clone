@@ -34,7 +34,9 @@ const NewTweetForm = styled.form`
 `
 
 const NewTweetEntry = (props) => {
-  const userObject = useContext(UserContext).userData
+  const userContext = useContext(UserContext) 
+  const userObject = userContext.userData
+  const followers = userContext.followers
 
   const [currentTextState, setCurrentTextState] = useState('')
   const [inputExpandedState, setInputExpandedState] = useState(false)
@@ -55,7 +57,9 @@ const NewTweetEntry = (props) => {
     setCurrentTextState(newValue)
   }
 
-  const submitTweet = () => { createNewTweet(currentTextState, userObject) }
+  const submitTweet = async () => {
+    await createNewTweet(currentTextState, userObject, followers)
+  }
 
   const expandTweetInput = () => {
     setInputExpandedState(true)

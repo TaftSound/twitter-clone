@@ -40,7 +40,7 @@ const DotDivider = styled.div`
 `;
 
 export const TweetHeader = (props) => {
-  const { displayName, userName, timestamp } = props.tweetData
+  const { displayName, userName, timestamp, tweetId } = props.tweetData
   const secondsElapsed = (Date.now() - timestamp) / 1000;
 
   const timeSinceTweet = secondsElapsed < 3600

@@ -1,11 +1,13 @@
 import styled from "styled-components"
 import autoAnimate from "@formkit/auto-animate"
+import PubSub from "pubsub-js"
 
 import { BACKGROUND_COLOR, SECONDARY_FONT_COLOR, MAIN_FONT_COLOR, BUTTON_HOVER_BACKGROUND, PRIMARY_COLOR } from "../constants"
 import { useContext, useState, useEffect, useRef } from "react"
 import { UserContext } from "../../App"
 import { StyledLogo, TooltipContainer } from "../styled-components"
 import { SmallMenuButton } from "../StyledButtons/SmallMenuButton"
+import { deleteTweet } from "../../firestore/delete-user-tweet"
 
 const RearContainer = styled.div`
   position: absolute;
@@ -61,17 +63,38 @@ const ButtonPopupMenu = (props) => {
   const contextData = useContext(UserContext)
   const userData = contextData.userData
   const following = contextData.following
+  const followers = contextData.followers
 
-  const { userId, userName } = props.tweetData
+  const { userId, userName, tweetId } = props.tweetData
   // props.userID
   // props.userName
   // props.tweetId
 
+  const deleteThisTweet = async () => {
+    try {
+      await deleteTweet(tweetId, followers)
+      PubSub.publish('reload feed')
+    } catch (error) {
+      console.error('Failure to delete user tweet:', error)
+    }
+  }
+
+  const unfollowUser = async () => {
+    
+  }
+
+  const followUser = async () => {
+    
+  }
 
   return (
     <RearContainer>
       <FrontContainer>
-        <InnerContainer>
+        <InnerContainer onClick={userId === userData.userId
+                        ? deleteThisTweet
+                        : following.includes(userId)
+                        ? unfollowUser
+                        : followUser }>
           {userId === userData.userId ? <DeleteIcon></DeleteIcon> 
           : following.includes(userId) ? <UnfollowIcon></UnfollowIcon> : <FollowIcon></FollowIcon> }
           {userId === userData.userId ? 'Delete this tweet'
