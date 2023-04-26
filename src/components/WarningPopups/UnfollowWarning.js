@@ -1,13 +1,18 @@
 import PubSub from "pubsub-js";
-import { unfollowUser } from "../../../firestore/follower-list-functions";
-import ConfirmationPopup from "../../ConfirmationPopup/ConfirmationPopup";
+import { unfollowUser } from "../../firestore/follower-list-functions";
+import ConfirmationPopup from "../ConfirmationPopup/ConfirmationPopup";
 
 const UnfollowWarning = (props) => {
-  const { tweetData, cancelFunction } = props;
-  const { userName, userId } = tweetData;
+  const { userId, userName, cancelFunction, hideFunction } = props;
 
-  const unfollowThisUser = async () => {
+  const unfollowThisUser = props.confirmFunction
+  ? async () => {
+    if (hideFunction) { hideFunction() }
+    props.confirmFunction()
+  }
+  : async () => {
     try {
+      if (hideFunction) { hideFunction() }
       await unfollowUser(userId);
       PubSub.publish('update follow list');
     } catch (error) {

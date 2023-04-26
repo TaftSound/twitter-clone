@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
 import { FormButton } from "../StyledButtons/FormButton";
+import UnfollowWarning from "../WarningPopups/UnfollowWarning"
+
 import { useState } from "react";
 import { ALERT_RED, ALERT_RED_DARK, ALERT_RED_TRANSPARENT, BUTTON_BORDER_COLOR, MAIN_FONT_COLOR, WHO_TO_FOLLOW_BACKGROUND } from "../constants";
 import { followUser, unfollowUser } from "../../firestore/follower-list-functions";
@@ -33,12 +35,14 @@ const StyledFormButton = styled(FormButton)`
   }
 `
 
-const FollowButton = ({ userId }) => {
+
+const FollowButton = ({ userId, userName }) => {
   const [isFollowed, setIsFollowed] = useState(false)
   const [displayUnfollowButton, setDisplayUnfollowButton] = useState(false)
+  const [displayUnfollowWarning, setDisplayUnfollowWarning] = useState(false)
   const [buttonText, setButtonText] = useState('Follow')
 
-  const followNewUser = async (userIdToFollow) => {
+  const followThisUser = async (userIdToFollow) => {
     try {
       setIsFollowed(true)
       setButtonText('Following')
@@ -52,12 +56,12 @@ const FollowButton = ({ userId }) => {
     }
   }
 
-  const unfollowNewUser = async (userIdToUnfollow) => {
+  const unfollowThisUser = async () => {
     try {
       setIsFollowed(false)
       setDisplayUnfollowButton(false)
       setButtonText('Follow')
-      return await unfollowUser(userIdToUnfollow)
+      return await unfollowUser(userId)
     } catch (error) {
       console.log("Follow button failure:", error)
       setIsFollowed(true)
@@ -66,13 +70,20 @@ const FollowButton = ({ userId }) => {
     }
   }
 
+  const warnAboutUnfollow = () => {
+    setDisplayUnfollowWarning(true)
+  }
+  const hidePopup = () => {
+    setDisplayUnfollowWarning(false)
+  }
+
   const toggleFollow = async () => {
     if (isFollowed) {
       // display popup to confirm unfollow
-      await unfollowNewUser(userId)
+      warnAboutUnfollow()
     } else {
       // call firestore function to follow user
-      await followNewUser(userId)
+      await followThisUser(userId)
     }
   }
   const mouseLeave = () => {
@@ -90,6 +101,9 @@ const FollowButton = ({ userId }) => {
     }
   }
 
+  const mouseUp = () => {
+    console.log('up')
+  }
 
   return (
     <OuterContainer>
@@ -98,6 +112,12 @@ const FollowButton = ({ userId }) => {
             {buttonText}
         </StyledFormButton>
       </FormButtonWrapper>
+      {displayUnfollowWarning 
+      ? <UnfollowWarning userName={userName} 
+                         confirmFunction={unfollowThisUser}
+                         cancelFunction={hidePopup}
+                         hideFunction={hidePopup}/> 
+      : ''}
     </OuterContainer>  
   )
 };

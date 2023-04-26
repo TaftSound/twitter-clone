@@ -1,5 +1,5 @@
-import { deleteTweet } from "../../../firestore/delete-user-tweet";
-import ConfirmationPopup from "../../ConfirmationPopup/ConfirmationPopup";
+import { deleteTweet } from "../../firestore/delete-user-tweet";
+import ConfirmationPopup from "../ConfirmationPopup/ConfirmationPopup";
 
 const DeleteWarning = (props) => {
   const { tweetData, cancelFunction, followers, hideTweet } = props;

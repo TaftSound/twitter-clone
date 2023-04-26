@@ -5,8 +5,8 @@ import { useContext, useState } from "react";
 import { UserContext } from "../../../App";
 import { StyledLogo } from "../../styled-components";
 import { followUser } from "../../../firestore/follower-list-functions";
-import UnfollowWarning from "./UnfollowWarning";
-import DeleteWarning from "./DeleteWarning";
+import UnfollowWarning from "../../WarningPopups/UnfollowWarning";
+import DeleteWarning from "../../WarningPopups/DeleteWarning";
 
 const RearContainer = styled.div`
   position: absolute;
@@ -105,7 +105,9 @@ const ButtonPopupMenu = (props) => {
         </InnerContainer>
       </FrontContainer>
       {displayUnfollowWarning
-        ? <UnfollowWarning tweetData={props.tweetData} cancelFunction={cancelUnfollow} />
+        ? <UnfollowWarning userName={props.tweetData.userName}
+                           userId={props.tweetData.userId} 
+                           cancelFunction={cancelUnfollow} />
         : false}
       {displayDeleteWarning
         ? <DeleteWarning tweetData={props.tweetData}

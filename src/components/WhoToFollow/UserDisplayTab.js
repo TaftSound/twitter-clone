@@ -53,7 +53,7 @@ const UserDisplayTab = (props) => {
           <UserName>@{userObject.userName}</UserName>
         </UserInfoContainer>
       </UserContainer>
-      <FollowButton userId={userObject.userId}></FollowButton>
+      <FollowButton userId={userObject.userId} userName={userObject.userName}></FollowButton>
     </OuterContainer>
   )
 };
