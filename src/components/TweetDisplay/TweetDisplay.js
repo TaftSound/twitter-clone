@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styled from "styled-components"
 import { DividerLine } from "../styled-components";
 import { TweetButtonBar } from "./TweetButtonBar";
@@ -35,14 +36,20 @@ const BottomDividerLine = styled(DividerLine)`
 `
 
 const TweetDisplay = ({ tweetData }) => {
-  const { text, likes, userName, displayName, userId, tweetId } = tweetData
+  const { text, likes, displayName, } = tweetData
+  const [hidden, setHidden] = useState(false)
 
+  const hideTweet = (boolean) => {
+    setHidden(boolean)
+  }
+
+  if (hidden) { return false }
   return (
     <OuterContainer>
       <PaddingDiv></PaddingDiv>
       <TweetUserCircle>{displayName[0]}</TweetUserCircle>
       <InnerContainer>
-        <TweetHeader tweetData={tweetData} ></TweetHeader>
+        <TweetHeader tweetData={tweetData} hideTweet={hideTweet}></TweetHeader>
         <TweetText>{text}</TweetText>
         <TweetButtonBar likes={likes}/>
       </InnerContainer>

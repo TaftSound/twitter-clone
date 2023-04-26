@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants";
-import FeedMenuButton from '../FeedPopupMenu/FeedPopupMenu'
+import FeedMenuButton from './FeedMenuButton'
 
 const TweetHeaderContainer = styled.div`
   display: flex;
@@ -40,7 +40,7 @@ const DotDivider = styled.div`
 `;
 
 export const TweetHeader = (props) => {
-  const { displayName, userName, timestamp, tweetId } = props.tweetData
+  const { displayName, userName, timestamp } = props.tweetData
   const secondsElapsed = (Date.now() - timestamp) / 1000;
 
   const timeSinceTweet = secondsElapsed < 3600
@@ -60,7 +60,7 @@ export const TweetHeader = (props) => {
         <DotDivider></DotDivider>
         <SecondaryHeader>{timeSinceTweet}</SecondaryHeader>
       </TweetInfoContainer>
-      <FeedMenuButton tweetData={props.tweetData}></FeedMenuButton>
+      <FeedMenuButton tweetData={props.tweetData} hideTweet={props.hideTweet}></FeedMenuButton>
     </TweetHeaderContainer>
   );
 };

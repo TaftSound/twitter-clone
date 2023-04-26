@@ -87,22 +87,42 @@ const UnfollowWarning = (props) => {
   )
 }
 
+const DeleteWarning = (props) => {
+  const {tweetData, cancelFunction, followers, hideTweet } = props
+  const {tweetId} = tweetData
+
+  const deleteThisTweet = async () => {
+    try {
+      hideTweet(true)
+      await deleteTweet(tweetId, followers)
+    } catch (error) {
+      console.error('Failure to delete user tweet:', error)
+      hideTweet(false)
+      alert("Failure to delete tweet, fake twitter apologizes for this inconvenience")
+    }
+  }
+
+  return (
+    <ConfirmationPopup header="Delete tweet?"
+                       confirmText="Delete"
+                       confirmFunction={deleteThisTweet}
+                       cancelFunction={cancelFunction}
+                       deleteButton={true}
+                       transparent={true}>
+      This can’t be undone and it will be removed from your profile, 
+      the timeline of any accounts that follow you, and from Tweeter search results.
+    </ConfirmationPopup>
+  )
+}
+
 const ButtonPopupMenu = (props) => {
   const contextData = useContext(UserContext)
   const { following, followers, userData } = contextData
 
-  const { userId, userName, tweetId } = props.tweetData
+  const { userId, userName } = props.tweetData
 
   const [displayUnfollowWarning, setDisplayUnfollowWarning] = useState(false)
-
-  const deleteThisTweet = async () => {
-    try {
-      await deleteTweet(tweetId, followers)
-      PubSub.publish('reload feed')
-    } catch (error) {
-      console.error('Failure to delete user tweet:', error)
-    }
-  }
+  const [displayDeleteWarning, setDisplayDeleteWarning] = useState(false)
 
   const followThisUser = async () => {
     try {
@@ -121,12 +141,20 @@ const ButtonPopupMenu = (props) => {
   const cancelUnfollow = (event) => {
     setDisplayUnfollowWarning(false)
   }
+
+  const warnAboutDelete = (event) => {
+    event.stopPropagation()
+    setDisplayDeleteWarning(true)
+  }
+  const cancelDelete = (event) => {
+    setDisplayDeleteWarning(false)
+  }
   
   return (
     <RearContainer>
       <FrontContainer>
         <InnerContainer onClick={userId === userData.userId
-                        ? deleteThisTweet
+                        ? warnAboutDelete
                         : following.includes(userId)
                         ? warnAboutUnfollow
                         : followThisUser }>
@@ -138,6 +166,12 @@ const ButtonPopupMenu = (props) => {
       </FrontContainer>
       {displayUnfollowWarning 
       ? <UnfollowWarning tweetData={props.tweetData} cancelFunction={cancelUnfollow}/>
+      : false}
+      {displayDeleteWarning
+      ? <DeleteWarning tweetData={props.tweetData} 
+                       followers={followers} 
+                       cancelFunction={cancelDelete}
+                       hideTweet={props.hideTweet}/>
       : false}
     </RearContainer>
   )
@@ -202,7 +236,7 @@ const FeedMenuButton = (props) => {
         <MenuButton onClick={toggleAccountMenu}></MenuButton>
       </ButtonContainer>
       {menuDisplayed ? 
-      <ButtonPopupMenu tweetData={props.tweetData}></ButtonPopupMenu>
+      <ButtonPopupMenu tweetData={props.tweetData} hideTweet={props.hideTweet}></ButtonPopupMenu>
       : false}
     </OuterContainer>
   )

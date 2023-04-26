@@ -13,7 +13,7 @@ export const SEARCH_BAR_BACKGROUND = "rgb(32, 35, 39)"
 export const WHO_TO_FOLLOW_BACKGROUND = "rgb(22, 24, 28)"
 export const BUTTON_GREEN = "rgb(25, 207, 134)"
 export const BUTTON_PINK = "rgb(255, 32, 82)"
-export const ALERT_RED = "rgb(255, 10, 15)"
+export const ALERT_RED = "rgb(244, 33, 46)"
 export const ALERT_RED_DARK = "rgb(100, 10, 15)"
 export const ALERT_RED_TRANSPARENT = "rgb(180, 50, 65, 0.15)"
 
