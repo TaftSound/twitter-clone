@@ -17,6 +17,12 @@ const ContextProvider = (props) => {
   const [value, setValue] = useState(null)
   const tempValue = useRef(null)
 
+  const updateFollowingData = (newUserId) => {
+    const contextData = tempValue.current
+    contextData.following.push(newUserId)
+    setValue(contextData)
+  }
+
   useEffect(() => {
     const unsubToken = PubSub.subscribe('update follow list', async () => {
       const contextData = tempValue.current
@@ -41,7 +47,7 @@ const ContextProvider = (props) => {
         const followData = await getFollowerList()
         const followers = followData.followers ? followData.followers : []
         const following = followData.following ? followData.following : []
-        const contextData = { userData, followers, following }
+        const contextData = { userData, followers, following, updateFollowingData }
         setValue(contextData)
         tempValue.current = contextData
       } else {

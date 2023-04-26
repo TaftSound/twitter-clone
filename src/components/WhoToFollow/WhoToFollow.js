@@ -1,7 +1,4 @@
-import { useEffect } from "react";
-import { useState } from "react";
 import styled from "styled-components";
-import { getUsersToFollow } from "../../firestore/follower-list-functions";
 
 import { MAIN_FONT_COLOR, SEARCH_BAR_BACKGROUND, WHO_TO_FOLLOW_BACKGROUND } from '../constants'
 import ShowMoreButton from "./ShowMoreButton";
@@ -36,20 +33,7 @@ const Header = styled.h1`
 
 const WhoToFollow = (props) => {
   const { userData } = props
-  
-  // const [userData, setUserData] = useState(null)
 
-  // useEffect(() => {
-  //   const getUserData = async (loadCount) => {
-  //     const newUserData = await getUsersToFollow(loadCount)
-  //     setUserData(newUserData)
-  //   }
-    
-  //   if (Number.isInteger(loadCount)) {
-  //     getUserData(loadCount)
-  //   }
-  // }, [loadCount])
-  // console.log(userData)
   if (!userData) { return false }
   
   return (

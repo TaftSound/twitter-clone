@@ -47,15 +47,12 @@ const MainFeed = (props) => {
   useEffect(() => { 
     const loadUsersToFollow = async (loadCount) => {
       const newUserData = await getUsersToFollow(loadCount, 3)
-      console.log(loadCount)
-      console.log(newUserData)
       setWhoToFollowFeed((oldFeed) => {
         return [...oldFeed, newUserData]
       })
     }
 
     const startLoadCycle = async () => {
-      console.log('start tweet load')
       setHasLoaded(false)
       observer.current.disconnect()
       return currentTab === "For you"

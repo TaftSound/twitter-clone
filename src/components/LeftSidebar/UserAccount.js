@@ -75,7 +75,7 @@ const UserAccountMenu = (props) => {
   }, [navigate])
 
   useEffect(() => {
-    if (userObject) { setUserName(userObject.userName) }
+    if (userObject) { setUserName(userObject.userData.userName) }
   }, [userObject])
 
   return (

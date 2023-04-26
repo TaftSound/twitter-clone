@@ -9,6 +9,7 @@ import { StyledLogo, TooltipContainer } from "../styled-components"
 import { SmallMenuButton } from "../StyledButtons/SmallMenuButton"
 import { deleteTweet } from "../../firestore/delete-user-tweet"
 import { followUser, unfollowUser } from "../../firestore/follower-list-functions"
+import ConfirmationPopup from "../ConfirmationPopup/ConfirmationPopup"
 
 const RearContainer = styled.div`
   position: absolute;
@@ -60,25 +61,9 @@ const FollowIcon = () => {
   return <MenuIcon color={MAIN_FONT_COLOR} path="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm13 4v3h2v-3h3V8h-3V5h-2v3h-3v2h3zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"/>
 }
 
-const ButtonPopupMenu = (props) => {
-  const contextData = useContext(UserContext)
-  const userData = contextData.userData
-  const following = contextData.following
-  const followers = contextData.followers
-
-  const { userId, userName, tweetId } = props.tweetData
-  // props.userID
-  // props.userName
-  // props.tweetId
-
-  const deleteThisTweet = async () => {
-    try {
-      await deleteTweet(tweetId, followers)
-      PubSub.publish('reload feed')
-    } catch (error) {
-      console.error('Failure to delete user tweet:', error)
-    }
-  }
+const UnfollowWarning = (props) => {
+  const {tweetData, cancelFunction} = props
+  const {userName, userId} = tweetData
 
   const unfollowThisUser = async () => {
     try {
@@ -87,6 +72,35 @@ const ButtonPopupMenu = (props) => {
     } catch (error) {
       console.error("Failure to unfollow user:", error)
       alert("Failure to unfollow user, fake twitter apologizes for this inconvenience")
+    }
+  }
+
+  return (
+    <ConfirmationPopup header={`Unfollow @${userName}?`}
+                       confirmText="Unfollow"
+                       confirmFunction={unfollowThisUser}
+                       cancelFunction={cancelFunction}
+                       transparent={true}>
+      Their Tweets will no longer show up in your home timeline. 
+      You can still view their profile, unless their Tweets are protected. 
+    </ConfirmationPopup>
+  )
+}
+
+const ButtonPopupMenu = (props) => {
+  const contextData = useContext(UserContext)
+  const { following, followers, userData } = contextData
+
+  const { userId, userName, tweetId } = props.tweetData
+
+  const [displayUnfollowWarning, setDisplayUnfollowWarning] = useState(false)
+
+  const deleteThisTweet = async () => {
+    try {
+      await deleteTweet(tweetId, followers)
+      PubSub.publish('reload feed')
+    } catch (error) {
+      console.error('Failure to delete user tweet:', error)
     }
   }
 
@@ -100,13 +114,21 @@ const ButtonPopupMenu = (props) => {
     }
   }
 
+  const warnAboutUnfollow = (event) => {
+    event.stopPropagation()
+    setDisplayUnfollowWarning(true)
+  }
+  const cancelUnfollow = (event) => {
+    setDisplayUnfollowWarning(false)
+  }
+  
   return (
     <RearContainer>
       <FrontContainer>
         <InnerContainer onClick={userId === userData.userId
                         ? deleteThisTweet
                         : following.includes(userId)
-                        ? unfollowThisUser
+                        ? warnAboutUnfollow
                         : followThisUser }>
           {userId === userData.userId ? <DeleteIcon></DeleteIcon> 
           : following.includes(userId) ? <UnfollowIcon></UnfollowIcon> : <FollowIcon></FollowIcon> }
@@ -114,6 +136,9 @@ const ButtonPopupMenu = (props) => {
           : following.includes(userId) ? `Unfollow @${userName}` : `Follow @${userName}`}
         </InnerContainer>
       </FrontContainer>
+      {displayUnfollowWarning 
+      ? <UnfollowWarning tweetData={props.tweetData} cancelFunction={cancelUnfollow}/>
+      : false}
     </RearContainer>
   )
 }
