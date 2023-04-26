@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants";
-import FeedMenuButton from './FeedMenuButton'
+import FeedMenuButton from './FeedMenuButton/FeedMenuButton'
 
 const TweetHeaderContainer = styled.div`
   display: flex;
