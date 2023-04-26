@@ -21,36 +21,40 @@ export const unfollowUser = async(userIdToUnfollow) => {
 }
 
 let userIdList = []
-let userDataList = []
 
-export const getUsersToFollow = async(loadCount) => {
+export const getUsersToFollow = async(loadCount, chunkSize = 2) => {
   try {
     if (!userIdList[0]) {
-      const docRef = doc(db, 'users', 'userIdList')
-      const userIdListSnap = await getDoc(docRef)
+      const idListDocRef = doc(db, 'users', 'userIdList')
+      const followDataDocRef = doc(db, 'followData', auth.currentUser.uid)
+
+      const userIdListSnap = await getDoc(idListDocRef)
+      const followDataSnap = await getDoc(followDataDocRef)
+
       const userIdListData = userIdListSnap.data()
-      userIdList = Object.keys(userIdListData)
-      // need to filter out self
-      // need to filter out users you already follow
+      const followData = followDataSnap.data()
+      const usersToFilter = [...followData.following, auth.currentUser.uid]
+
+      const unfilteredIdList = Object.keys(userIdListData)
+      userIdList = unfilteredIdList.filter((userId) => {
+        return !usersToFilter.includes(userId)
+      })
     }
-    // get the userId's for the chunk
-    // get the data for each user
-    // return the data for both users togeth in one object
 
-    const startKey = loadCount * 2
-    const userIdOne = userIdList[startKey]
-    const userIdTwo = userIdList[startKey + 1]
+    const startKey = loadCount * chunkSize
+    const userDataArray = []
 
-    const docRefOne = doc(db, 'users', userIdOne)
-    const docRefTwo = doc(db, 'users', userIdTwo)
+    for (let i = 0; i < chunkSize; i++) {
+      const userId = userIdList[startKey + i]
+      if (userId) {
+        const docRef = doc(db, 'users', userId)
+        const docSnap = await getDoc(docRef)
+        const userData = docSnap.data()
+        userDataArray.push(userData)
+      }
+    }
 
-    const docSnapOne = await getDoc(docRefOne)
-    const docSnapTwo = await getDoc(docRefTwo)
-
-    const userOneData = docSnapOne.data()
-    const userTwoData = docSnapTwo.data()
-
-    return [ userOneData, userTwoData ]
+    return userDataArray
   } catch (error) {
     console.error("Failure to get users to follow:", error)
   }
