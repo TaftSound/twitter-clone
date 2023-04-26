@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { FormButton } from "../StyledButtons/FormButton";
 import { useState } from "react";
 import { ALERT_RED, ALERT_RED_DARK, ALERT_RED_TRANSPARENT, BUTTON_BORDER_COLOR, MAIN_FONT_COLOR, WHO_TO_FOLLOW_BACKGROUND } from "../constants";
+import { followUser } from "../../firestore/follower-list-functions";
 
 const OuterContainer = styled.div`
   margin-left: 12px;
@@ -32,22 +33,46 @@ const StyledFormButton = styled(FormButton)`
   }
 `
 
-const FollowButton = (props) => {
+const FollowButton = ({ userId }) => {
   const [isFollowed, setIsFollowed] = useState(false)
   const [displayUnfollowButton, setDisplayUnfollowButton] = useState(false)
   const [buttonText, setButtonText] = useState('Follow')
 
-  const toggleFollow = () => {
+  const followNewUser = async (userIdToFollow) => {
+    try {
+      setIsFollowed(true)
+      setButtonText('Following')
+      await followUser(userIdToFollow)
+    } catch (error) {
+      console.log("Follow button failure:", error)
+      setIsFollowed(false)
+      setDisplayUnfollowButton(false)
+      setButtonText('Follow')
+    }
+  }
+
+  // const unfollowNewUser = async (userIdToUnfollow) => {
+  //   try {
+  //     setIsFollowed(false)
+  //     setDisplayUnfollowButton(false)
+  //     setButtonText('Follow')
+  //     await unfollowUser(userIdToUnfollow)
+  //   } catch (error) {
+  //     console.log("Follow button failure:", error)
+  //     setIsFollowed(true)
+  //     setButtonText('Following')
+  //   }
+  // }
+
+  const toggleFollow = async () => {
     if (isFollowed) {
       // display popup to confirm unfollow
-      // call firestore function to unfollow user
       setIsFollowed(false)
       setDisplayUnfollowButton(false)
       setButtonText('Follow')
     } else {
       // call firestore function to follow user
-      setIsFollowed(true)
-      setButtonText('Following')
+      await followNewUser(userId)
     }
   }
   const mouseLeave = () => {

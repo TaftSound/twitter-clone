@@ -18,6 +18,7 @@ const Input = styled.textarea`
   font-weight: 400;
   font-family: ${FONT_FAMILY};
   height: 24px;
+  overflow: hidden;
 
   &:focus {
     border: none;

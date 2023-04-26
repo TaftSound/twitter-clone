@@ -1,4 +1,4 @@
-import { doc, getDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, runTransaction, writeBatch } from "firebase/firestore";
 import { auth } from "../auth";
 import { db } from "./firestore";
 
@@ -12,8 +12,46 @@ export const getFollowerList = async (userId = auth.currentUser.uid) => {
   }
 };
 
-export const followUser = async(userIdToFollow) => {
-  
+export const followUser = async (userIdToFollow) => {
+  // do this whole write with a transaction write
+  try {
+    await runTransaction(db, async (transaction) => {
+      const currentUser = {}
+      const userToFollow = {}
+      // get current user followData docRef
+      currentUser.followDataRef = doc(db, 'followData', auth.currentUser.uid)
+      // get the userToFollow followData docRef
+      userToFollow.followDataRef = doc(db, 'followData', userIdToFollow)
+
+      // get all of that users tweets and add them to your userFeed
+      // get tweetReferences file for current user
+      currentUser.tweetReferencesRef = doc(db, 'tweetReferences', auth.currentUser.uid)
+       
+      // get tweetReferences file for user that you have followed
+      userToFollow.tweetReferencesRef = doc(db, 'tweetReferences', userIdToFollow)
+      userToFollow.tweetReferencesSnap = await transaction.get(userToFollow.tweetReferencesRef)
+      // store 'userTweets' object from userToFollow
+      userToFollow.userTweetsData = userToFollow.tweetReferencesSnap.data().userTweets
+      
+
+      // add to 'userFeed' object of current user with the merge option
+      Object.entries(userToFollow.userTweetsData).forEach(([key, value]) => {
+        const fieldNameArray = ['userFeed', key]
+        const dotNotationPath = fieldNameArray.join('.')
+        transaction.update(currentUser.tweetReferencesRef, {
+          [dotNotationPath]: value
+        })
+      })
+
+      // write userIdToFollow into the 'following' array with array.union
+      transaction.update(currentUser.followDataRef, { following: arrayUnion(userIdToFollow) })
+      // write current user's id into the userToFollow 'followers' array with array.union
+      transaction.update(userToFollow.followDataRef, { followers: arrayUnion(auth.currentUser.uid) })
+      
+    })
+  } catch (error) {
+    console.error("Failure to follow new user:", error)
+  }
 }
 
 export const unfollowUser = async(userIdToUnfollow) => {

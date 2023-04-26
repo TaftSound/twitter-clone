@@ -51,7 +51,7 @@ const WhoToFollow = (props) => {
   // }, [loadCount])
   // console.log(userData)
   if (!userData) { return false }
-
+  
   return (
     <OuterContainer>
       <InnerContainer mainFeed={props.mainFeed}>
