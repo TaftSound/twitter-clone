@@ -5,6 +5,7 @@ import LoadingPage from "../LoadingPage/LoadingPage";
 import TweetDisplay from "../TweetDisplay/TweetDisplay";
 import PubSub from "pubsub-js";
 import WhoToFollow from "../WhoToFollow/WhoToFollow";
+import { getUsersToFollow } from "../../firestore/follower-list-functions";
 
 const LoadingContainer = styled(LoadingPage)`
   height: 100px;
@@ -13,19 +14,13 @@ const LoadingContainer = styled(LoadingPage)`
 
 const MainFeed = (props) => {
   const [tweetFeed, setTweetFeed] = useState([])
+  const [whoToFollowFeed, setWhoToFollowFeed] = useState([])
   const [hasLoaded, setHasLoaded] = useState(false)
   const [currentTab, setCurrentTab] = useState("For you")
   
   const sentinelRef = useRef(null)
   const observer = useRef(null)
   const loadCount = useRef(0)
-
-  // useEffect(() => {
-  //   loadCount.current = 0
-  //   setHasLoaded(false)
-  //   setTweetFeed([])
-  //   console.log('publish')
-  // }, [currentTab])
 
   useEffect(() => {
     const reloadFeed = () => {
@@ -50,6 +45,13 @@ const MainFeed = (props) => {
   }, [])
 
   useEffect(() => { 
+    const loadUsersToFollow = async (loadCount) => {
+      const newUserData = await getUsersToFollow(loadCount)
+      setWhoToFollowFeed((oldFeed) => {
+        return [...oldFeed, newUserData]
+      })
+    }
+
     const startLoadCycle = async () => {
       console.log('start tweet load')
       setHasLoaded(false)
@@ -62,10 +64,11 @@ const MainFeed = (props) => {
     const finishLoadCycle = (newTweets) => {
       setHasLoaded(true)
       if (!newTweets[0]) { return }
+      loadUsersToFollow(loadCount.current)
       loadCount.current = loadCount.current + 1
       setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
       if (sentinelRef.current) observer.current.observe(sentinelRef.current)
-    } 
+    }
 
     observer.current = new IntersectionObserver(async (entries) => {
       if (entries[0].isIntersecting) {
@@ -81,17 +84,34 @@ const MainFeed = (props) => {
 
     return () => { observer.current.disconnect() }
   }, [currentTab])
+
+  const isWhoToFollowPlacement = (index) => {
+    if (index !== 0 
+        && (index + 1) % 5 === 0
+        && currentTab === "For you") {
+      return true
+    } else {
+      return false
+    }
+  }
+  
   
   return (
     <>
-    {tweetFeed.map((tweetData) => {
-      if (!tweetData) { return '' }
+    {tweetFeed.map((tweetData, index) => {
+      if (isWhoToFollowPlacement(index) && whoToFollowFeed[0]) { 
+        return (
+          <div key={tweetData.tweetId}>
+            <TweetDisplay tweetData={tweetData}></TweetDisplay>
+            <WhoToFollow mainFeed={true} userData={whoToFollowFeed[(index + 1) / 5 - 1]}></WhoToFollow>
+          </div>
+        )
+      }
       return (
-          <TweetDisplay key={tweetData.tweetId} tweetData={tweetData}></TweetDisplay>
+        <TweetDisplay key={tweetData.tweetId} tweetData={tweetData}></TweetDisplay>
       )
     })}
     {hasLoaded ? '' : <LoadingContainer></LoadingContainer>}
-    <WhoToFollow mainFeed={true}></WhoToFollow>
     <div ref={sentinelRef}>herro</div>
     </>
   )
