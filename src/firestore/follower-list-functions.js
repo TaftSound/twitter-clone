@@ -1,4 +1,4 @@
-import { arrayUnion, doc, getDoc, runTransaction, writeBatch } from "firebase/firestore";
+import { arrayRemove, arrayUnion, deleteField, doc, FieldValue, getDoc, runTransaction } from "firebase/firestore";
 import { auth } from "../auth";
 import { db } from "./firestore";
 
@@ -34,7 +34,7 @@ export const followUser = async (userIdToFollow) => {
       userToFollow.userTweetsData = userToFollow.tweetReferencesSnap.data().userTweets
       
 
-      // add to 'userFeed' object of current user with the merge option
+      // add to 'userFeed' object of current user with dot notation
       Object.entries(userToFollow.userTweetsData).forEach(([key, value]) => {
         const fieldNameArray = ['userFeed', key]
         const dotNotationPath = fieldNameArray.join('.')
@@ -43,19 +43,58 @@ export const followUser = async (userIdToFollow) => {
         })
       })
 
-      // write userIdToFollow into the 'following' array with array.union
+      // write userIdToFollow into the 'following' array with arrayUnion
       transaction.update(currentUser.followDataRef, { following: arrayUnion(userIdToFollow) })
-      // write current user's id into the userToFollow 'followers' array with array.union
+      // write current user's id into the userToFollow 'followers' array with arrayUnion
       transaction.update(userToFollow.followDataRef, { followers: arrayUnion(auth.currentUser.uid) })
       
     })
   } catch (error) {
     console.error("Failure to follow new user:", error)
+    return Promise.reject(error)
   }
 }
 
 export const unfollowUser = async(userIdToUnfollow) => {
-  
+  try {
+    await runTransaction(db, async (transaction) => {
+      const currentUser = {}
+      const userToUnfollow = {}
+      // get current user followData docRef
+      currentUser.followDataRef = doc(db, 'followData', auth.currentUser.uid)
+      // get the userToUnfollow followData docRef
+      userToUnfollow.followDataRef = doc(db, 'followData', userIdToUnfollow)
+
+      // get all of that users tweets and remove them from your userFeed
+      // get tweetReferences file for current user
+      currentUser.tweetReferencesRef = doc(db, 'tweetReferences', auth.currentUser.uid)
+       
+      // get tweetReferences file for user that you are unfollowing
+      userToUnfollow.tweetReferencesRef = doc(db, 'tweetReferences', userIdToUnfollow)
+      userToUnfollow.tweetReferencesSnap = await transaction.get(userToUnfollow.tweetReferencesRef)
+      // store 'userTweets' object from userToFollow
+      userToUnfollow.userTweetsData = userToUnfollow.tweetReferencesSnap.data().userTweets
+      
+
+      // Remove 'userTweets' from 'userFeed' object of current user with dot notation
+      Object.entries(userToUnfollow.userTweetsData).forEach(([key, value]) => {
+        const fieldNameArray = ['userFeed', key]
+        const dotNotationPath = fieldNameArray.join('.')
+        transaction.update(currentUser.tweetReferencesRef, {
+          [dotNotationPath]: deleteField()
+        })
+      })
+
+      // write userIdToFollow into the 'following' array with arrayRemove
+      transaction.update(currentUser.followDataRef, { following: arrayRemove(userIdToUnfollow) })
+      // write current user's id into the userToFollow 'followers' array with arrayRemove
+      transaction.update(userToUnfollow.followDataRef, { followers: arrayRemove(auth.currentUser.uid) })
+      
+    })
+  } catch (error) {
+    console.error("Failure to unfollow new user:", error)
+    return Promise.reject(error)
+  }
 }
 
 let userIdList = []

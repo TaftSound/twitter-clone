@@ -8,6 +8,7 @@ import { UserContext } from "../../App"
 import { StyledLogo, TooltipContainer } from "../styled-components"
 import { SmallMenuButton } from "../StyledButtons/SmallMenuButton"
 import { deleteTweet } from "../../firestore/delete-user-tweet"
+import { followUser, unfollowUser } from "../../firestore/follower-list-functions"
 
 const RearContainer = styled.div`
   position: absolute;
@@ -79,12 +80,24 @@ const ButtonPopupMenu = (props) => {
     }
   }
 
-  const unfollowUser = async () => {
-    
+  const unfollowThisUser = async () => {
+    try {
+      await unfollowUser(userId)
+      PubSub.publish('update follow list')
+    } catch (error) {
+      console.error("Failure to unfollow user:", error)
+      alert("Failure to unfollow user, fake twitter apologizes for this inconvenience")
+    }
   }
 
-  const followUser = async () => {
-    
+  const followThisUser = async () => {
+    try {
+      await followUser(userId)
+      PubSub.publish('update follow list')
+    } catch (error) {
+      console.error("Failure to follow user:", error)
+      alert("Failure to follow user, fake twitter apologizes for this inconvenience")
+    }
   }
 
   return (
@@ -93,8 +106,8 @@ const ButtonPopupMenu = (props) => {
         <InnerContainer onClick={userId === userData.userId
                         ? deleteThisTweet
                         : following.includes(userId)
-                        ? unfollowUser
-                        : followUser }>
+                        ? unfollowThisUser
+                        : followThisUser }>
           {userId === userData.userId ? <DeleteIcon></DeleteIcon> 
           : following.includes(userId) ? <UnfollowIcon></UnfollowIcon> : <FollowIcon></FollowIcon> }
           {userId === userData.userId ? 'Delete this tweet'

@@ -47,6 +47,8 @@ const MainFeed = (props) => {
   useEffect(() => { 
     const loadUsersToFollow = async (loadCount) => {
       const newUserData = await getUsersToFollow(loadCount, 3)
+      console.log(loadCount)
+      console.log(newUserData)
       setWhoToFollowFeed((oldFeed) => {
         return [...oldFeed, newUserData]
       })
@@ -61,12 +63,12 @@ const MainFeed = (props) => {
       : await getFollowingFeed(loadCount.current)
     }
   
-    const finishLoadCycle = (newTweets) => {
+    const finishLoadCycle = async (newTweets) => {
       setHasLoaded(true)
       if (!newTweets[0]) { return }
-      if (currentTab === "For you") { loadUsersToFollow(loadCount.current) }
-      loadCount.current = loadCount.current + 1
       setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
+      if (currentTab === "For you") { await loadUsersToFollow(loadCount.current) }
+      loadCount.current = loadCount.current + 1
       if (sentinelRef.current) observer.current.observe(sentinelRef.current)
     }
 

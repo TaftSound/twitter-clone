@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { FormButton } from "../StyledButtons/FormButton";
 import { useState } from "react";
 import { ALERT_RED, ALERT_RED_DARK, ALERT_RED_TRANSPARENT, BUTTON_BORDER_COLOR, MAIN_FONT_COLOR, WHO_TO_FOLLOW_BACKGROUND } from "../constants";
-import { followUser } from "../../firestore/follower-list-functions";
+import { followUser, unfollowUser } from "../../firestore/follower-list-functions";
 
 const OuterContainer = styled.div`
   margin-left: 12px;
@@ -48,28 +48,28 @@ const FollowButton = ({ userId }) => {
       setIsFollowed(false)
       setDisplayUnfollowButton(false)
       setButtonText('Follow')
+      alert("Something has gone wrong, fake twitter apologizes for the inconvenience")
     }
   }
 
-  // const unfollowNewUser = async (userIdToUnfollow) => {
-  //   try {
-  //     setIsFollowed(false)
-  //     setDisplayUnfollowButton(false)
-  //     setButtonText('Follow')
-  //     await unfollowUser(userIdToUnfollow)
-  //   } catch (error) {
-  //     console.log("Follow button failure:", error)
-  //     setIsFollowed(true)
-  //     setButtonText('Following')
-  //   }
-  // }
+  const unfollowNewUser = async (userIdToUnfollow) => {
+    try {
+      setIsFollowed(false)
+      setDisplayUnfollowButton(false)
+      setButtonText('Follow')
+      return await unfollowUser(userIdToUnfollow)
+    } catch (error) {
+      console.log("Follow button failure:", error)
+      setIsFollowed(true)
+      setButtonText('Following')
+      alert("Something has gone wrong, fake twitter apologizes for the inconvenience")
+    }
+  }
 
   const toggleFollow = async () => {
     if (isFollowed) {
       // display popup to confirm unfollow
-      setIsFollowed(false)
-      setDisplayUnfollowButton(false)
-      setButtonText('Follow')
+      await unfollowNewUser(userId)
     } else {
       // call firestore function to follow user
       await followNewUser(userId)
@@ -77,7 +77,6 @@ const FollowButton = ({ userId }) => {
   }
   const mouseLeave = () => {
     if (isFollowed && !displayUnfollowButton) {
-      console.log('schmoop')
       setDisplayUnfollowButton(true)
     }
     if (isFollowed && buttonText === 'Unfollow') {
