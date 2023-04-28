@@ -5,7 +5,7 @@ import { AudienceSelector } from "./AudienceSelector";
 import { TweetInput } from "./TweetInput";
 import { WhoCanReply } from "./WhoCanReply";
 import { ButtonBar } from "./ButtonBar";
-import { UserContext } from "../../App";
+import { FollowContext, UserContext } from "../../App";
 import { createNewTweet } from "../../firestore/create-new-tweet";
 import { DIVIDER_COLOR } from "../constants";
 
@@ -35,8 +35,8 @@ const NewTweetForm = styled.form`
 
 const NewTweetEntry = (props) => {
   const userContext = useContext(UserContext) 
-  const userObject = userContext.userData
-  const followers = userContext.followers
+  const followContext = useContext(FollowContext)
+  const followers = followContext.followers
 
   const [currentTextState, setCurrentTextState] = useState('')
   const [inputExpandedState, setInputExpandedState] = useState(false)
@@ -47,10 +47,10 @@ const NewTweetEntry = (props) => {
   }, [props.popup])
 
   useEffect(() => {
-    if (userObject) {
-      setAccountInitial(userObject.displayName[0])
+    if (userContext) {
+      setAccountInitial(userContext.displayName[0])
     }
-  }, [userObject])
+  }, [userContext])
 
   const updateValue = (event) => {
     const newValue = event.target.value
@@ -58,7 +58,7 @@ const NewTweetEntry = (props) => {
   }
 
   const submitTweet = async () => {
-    await createNewTweet(currentTextState, userObject, followers)
+    await createNewTweet(currentTextState, userContext, followers)
   }
 
   const expandTweetInput = () => {

@@ -4,6 +4,7 @@ import RightSidebar from "../RightSidebar/RightSidebar"
 import uniqid from 'uniqid'
 
 import { PageLayoutContainer, LeftContainer, RightContainer, CenterContainer, SubContainer } from "./StyledContainers"
+import React from 'react'
 
 
 const structureCenterContent = (elementArray) => {
@@ -30,5 +31,6 @@ const PageLayout = (props) => {
 PageLayout.propTypes = {
   centerContent: PropTypes.array
 }
+
 
 export default PageLayout

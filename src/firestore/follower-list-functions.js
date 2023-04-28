@@ -101,7 +101,7 @@ let userIdList = []
 
 export const getUsersToFollow = async(loadCount, chunkSize = 2) => {
   try {
-    if (!userIdList[0]) {
+    if (loadCount === 0) {
       const idListDocRef = doc(db, 'users', 'userIdList')
       const followDataDocRef = doc(db, 'followData', auth.currentUser.uid)
 

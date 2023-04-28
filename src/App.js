@@ -11,28 +11,31 @@ import LogoutPage from './components/LogoutPage/LogoutPage';
 import { getFollowerList } from './firestore/follower-list-functions';
 
 export const UserContext = createContext()
-export const AuthContext = createContext()
+export const FollowContext = createContext()
 
 const ContextProvider = (props) => {
-  const [value, setValue] = useState(null)
-  const tempValue = useRef(null)
+  const [userData, setUserData] = useState(null)
+  const [followData, setFollowData] = useState(null)
+  // const tempUserData = useRef(null)
+  // const tempFollowData = useRef(null)
 
-  const updateFollowingData = (newUserId) => {
-    const contextData = tempValue.current
-    contextData.following.push(newUserId)
-    setValue(contextData)
-  }
+  // const updateFollowingData = (newUserId) => {
+  //   const contextData = tempFollowData.current
+  //   contextData.following.push(newUserId)
+  //   setUserData(contextData)
+  // }
 
   useEffect(() => {
     const unsubToken = PubSub.subscribe('update follow list', async () => {
-      const contextData = tempValue.current
-      const followData = await getFollowerList()
-      const followers = followData.followers ? followData.followers : []
-      const following = followData.following ? followData.following : []
-      contextData.followers = followers
-      contextData.following = following
-      setValue(contextData)
-      tempValue.current = contextData
+      // const contextData = tempFollowData.current
+      const newFollowData = await getFollowerList()
+      const followers = newFollowData.followers ? newFollowData.followers : []
+      const following = newFollowData.following ? newFollowData.following : []
+      // contextData.followers = followers
+      // contextData.following = following
+      // setUserData({ ...contextData })
+      // tempFollowData.current = contextData
+      setFollowData({ followers, following })
     })
     
     return () => {
@@ -44,15 +47,16 @@ const ContextProvider = (props) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userData = await getUserData(user)
-        const followData = await getFollowerList()
-        const followers = followData.followers ? followData.followers : []
-        const following = followData.following ? followData.following : []
-        const contextData = { userData, followers, following, updateFollowingData }
-        setValue(contextData)
-        tempValue.current = contextData
+        const currentFollowData = await getFollowerList()
+        const followers = currentFollowData.followers ? currentFollowData.followers : []
+        const following = currentFollowData.following ? currentFollowData.following : []
+        // const contextData = { userData, followers, following, updateFollowingData }
+        setUserData(userData)
+        setFollowData({ followers, following })
+        // tempFollowData.current = { followers, following }
       } else {
-        setValue(null)
-        tempValue.current = null
+        setUserData(null)
+        // tempFollowData.current = null
       }
     })
 
@@ -60,9 +64,11 @@ const ContextProvider = (props) => {
   }, [])
 
   return (
-    <UserContext.Provider value={value}>
-      {props.children}
-    </UserContext.Provider>
+    <FollowContext.Provider value={followData}>
+      <UserContext.Provider value={userData}>
+        {props.children}
+      </UserContext.Provider>
+    </FollowContext.Provider>
   )
 }
 

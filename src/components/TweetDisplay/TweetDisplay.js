@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import styled from "styled-components"
 import { DividerLine } from "../styled-components";
@@ -58,4 +59,4 @@ const TweetDisplay = ({ tweetData }) => {
   )
 }
 
-export default TweetDisplay
+export default React.memo(TweetDisplay)

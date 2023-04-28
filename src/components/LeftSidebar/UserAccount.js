@@ -58,7 +58,7 @@ const InnerContainer = styled.div`
 
 const UserAccountMenu = (props) => {
   const logoutButtonRef = useRef(null)
-  const userObject = useContext(UserContext)
+  const userContext = useContext(UserContext)
   const navigate = useNavigate()
   const [userName, setUserName] = useState('')
 
@@ -75,8 +75,8 @@ const UserAccountMenu = (props) => {
   }, [navigate])
 
   useEffect(() => {
-    if (userObject) { setUserName(userObject.userData.userName) }
-  }, [userObject])
+    if (userContext) { setUserName(userContext.userName) }
+  }, [userContext])
 
   return (
     <RearContainer>
@@ -113,7 +113,7 @@ const ButtonContainer = styled(TooltipContainer)`
 
 const UserAccountButton = (props) => {
   const parent = useRef(null)
-  const userObject = useContext(UserContext).userData
+  const userContext = useContext(UserContext)
 
   const [accountInitial, setAccountInitial] = useState('')
   const [menuDisplayed, setMenuDisplayed] = useState(false)
@@ -139,8 +139,8 @@ const UserAccountButton = (props) => {
     }
   })
   useEffect(() => {
-    if (userObject) { setAccountInitial(userObject.displayName[0]) }
-  }, [userObject])
+    if (userContext) { setAccountInitial(userContext.displayName[0]) }
+  }, [userContext])
 
   return (
     <OuterContainer>

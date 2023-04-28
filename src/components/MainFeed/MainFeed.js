@@ -23,28 +23,20 @@ const MainFeed = (props) => {
   const loadCount = useRef(0)
 
   useEffect(() => {
-    const reloadFeed = () => {
-      loadCount.current = 0
-      observer.current.observe(sentinelRef.current)
-      setTweetFeed([])
-    }
-
-    const feedResetToken = PubSub.subscribe('reload feed', () => {
-      reloadFeed()
-    })
-
     const tabChangeToken = PubSub.subscribe('set current tab', (msg, data) => {
       setCurrentTab(data)
-      reloadFeed()
     })
 
     return () => {
       PubSub.unsubscribe(tabChangeToken)
-      PubSub.unsubscribe(feedResetToken)
     }
   }, [])
 
   useEffect(() => { 
+    loadCount.current = 0
+    setTweetFeed([])
+    setWhoToFollowFeed([])
+
     const loadUsersToFollow = async (loadCount) => {
       const newUserData = await getUsersToFollow(loadCount, 3)
       setWhoToFollowFeed((oldFeed) => {
@@ -93,8 +85,7 @@ const MainFeed = (props) => {
       return false
     }
   }
-  
-  
+
   return (
     <>
     {tweetFeed.map((tweetData, index) => {

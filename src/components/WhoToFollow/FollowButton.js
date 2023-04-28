@@ -1,11 +1,14 @@
 import styled from "styled-components";
+import PubSub from "pubsub-js";
 
 import { FormButton } from "../StyledButtons/FormButton";
 import UnfollowWarning from "../WarningPopups/UnfollowWarning"
 
-import { useState } from "react";
 import { ALERT_RED, ALERT_RED_DARK, ALERT_RED_TRANSPARENT, BUTTON_BORDER_COLOR, MAIN_FONT_COLOR, WHO_TO_FOLLOW_BACKGROUND } from "../constants";
 import { followUser, unfollowUser } from "../../firestore/follower-list-functions";
+import { FollowContext } from "../../App";
+import { useContext, useEffect, useState } from "react";
+import { useRef } from "react";
 
 const OuterContainer = styled.div`
   margin-left: 12px;
@@ -42,11 +45,20 @@ const FollowButton = ({ userId, userName }) => {
   const [displayUnfollowWarning, setDisplayUnfollowWarning] = useState(false)
   const [buttonText, setButtonText] = useState('Follow')
 
+  const followContext = useContext(FollowContext)
+
+  const isFollowedRef = useRef(isFollowed)
+
+  useEffect(() => {
+    isFollowedRef.current = isFollowed
+  }, [isFollowed])
+
   const followThisUser = async (userIdToFollow) => {
     try {
       setIsFollowed(true)
       setButtonText('Following')
       await followUser(userIdToFollow)
+      PubSub.publish('update follow list');
     } catch (error) {
       console.log("Follow button failure:", error)
       setIsFollowed(false)
@@ -61,7 +73,8 @@ const FollowButton = ({ userId, userName }) => {
       setIsFollowed(false)
       setDisplayUnfollowButton(false)
       setButtonText('Follow')
-      return await unfollowUser(userId)
+      await unfollowUser(userId)
+      PubSub.publish('update follow list')
     } catch (error) {
       console.log("Follow button failure:", error)
       setIsFollowed(true)
@@ -86,6 +99,24 @@ const FollowButton = ({ userId, userName }) => {
       await followThisUser(userId)
     }
   }
+  
+  useEffect(() => {
+    if (followContext.following.includes(userId)) {
+      if (!isFollowedRef.current) {
+        setDisplayUnfollowButton(true)
+        setButtonText('Following')
+        setIsFollowed(true)
+      }
+    } else {
+      if (isFollowedRef.current) {
+        setIsFollowed(false)
+        setDisplayUnfollowButton(false)
+        setButtonText('Follow')
+      }
+    }
+    console.log('run')
+  }, [followContext, userId])
+
   const mouseLeave = () => {
     if (isFollowed && !displayUnfollowButton) {
       setDisplayUnfollowButton(true)
@@ -99,10 +130,6 @@ const FollowButton = ({ userId, userName }) => {
     if (isFollowed) {
       setButtonText('Unfollow')
     }
-  }
-
-  const mouseUp = () => {
-    console.log('up')
   }
 
   return (

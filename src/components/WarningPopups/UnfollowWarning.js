@@ -8,7 +8,8 @@ const UnfollowWarning = (props) => {
   const unfollowThisUser = props.confirmFunction
   ? async () => {
     if (hideFunction) { hideFunction() }
-    props.confirmFunction()
+    await props.confirmFunction()
+    PubSub.publish('update follow list');
   }
   : async () => {
     try {
