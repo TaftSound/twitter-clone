@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-import { BACKGROUND_COLOR, MAIN_FONT_COLOR, PAGE_OVERLAY_COLOR, SECONDARY_FONT_COLOR } from "../constants"
+import { ALERT_RED, BACKGROUND_COLOR, MAIN_FONT_COLOR, PAGE_OVERLAY_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 import { TwitterLogoLarge } from '../TwitterLogo'
 import { FormButton } from '../StyledButtons/FormButton'
 
@@ -57,23 +57,33 @@ const ConfirmFormButton = styled(FormButton)`
   width: 100%;
   margin: 0px;
   margin-top: 12px;
+  ${props => props.deleteButton ? `background-color: ${ALERT_RED};` : ''}
+  ${props => props.deleteButton ? `color: ${MAIN_FONT_COLOR};` : ''}
 `
 
 const ConfirmationPopup = (props) => {
-  const { confirmFunction, cancelFunction, confirmText, header, transparent } = props
+  const { confirmFunction, 
+          cancelFunction, 
+          confirmText, 
+          header, 
+          transparent, 
+          deleteButton, 
+          tweeterLogo } = props
 
   return (
     <BackgroundDiv transparent={transparent}>
       <OverlayDiv>
         <PopupContainer>
-          <LogoContainer>
-            <TwitterLogoLarge/>
-          </LogoContainer>
+          {tweeterLogo 
+          ? <LogoContainer>
+              <TwitterLogoLarge/>
+            </LogoContainer>
+          : false}
           <Header>{header}</Header>
           <Text>
             {props.children}
           </Text>
-          <ConfirmFormButton onClick={confirmFunction}>{confirmText}</ConfirmFormButton>
+          <ConfirmFormButton deleteButton={deleteButton} onClick={confirmFunction}>{confirmText}</ConfirmFormButton>
           <ConfirmFormButton onClick={cancelFunction} dark={true}>Cancel</ConfirmFormButton>
         </PopupContainer>
       </OverlayDiv>
