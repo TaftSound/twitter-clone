@@ -9,13 +9,13 @@ const UnfollowWarning = (props) => {
   ? async () => {
     if (hideFunction) { hideFunction() }
     await props.confirmFunction()
-    PubSub.publish('update follow list');
+    // PubSub.publish('update follow list');
   }
   : async () => {
     try {
       if (hideFunction) { hideFunction() }
       await unfollowUser(userId);
-      PubSub.publish('update follow list');
+      // PubSub.publish('update follow list');
     } catch (error) {
       console.error("Failure to unfollow user:", error);
       alert("Failure to unfollow user, fake twitter apologizes for this inconvenience");

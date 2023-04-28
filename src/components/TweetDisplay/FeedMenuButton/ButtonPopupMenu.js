@@ -67,7 +67,6 @@ const ButtonPopupMenu = (props) => {
   const followThisUser = async () => {
     try {
       await followUser(userId);
-      PubSub.publish('update follow list');
     } catch (error) {
       console.error("Failure to follow user:", error);
       alert("Failure to follow user, fake twitter apologizes for this inconvenience");

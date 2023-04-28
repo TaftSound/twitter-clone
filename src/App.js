@@ -8,7 +8,7 @@ import PubSub from 'pubsub-js';
 import HomePage from "./components/HomePage/HomePage"
 import LoginPage from "./components/LoginPage/LoginPage"
 import LogoutPage from './components/LogoutPage/LogoutPage';
-import { getFollowerList } from './firestore/follower-list-functions';
+import { getFollowerList, listenForFollowerData, unsubscribeFromFollowerData } from './firestore/follower-list-functions';
 
 export const UserContext = createContext()
 export const FollowContext = createContext()
@@ -16,25 +16,12 @@ export const FollowContext = createContext()
 const ContextProvider = (props) => {
   const [userData, setUserData] = useState(null)
   const [followData, setFollowData] = useState(null)
-  // const tempUserData = useRef(null)
-  // const tempFollowData = useRef(null)
-
-  // const updateFollowingData = (newUserId) => {
-  //   const contextData = tempFollowData.current
-  //   contextData.following.push(newUserId)
-  //   setUserData(contextData)
-  // }
 
   useEffect(() => {
-    const unsubToken = PubSub.subscribe('update follow list', async () => {
-      // const contextData = tempFollowData.current
-      const newFollowData = await getFollowerList()
-      const followers = newFollowData.followers ? newFollowData.followers : []
-      const following = newFollowData.following ? newFollowData.following : []
-      // contextData.followers = followers
-      // contextData.following = following
-      // setUserData({ ...contextData })
-      // tempFollowData.current = contextData
+    const unsubToken = PubSub.subscribe('update follow list', async (msg, data) => {
+      const followers = data.followers ? data.followers : []
+      const following = data.following ? data.following : []
+
       setFollowData({ followers, following })
     })
     
@@ -50,17 +37,19 @@ const ContextProvider = (props) => {
         const currentFollowData = await getFollowerList()
         const followers = currentFollowData.followers ? currentFollowData.followers : []
         const following = currentFollowData.following ? currentFollowData.following : []
-        // const contextData = { userData, followers, following, updateFollowingData }
+
         setUserData(userData)
         setFollowData({ followers, following })
-        // tempFollowData.current = { followers, following }
+        listenForFollowerData()
       } else {
         setUserData(null)
-        // tempFollowData.current = null
       }
     })
 
-    return unsubscribe
+    return () => {
+      unsubscribeFromFollowerData()
+      unsubscribe()
+    }
   }, [])
 
   return (

@@ -58,7 +58,7 @@ const FollowButton = ({ userId, userName }) => {
       setIsFollowed(true)
       setButtonText('Following')
       await followUser(userIdToFollow)
-      PubSub.publish('update follow list');
+
     } catch (error) {
       console.log("Follow button failure:", error)
       setIsFollowed(false)
@@ -74,7 +74,7 @@ const FollowButton = ({ userId, userName }) => {
       setDisplayUnfollowButton(false)
       setButtonText('Follow')
       await unfollowUser(userId)
-      PubSub.publish('update follow list')
+
     } catch (error) {
       console.log("Follow button failure:", error)
       setIsFollowed(true)
@@ -114,7 +114,6 @@ const FollowButton = ({ userId, userName }) => {
         setButtonText('Follow')
       }
     }
-    console.log('run')
   }, [followContext, userId])
 
   const mouseLeave = () => {

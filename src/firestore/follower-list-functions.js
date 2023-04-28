@@ -1,6 +1,12 @@
-import { arrayRemove, arrayUnion, deleteField, doc, FieldValue, getDoc, runTransaction } from "firebase/firestore";
+import { arrayRemove, arrayUnion, deleteField, doc, getDoc, onSnapshot, runTransaction } from "firebase/firestore";
 import { auth } from "../auth";
 import { db } from "./firestore";
+
+import PubSub from "pubsub-js";
+
+
+let followDocRef = null
+let unsubFollowSnap = null
 
 export const getFollowerList = async (userId = auth.currentUser.uid) => {
   try {
@@ -11,6 +17,24 @@ export const getFollowerList = async (userId = auth.currentUser.uid) => {
     console.error("Failure to check username availability:", error)
   }
 };
+
+export const listenForFollowerData = () => {
+  if (!followDocRef) {
+      followDocRef = doc(db, 'followData', auth.currentUser.uid);
+      unsubFollowSnap = onSnapshot(
+        followDocRef, 
+        (snapshot) => {
+          console.log(snapshot.data())
+          PubSub.publish('update follow list', snapshot.data())
+        },
+        (error) => {
+          console.error("Failure to listen for changes to follower data", error)
+        })
+    }
+}
+export const unsubscribeFromFollowerData = () => {
+  if (unsubFollowSnap) { unsubFollowSnap() }
+}
 
 export const followUser = async (userIdToFollow) => {
   // do this whole write with a transaction write
