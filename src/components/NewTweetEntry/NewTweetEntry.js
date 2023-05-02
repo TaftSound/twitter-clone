@@ -1,15 +1,27 @@
-import { UserCircle } from "../styled-components";
 import styled from "styled-components";
+import autoAnimate from "@formkit/auto-animate";
+
 import { useContext, useEffect, useState } from "react";
+
 import { AudienceSelector } from "./AudienceSelector";
 import { TweetInput } from "./TweetInput";
 import { WhoCanReply } from "./WhoCanReply";
 import { ButtonBar } from "./ButtonBar";
-import { FollowContext, UserContext } from "../../App";
-import { createNewTweet } from "../../firestore/create-new-tweet";
-import { DIVIDER_COLOR } from "../constants";
+import { UserCircle } from "../styled-components";
 
-const NewTweetContainer = styled.div`
+import { FollowContext, UserContext } from "../../App";
+import { DIVIDER_COLOR, PRIMARY_COLOR } from "../constants";
+
+import { createNewTweet } from "../../firestore/create-new-tweet";
+import { useRef } from "react";
+import TweetDisplay from "../TweetDisplay/TweetDisplay";
+
+
+const OuterContainer = styled.div`
+
+`
+
+const NewTweetEntryContainer = styled.div`
   display: grid;
   position: relative;
   grid-template-columns: min-content 1fr;
@@ -25,6 +37,16 @@ const UserAccountContainer = styled.div`
   padding: 4px 0px 0px;
   overflow: visible;
 `
+const UserCircleOverlay = styled.div`
+  height: 100%;
+  width: 100%;
+  background-color: rgb(0, 0, 0, 0.4);
+  border-radius: 1000px;
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+`
 const NewTweetForm = styled.form`
   display: flex;
   position: relative;
@@ -33,14 +55,58 @@ const NewTweetForm = styled.form`
   overflow: visible;
 `
 
+// PLAN ANIMATION
+  // What happens to tweet entry container?
+  // Everything except user logo and and tweet text is removed
+  // loading bar animation starts
+  // new tweet creation function is called
+  // upon successful tweet creation, new tweet is added to bottom of tweet entry container
+  // this is done by adding it to an array, so that multiple new tweets can be added
+  // tweet entry container is reset back to neutral state
+
+
+const LoadingBar = styled.div`
+  position: absolute;
+  width: 20px;
+  height: 4px;
+  border-radius: 100px;
+  top: 0px;
+  left: -10px;
+  background-color: ${PRIMARY_COLOR};
+  animation: loadProgress 2s ease-out;
+
+  @keyframes loadProgress {
+    from {
+      width: 20px;
+    }
+    to {
+      width: 100%;
+    }
+  }
+`
+
 const NewTweetEntry = (props) => {
   const userContext = useContext(UserContext) 
   const followContext = useContext(FollowContext)
-  const followers = followContext.followers
+  const { followers } = followContext
 
   const [currentTextState, setCurrentTextState] = useState('')
   const [inputExpandedState, setInputExpandedState] = useState(false)
   const [accountInitial, setAccountInitial] = useState('')
+  const [newTweetsArray, setNewTweetsArray] = useState([])
+  const [tweetUploadingState, setTweetUploadingState] = useState(false)
+
+  const formParent = useRef(null)
+  const tweetsParent = useRef(null)
+  const userParent = useRef(null)
+
+  const newTweetRef = useRef(null)
+
+  useEffect(() => {
+    tweetsParent.current && autoAnimate(tweetsParent.current, { duration: 250 })
+    formParent.current && autoAnimate(formParent.current, { duration: 75 })
+    userParent.current && autoAnimate(userParent.current, { duration: 50 })
+  },[formParent, tweetsParent, userParent])
 
   useEffect(() => {
     if (props.popup) { setInputExpandedState(true) }
@@ -58,31 +124,42 @@ const NewTweetEntry = (props) => {
   }
 
   const submitTweet = async () => {
-    await createNewTweet(currentTextState, userContext, followers)
+    setTweetUploadingState(true)
+    const tweetData = await createNewTweet(currentTextState, userContext, followers)
+    const newTweet = <TweetDisplay tweetData={{...tweetData, ...userContext}} key={tweetData.tweetId}></TweetDisplay>
+    newTweetRef.current = newTweet
+    setCurrentTextState('')
+    setInputExpandedState(false)
+    setTweetUploadingState(false)
+    setNewTweetsArray((oldTweets) => { return [newTweet, ...oldTweets] })
   }
 
   const expandTweetInput = () => {
     setInputExpandedState(true)
   }
-  const collapseTweetInput = () => {
-    setInputExpandedState(false)
-  }
 
   return (
-    <NewTweetContainer popup={props.popup}>
-      <UserAccountContainer>
-        <UserCircle data-testid="user-initial">{accountInitial}</UserCircle>
-      </UserAccountContainer>
-      <NewTweetForm>
-        <AudienceSelector expanded={inputExpandedState}/>
-        <TweetInput value={currentTextState} 
-          updateValue={updateValue}
-          expandTweetInput={expandTweetInput}
-          popup={props.popup} />
-        <WhoCanReply expanded={inputExpandedState}/>
-        <ButtonBar submitTweet={submitTweet} tweetText={currentTextState}/>
-      </NewTweetForm>
-    </NewTweetContainer>
+    <OuterContainer>
+      <NewTweetEntryContainer popup={props.popup}>
+        {tweetUploadingState ? <LoadingBar></LoadingBar> : false}
+        <UserAccountContainer>
+          <UserCircle data-testid="user-initial" ref={userParent}>
+            {accountInitial}
+            {tweetUploadingState ? <UserCircleOverlay/> : ''}
+          </UserCircle>
+        </UserAccountContainer>
+        <NewTweetForm ref={formParent}>
+          {tweetUploadingState ? false : <AudienceSelector expanded={inputExpandedState}/>}
+          <TweetInput value={currentTextState}
+            updateValue={updateValue}
+            expandTweetInput={expandTweetInput}
+            popup={props.popup} />
+          {tweetUploadingState ? false : <WhoCanReply expanded={inputExpandedState}/>}
+          {tweetUploadingState ? false : <ButtonBar submitTweet={submitTweet} tweetText={currentTextState}/>}
+        </NewTweetForm>
+      </NewTweetEntryContainer>
+      <OuterContainer ref={tweetsParent}>{newTweetsArray}</OuterContainer>
+    </OuterContainer>
   );
 };
 

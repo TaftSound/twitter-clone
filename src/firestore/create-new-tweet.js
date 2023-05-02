@@ -7,7 +7,10 @@ export const createNewTweet = async (newTweetText, userObject, followers) => {
   try {
     const tweetDataObject = prepareTweetData(userObject, newTweetText);
     await batchWriteTweet(tweetDataObject, followers);
-
+    return {
+      ...tweetDataObject.tweet.data,
+      tweetId: tweetDataObject.tweetId
+    }
   } catch (error) {
     console.error("Failure to store new tweet in database", error);
   }

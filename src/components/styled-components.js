@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { USER_ICON_COLOR, MAIN_FONT_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FAMILY, BUTTON_TOOLTIP_BACKGROUND } from "./constants";
 
 export const UserCircle = styled.button`
+  position: relative;
+  z-index: 100;
   border-radius: 50%;
   font-size: 28px;
   height: 47.5px;

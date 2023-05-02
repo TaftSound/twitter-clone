@@ -24,7 +24,6 @@ export const listenForFollowerData = () => {
       unsubFollowSnap = onSnapshot(
         followDocRef, 
         (snapshot) => {
-          console.log(snapshot.data())
           PubSub.publish('update follow list', snapshot.data())
         },
         (error) => {
