@@ -1,6 +1,7 @@
 
 export const PRIMARY_COLOR = "rgb(29, 155, 240)"
 export const BACKGROUND_COLOR = "rgb(0, 0, 0)"
+export const DIVIDER_COLOR_LIGHT = "rgb(47,51,54)"
 export const DIVIDER_COLOR = "rgb(51,54,57)"
 export const MAIN_FONT_COLOR = "rgb(231, 233, 234)"
 export const SECONDARY_FONT_COLOR = "rgb(113, 118, 123)"

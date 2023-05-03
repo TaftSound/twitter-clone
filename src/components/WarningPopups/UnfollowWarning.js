@@ -1,5 +1,5 @@
 import PubSub from "pubsub-js";
-import { unfollowUser } from "../../firestore/follower-list-functions";
+import { unfollowUser } from "../../firebase/firestore/follower-list-functions";
 import ConfirmationPopup from "../ConfirmationPopup/ConfirmationPopup";
 
 const UnfollowWarning = (props) => {

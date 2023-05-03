@@ -5,7 +5,7 @@ import { FormButton } from "../StyledButtons/FormButton";
 import UnfollowWarning from "../WarningPopups/UnfollowWarning"
 
 import { ALERT_RED, ALERT_RED_DARK, ALERT_RED_TRANSPARENT, BUTTON_BORDER_COLOR, MAIN_FONT_COLOR, WHO_TO_FOLLOW_BACKGROUND } from "../constants";
-import { followUser, unfollowUser } from "../../firestore/follower-list-functions";
+import { followUser, unfollowUser } from "../../firebase/firestore/follower-list-functions";
 import { FollowContext } from "../../App";
 import { useContext, useEffect, useState } from "react";
 import { useRef } from "react";

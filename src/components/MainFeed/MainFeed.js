@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
-import { getForYouFeed, getFollowingFeed } from "../../firestore/user-feed";
+import { getForYouFeed, getFollowingFeed } from "../../firebase/firestore/user-feed";
+import { getUsersToFollow } from "../../firebase/firestore/follower-list-functions";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import TweetDisplay from "../TweetDisplay/TweetDisplay";
 import PubSub from "pubsub-js";
 import WhoToFollow from "../WhoToFollow/WhoToFollow";
-import { getUsersToFollow } from "../../firestore/follower-list-functions";
 
 const LoadingContainer = styled(LoadingPage)`
   height: 100px;

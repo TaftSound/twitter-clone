@@ -1,10 +1,9 @@
 import styled from "styled-components";
-import PubSub from "pubsub-js";
 import { BACKGROUND_COLOR, SECONDARY_FONT_COLOR, MAIN_FONT_COLOR, BUTTON_HOVER_BACKGROUND, PRIMARY_COLOR } from "../../constants";
 import { useContext, useState } from "react";
 import { FollowContext, UserContext } from "../../../App";
 import { StyledLogo } from "../../styled-components";
-import { followUser } from "../../../firestore/follower-list-functions";
+import { followUser } from "../../../firebase/firestore/follower-list-functions";
 import UnfollowWarning from "../../WarningPopups/UnfollowWarning";
 import DeleteWarning from "../../WarningPopups/DeleteWarning";
 

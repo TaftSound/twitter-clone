@@ -1,15 +1,7 @@
-// need to delete actual tweet - done
-// need to delete reference in current user's tweets - done
-// need to delete reference in user feed of every user that follows current user - done
-// need to delete reference in tweetLedger - done
-
-import { deleteField, doc, getDoc, runTransaction, writeBatch } from "firebase/firestore"
+import { doc, runTransaction, } from "firebase/firestore"
 import { auth } from "../auth"
+import { deleteTweetImages } from "../storage/delete-image"
 import { db } from "./firestore"
-
-// data needed:
-  // tweetId
-  // followers
 
 
 const getFollowerDocRefs = (followers) => {
@@ -51,6 +43,7 @@ export const deleteTweet = async (tweetId, followers) => {
       })
       transaction.delete(tweetDocRef)
     })
+    await deleteTweetImages(tweetId)
   } catch (error) {
     console.error("Failure to delete user tweet:", error)
   }

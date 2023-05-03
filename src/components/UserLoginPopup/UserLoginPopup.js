@@ -10,8 +10,8 @@ import { FormButton } from "../StyledButtons/FormButton"
 import { OrDivider } from "./OrDivider"
 import { UserNameInput } from "./UserNameInput"
 
-import { anonymousGuestSignin, googlePopupSignin, googlePopupSignup  } from "../../auth"
-import { checkUserNameAvailability } from "../../firestore/user-functions"
+import { anonymousGuestSignin, googlePopupSignin, googlePopupSignup  } from "../../firebase/auth"
+import { checkUserNameAvailability } from "../../firebase/firestore/user-functions"
 import { useNavigate } from "react-router-dom"
 
 

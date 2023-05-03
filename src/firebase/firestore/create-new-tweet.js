@@ -2,14 +2,19 @@ import { doc, collection, writeBatch } from "firebase/firestore";
 import { db } from "./firestore";
 
 import { createFakeUser } from "./user-functions";
+import { storeTweetImages } from "../storage/store-image";
 
-export const createNewTweet = async (newTweetText, userObject, followers) => {
+export const createNewTweet = async (newTweetText, imageFilesArray, userObject, followers) => {
   try {
     const tweetDataObject = prepareTweetData(userObject, newTweetText);
+    if (imageFilesArray[0]) {
+      const imageUrls = await storeTweetImages(imageFilesArray, tweetDataObject.tweetId)
+      tweetDataObject.tweet.data.imageUrls = imageUrls
+    }
     await batchWriteTweet(tweetDataObject, followers);
     return {
       ...tweetDataObject.tweet.data,
-      tweetId: tweetDataObject.tweetId
+      tweetId: tweetDataObject.tweetId,
     }
   } catch (error) {
     console.error("Failure to store new tweet in database", error);
@@ -63,8 +68,8 @@ const prepareTweetData = (userObject, newTweetText) => {
 
 
 
-const fakeUserObject = { userId: 'MarkTwain' }
-const fakeTweetText = "It is better to keep your mouth closed and let people think you are a fool than to open it and remove all doubt"
+// const fakeUserObject = { userId: 'MarkTwain' }
+// const fakeTweetText = "It is better to keep your mouth closed and let people think you are a fool than to open it and remove all doubt"
 
-createFakeUser('NeildeGrasseTyson', 'Neil deGrasse Tyson')
+// createFakeUser('NeildeGrasseTyson', 'Neil deGrasse Tyson')
 // createNewTweet(fakeTweetText, fakeUserObject, []) 

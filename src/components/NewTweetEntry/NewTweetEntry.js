@@ -1,20 +1,20 @@
 import styled from "styled-components";
 import autoAnimate from "@formkit/auto-animate";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState, useRef } from "react";
 
 import { AudienceSelector } from "./AudienceSelector";
 import { TweetInput } from "./TweetInput";
 import { WhoCanReply } from "./WhoCanReply";
 import { ButtonBar } from "./ButtonBar";
 import { UserCircle } from "../styled-components";
+import TweetDisplay from "../TweetDisplay/TweetDisplay";
+import { CloseButton } from "../StyledButtons/CloseButton";
 
 import { FollowContext, UserContext } from "../../App";
 import { DIVIDER_COLOR, PRIMARY_COLOR } from "../constants";
 
-import { createNewTweet } from "../../firestore/create-new-tweet";
-import { useRef } from "react";
-import TweetDisplay from "../TweetDisplay/TweetDisplay";
+import { createNewTweet } from "../../firebase/firestore/create-new-tweet";
 
 
 const OuterContainer = styled.div`
@@ -54,15 +54,18 @@ const NewTweetForm = styled.form`
   padding: 4px 0px 0px;
   overflow: visible;
 `
-
-// PLAN ANIMATION
-  // What happens to tweet entry container?
-  // Everything except user logo and and tweet text is removed
-  // loading bar animation starts
-  // new tweet creation function is called
-  // upon successful tweet creation, new tweet is added to bottom of tweet entry container
-  // this is done by adding it to an array, so that multiple new tweets can be added
-  // tweet entry container is reset back to neutral state
+const ImageContainer = styled.div`
+  max-width: 100%;
+  position: relative;
+`
+const Img = styled.img`
+  width: 100%;
+`
+const ImgDeleteButton = styled(CloseButton)`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+`
 
 
 const LoadingBar = styled.div`
@@ -94,7 +97,10 @@ const NewTweetEntry = (props) => {
   const [inputExpandedState, setInputExpandedState] = useState(false)
   const [accountInitial, setAccountInitial] = useState('')
   const [newTweetsArray, setNewTweetsArray] = useState([])
+  const [readyToUpload, setReadyToUpload] = useState(false)
   const [tweetUploadingState, setTweetUploadingState] = useState(false)
+  const [imageUrls, setImageUrls] = useState([])
+  const [imageFiles, setImageFiles] = useState([])
 
   const formParent = useRef(null)
   const tweetsParent = useRef(null)
@@ -103,9 +109,9 @@ const NewTweetEntry = (props) => {
   const newTweetRef = useRef(null)
 
   useEffect(() => {
-    tweetsParent.current && autoAnimate(tweetsParent.current, { duration: 250 })
-    formParent.current && autoAnimate(formParent.current, { duration: 75 })
-    userParent.current && autoAnimate(userParent.current, { duration: 50 })
+    tweetsParent.current && autoAnimate(tweetsParent.current, { duration: 200 })
+    formParent.current && autoAnimate(formParent.current, { duration: 50 })
+    userParent.current && autoAnimate(userParent.current, { duration: 25 })
   },[formParent, tweetsParent, userParent])
 
   useEffect(() => {
@@ -113,10 +119,20 @@ const NewTweetEntry = (props) => {
   }, [props.popup])
 
   useEffect(() => {
-    if (userContext) {
-      setAccountInitial(userContext.displayName[0])
-    }
+    if (userContext) { setAccountInitial(userContext.displayName[0]) }
   }, [userContext])
+  
+  const checkUploadReady = useMemo(() => {
+    if (imageUrls[0] || currentTextState) {
+      return true
+    } else return false
+  }, [imageUrls, currentTextState])
+
+  useEffect(() => {
+    if (checkUploadReady) {
+      setReadyToUpload(true)
+    } else setReadyToUpload(false)
+  }, [checkUploadReady])
 
   const updateValue = (event) => {
     const newValue = event.target.value
@@ -125,13 +141,33 @@ const NewTweetEntry = (props) => {
 
   const submitTweet = async () => {
     setTweetUploadingState(true)
-    const tweetData = await createNewTweet(currentTextState, userContext, followers)
+    const tweetData = await createNewTweet(currentTextState, imageFiles, userContext, followers)
     const newTweet = <TweetDisplay tweetData={{...tweetData, ...userContext}} key={tweetData.tweetId}></TweetDisplay>
     newTweetRef.current = newTweet
     setCurrentTextState('')
     setInputExpandedState(false)
     setTweetUploadingState(false)
-    setNewTweetsArray((oldTweets) => { return [newTweet, ...oldTweets] })
+    setImageUrls([])
+    setImageFiles([])
+    setTimeout(() => {
+      setNewTweetsArray((oldTweets) => { return [newTweet, ...oldTweets] })
+    }, 250)
+  }
+
+  const uploadImage = (event) => {
+    const imageFile = event.target.files[0]
+    const imgUrl = URL.createObjectURL(imageFile)
+    setImageFiles((oldFiles) => {
+      return [...oldFiles, imageFile]
+    })
+    setImageUrls((imageUrls) => {
+      return [...imageUrls, imgUrl]
+    })
+  }
+  const removeImage = (index) => {
+    const imgUrls = [...imageUrls]
+    imgUrls.splice(index, 1)
+    setImageUrls(imgUrls)
   }
 
   const expandTweetInput = () => {
@@ -145,7 +181,7 @@ const NewTweetEntry = (props) => {
         <UserAccountContainer>
           <UserCircle data-testid="user-initial" ref={userParent}>
             {accountInitial}
-            {tweetUploadingState ? <UserCircleOverlay/> : ''}
+            {tweetUploadingState && <UserCircleOverlay/>}
           </UserCircle>
         </UserAccountContainer>
         <NewTweetForm ref={formParent}>
@@ -154,8 +190,21 @@ const NewTweetEntry = (props) => {
             updateValue={updateValue}
             expandTweetInput={expandTweetInput}
             popup={props.popup} />
+          {imageUrls[0] && imageUrls.map((imageUrl, index) => {
+            return (
+              <ImageContainer key={index}>
+                <Img src={imageUrl} alt="uploaded-image"></Img>
+                <ImgDeleteButton onClick={() => { removeImage(index) }}></ImgDeleteButton>
+              </ImageContainer>
+            )
+          })}
           {tweetUploadingState ? false : <WhoCanReply expanded={inputExpandedState}/>}
-          {tweetUploadingState ? false : <ButtonBar submitTweet={submitTweet} tweetText={currentTextState}/>}
+          {tweetUploadingState 
+          ? false
+          : <ButtonBar submitTweet={submitTweet} 
+                       uploadImage={uploadImage}
+                       tweetReady={readyToUpload}
+                       />}
         </NewTweetForm>
       </NewTweetEntryContainer>
       <OuterContainer ref={tweetsParent}>{newTweetsArray}</OuterContainer>

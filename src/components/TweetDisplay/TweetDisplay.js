@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import styled from "styled-components"
+import { DIVIDER_COLOR_LIGHT } from "../constants";
 import { DividerLine } from "../styled-components";
 import { TweetButtonBar } from "./TweetButtonBar";
 
@@ -36,8 +37,15 @@ const BottomDividerLine = styled(DividerLine)`
   right: 0;
 `
 
+const TweetImage = styled.img`
+  max-width: 100%;
+  border: solid 1px ${DIVIDER_COLOR_LIGHT};
+  border-radius: 16px;
+  margin-top: 12px;
+`
+
 const TweetDisplay = ({ tweetData }) => {
-  const { text, likes, displayName, } = tweetData
+  const { text, likes, imageUrls, displayName, } = tweetData
   const [hidden, setHidden] = useState(false)
 
   const hideTweet = (boolean) => {
@@ -52,6 +60,9 @@ const TweetDisplay = ({ tweetData }) => {
       <InnerContainer>
         <TweetHeader tweetData={tweetData} hideTweet={hideTweet}></TweetHeader>
         <TweetText>{text}</TweetText>
+        {imageUrls && imageUrls.map((url) => {
+          return <TweetImage src={url} key={url} alt='user uploaded image'></TweetImage>
+        })}
         <TweetButtonBar likes={likes}/>
       </InnerContainer>
       <BottomDividerLine></BottomDividerLine>

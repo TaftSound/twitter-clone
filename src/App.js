@@ -1,14 +1,15 @@
 import { onAuthStateChanged } from 'firebase/auth';
-import { createContext, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import { auth } from './auth';
-import { getUserData } from "./firestore/current-user-data";
 import PubSub from 'pubsub-js';
 
 import HomePage from "./components/HomePage/HomePage"
 import LoginPage from "./components/LoginPage/LoginPage"
 import LogoutPage from './components/LogoutPage/LogoutPage';
-import { getFollowerList, listenForFollowerData, unsubscribeFromFollowerData } from './firestore/follower-list-functions';
+
+import { auth } from './firebase/auth';
+import { getUserData } from "./firebase/firestore/current-user-data";
+import { getFollowerList, listenForFollowerData, unsubscribeFromFollowerData } from './firebase/firestore/follower-list-functions';
 
 export const UserContext = createContext()
 export const FollowContext = createContext()

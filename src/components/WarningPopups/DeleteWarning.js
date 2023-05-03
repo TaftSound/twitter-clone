@@ -1,4 +1,4 @@
-import { deleteTweet } from "../../firestore/delete-user-tweet";
+import { deleteTweet } from "../../firebase/firestore/delete-user-tweet";
 import ConfirmationPopup from "../ConfirmationPopup/ConfirmationPopup";
 
 const DeleteWarning = (props) => {
