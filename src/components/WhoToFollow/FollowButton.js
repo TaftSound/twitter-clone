@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import PubSub from "pubsub-js";
 
 import { FormButton } from "../StyledButtons/FormButton";
 import UnfollowWarning from "../WarningPopups/UnfollowWarning"

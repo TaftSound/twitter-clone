@@ -23,6 +23,7 @@ const PopupContainer = styled.div`
   width: 100%;
   max-height: 90vh;
   overflow: ${props => props.scroll ? 'scroll' : 'visible'};
+  overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -36,7 +37,7 @@ const PopupContainer = styled.div`
 `;
 const StickyHeader = styled.div`
   position: sticky;
-  z-index: 5;
+  z-index: 9;
   top: 0;
   padding: 0px 16px;
   border-radius: 16px;

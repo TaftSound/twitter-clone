@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import autoAnimate from "@formkit/auto-animate";
+import PubSub from "pubsub-js";
 
 import { useContext, useEffect, useMemo, useState, useRef } from "react";
 
@@ -70,11 +71,12 @@ const ImgDeleteButton = styled(CloseButton)`
 
 const LoadingBar = styled.div`
   position: absolute;
+  z-index: 10;
   width: 20px;
   height: 4px;
   border-radius: 100px;
   top: 0px;
-  left: -10px;
+  left: -5px;
   background-color: ${PRIMARY_COLOR};
   animation: loadProgress 2s ease-out;
 
@@ -112,7 +114,7 @@ const NewTweetEntry = (props) => {
     tweetsParent.current && autoAnimate(tweetsParent.current, { duration: 200 })
     formParent.current && autoAnimate(formParent.current, { duration: 50 })
     userParent.current && autoAnimate(userParent.current, { duration: 25 })
-  },[formParent, tweetsParent, userParent])
+  },[formParent, userParent])
 
   useEffect(() => {
     if (props.popup) { setInputExpandedState(true) }
@@ -150,9 +152,22 @@ const NewTweetEntry = (props) => {
     setImageUrls([])
     setImageFiles([])
     setTimeout(() => {
-      setNewTweetsArray((oldTweets) => { return [newTweet, ...oldTweets] })
+      PubSub.publish('display new tweet', newTweet)
+      if (props.popup) { props.removePopup() }
+      // setNewTweetsArray((oldTweets) => { return [newTweet, ...oldTweets] })
     }, 250)
   }
+
+  useEffect(() => {
+    if (props.popup) { return }
+    const listenerToken = PubSub.subscribe('display new tweet', (msg, newTweet) => {
+      setNewTweetsArray((oldTweets) => { return [newTweet, ...oldTweets] })
+    })
+
+    return () => {
+      PubSub.unsubscribe(listenerToken)
+    }
+  }, [props.popup])
 
   const uploadImage = (event) => {
     const imageFile = event.target.files[0]
@@ -166,8 +181,11 @@ const NewTweetEntry = (props) => {
   }
   const removeImage = (index) => {
     const imgUrls = [...imageUrls]
+    const imgFiles = [...imageFiles]
     imgUrls.splice(index, 1)
+    imgFiles.splice(index, 1)
     setImageUrls(imgUrls)
+    setImageFiles(imgFiles)
   }
 
   const expandTweetInput = () => {
@@ -176,8 +194,9 @@ const NewTweetEntry = (props) => {
 
   return (
     <OuterContainer>
+    {tweetUploadingState && props.popup ? <LoadingBar></LoadingBar> : false}
       <NewTweetEntryContainer popup={props.popup}>
-        {tweetUploadingState ? <LoadingBar></LoadingBar> : false}
+        {tweetUploadingState && !props.popup ? <LoadingBar></LoadingBar> : false}
         <UserAccountContainer>
           <UserCircle data-testid="user-initial" ref={userParent}>
             {accountInitial}

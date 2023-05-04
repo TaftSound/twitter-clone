@@ -6,6 +6,7 @@ import LoadingPage from "../LoadingPage/LoadingPage";
 import TweetDisplay from "../TweetDisplay/TweetDisplay";
 import PubSub from "pubsub-js";
 import WhoToFollow from "../WhoToFollow/WhoToFollow";
+import { useMemo } from "react";
 
 const LoadingContainer = styled(LoadingPage)`
   height: 100px;
@@ -18,6 +19,7 @@ const MainFeed = (props) => {
   const [hasLoaded, setHasLoaded] = useState(false)
   const [currentTab, setCurrentTab] = useState("For you")
   
+  const currentTabRef = useRef("For you")
   const sentinelRef = useRef(null)
   const observer = useRef(null)
   const loadCount = useRef(0)
@@ -31,6 +33,15 @@ const MainFeed = (props) => {
       PubSub.unsubscribe(tabChangeToken)
     }
   }, [])
+
+  const memoizedTabData = useMemo(() => {
+    if (currentTab === "For you") {
+      return "For you"
+    } else if (currentTab === "Following") {
+      return "Following"
+    }
+    
+  }, [currentTab])
 
   useEffect(() => { 
     loadCount.current = 0
@@ -47,7 +58,7 @@ const MainFeed = (props) => {
     const startLoadCycle = async () => {
       setHasLoaded(false)
       observer.current.disconnect()
-      return currentTab === "For you"
+      return memoizedTabData === "For you"
       ? await getForYouFeed(loadCount.current)
       : await getFollowingFeed(loadCount.current)
     }
@@ -56,7 +67,7 @@ const MainFeed = (props) => {
       setHasLoaded(true)
       if (!newTweets[0]) { return }
       setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
-      if (currentTab === "For you") { await loadUsersToFollow(loadCount.current) }
+      if (memoizedTabData === "For you") { await loadUsersToFollow(loadCount.current) }
       loadCount.current = loadCount.current + 1
       if (sentinelRef.current) observer.current.observe(sentinelRef.current)
     }
@@ -74,7 +85,7 @@ const MainFeed = (props) => {
     if (sentinelRef.current) { observer.current.observe(sentinelRef.current) }
 
     return () => { observer.current.disconnect() }
-  }, [currentTab])
+  }, [memoizedTabData])
 
   const isWhoToFollowPlacement = (index) => {
     if (index !== 0 

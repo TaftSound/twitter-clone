@@ -3,7 +3,7 @@ import { USER_ICON_COLOR, MAIN_FONT_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FA
 
 export const UserCircle = styled.button`
   position: relative;
-  z-index: 100;
+  z-index: 5;
   border-radius: 50%;
   font-size: 28px;
   height: 47.5px;

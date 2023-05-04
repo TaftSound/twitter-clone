@@ -19,7 +19,7 @@ const HomePage = (props) => {
   }, [userContext])
 
   useEffect(() => {
-      memoizedUserData ? setPageDisplayed(true) : setPageDisplayed(false)
+    memoizedUserData ? setPageDisplayed(true) : setPageDisplayed(false)
   }, [memoizedUserData])
 
   return pageDisplayed
