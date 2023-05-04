@@ -13,6 +13,13 @@ const LoadingContainer = styled(LoadingPage)`
   width: 100%;
 `
 
+const CenterWhoToFollow = styled(WhoToFollow)`
+
+  @media (min-width: 992px) {
+    display: none;
+  }
+`
+
 const MainFeed = (props) => {
   const [tweetFeed, setTweetFeed] = useState([])
   const [whoToFollowFeed, setWhoToFollowFeed] = useState([])
@@ -104,7 +111,7 @@ const MainFeed = (props) => {
         return (
           <div key={tweetData.tweetId}>
             <TweetDisplay tweetData={tweetData}></TweetDisplay>
-            <WhoToFollow mainFeed={true} userData={whoToFollowFeed[(index + 1) / 5 - 1]}></WhoToFollow>
+            <CenterWhoToFollow mainFeed={true} userData={whoToFollowFeed[(index + 1) / 5 - 1]}></CenterWhoToFollow>
           </div>
         )
       }

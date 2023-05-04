@@ -37,7 +37,7 @@ const WhoToFollow = (props) => {
   if (!userData) { return false }
   
   return (
-    <OuterContainer>
+    <OuterContainer className={props.className}>
       <InnerContainer mainFeed={props.mainFeed}>
         <ItemContainer><Header>Who to follow</Header></ItemContainer>
         {userData.map((user) => {

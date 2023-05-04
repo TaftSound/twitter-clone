@@ -22,7 +22,17 @@ const Container = styled.div`
     
   }
 
-  @media (min-width: 992px) {
+  @media (min-width: 988px) {
+    padding: 0px 4px;
+    width: 60px;
+  }
+
+  @media (min-width: 1008px) {
+    padding: 0px 8px;
+    width: 72px;
+  }
+
+  @media (min-width: 1078px) {
     
   }
 

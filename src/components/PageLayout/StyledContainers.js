@@ -27,8 +27,16 @@ export const LeftContainer = styled.div`
     width: calc(35vw - 153px);
   }
 
-  @media (min-width: 992px) {
-    
+  @media (min-width: 988px) {
+    width: calc(55vw - 475px);
+  }
+
+  @media (min-width: 1008px) {
+    width: calc(51vw - 425px);
+  }
+
+  @media (min-width: 1078px) {
+    width: calc(51vw - 461px);
   }
 
   @media (min-width: 1200px) {
