@@ -45,7 +45,7 @@ const TweetImage = styled.img`
 `
 
 const TweetDisplay = ({ tweetData }) => {
-  const { text, likes, imageUrls, displayName, } = tweetData
+  const { text, imageUrls, displayName, } = tweetData
   const [hidden, setHidden] = useState(false)
 
   const hideTweet = (boolean) => {
@@ -63,7 +63,7 @@ const TweetDisplay = ({ tweetData }) => {
         {imageUrls && imageUrls.map((url) => {
           return <TweetImage src={url} key={url} alt='user uploaded image'></TweetImage>
         })}
-        <TweetButtonBar likes={likes}/>
+        <TweetButtonBar tweetData={tweetData}/>
       </InnerContainer>
       <BottomDividerLine></BottomDividerLine>
     </OuterContainer>
