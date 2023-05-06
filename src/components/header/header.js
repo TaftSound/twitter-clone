@@ -8,6 +8,16 @@ import PropTypes from 'prop-types';
 import uniqid from 'uniqid'
 
 import SearchBar from "../SearchBar/SearchBar";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+const HeaderContainerOuter = styled.div`
+  position: relative;
+  z-index: 25;
+  border-bottom: solid 1px ${DIVIDER_COLOR};
+  background-color: rgb(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+`
 
 const NavButtonOuter = styled.div`
   flex-grow: 1;
@@ -107,15 +117,13 @@ const displayLogin = () => {
   PubSub.publish('login user')
 }
 
-// const SettingsButton = styled(StyledSmallMenuButton)`
-// `
 
-const HeaderComponent = (props) => {
+const Header = (props) => {
 
   const [currentTab, setCurrentTab] = useState(props.defaultTab)
 
   return (
-    <div data-testid="home-header" className={props.className}>
+    <HeaderContainerOuter data-testid="home-header" className={props.className}>
       {props.titleHeader ? <HeaderContainer><H1>{props.titleHeader}</H1></HeaderContainer> : false }
       {props.searchBar
         ? <HeaderContainer>
@@ -133,15 +141,59 @@ const HeaderComponent = (props) => {
                             setCurrentTab={setCurrentTab} />
         })}
       </TabContainer>
-    </div>
+    </HeaderContainerOuter>
   )
 }
-const Header = styled(HeaderComponent)`
-  position: relative;
-  z-index: 25;
-  border-bottom: solid 1px ${DIVIDER_COLOR};
-  background-color: rgb(0, 0, 0, 0.65);
-  backdrop-filter: blur(12px);
+
+const ProfileH1Container = styled.div`
+  padding: 2px 0px;
+  margin-top: -2px;
 `
+const TweetCount = styled.p`
+  color: ${SECONDARY_FONT_COLOR};
+  font-size: 14px;
+  margin: 0px;
+`
+const BackButtonContainer = styled.div`
+  width: 56px;
+`
+const BackButton = styled(SmallMenuButton)`
+  margin-left: -7px;
+`
+
+export const ProfileHeader = (props) => {
+  const navigate = useNavigate()
+  const [tweetCount, setTweetCount] = useState(0)
+
+  const navigateBack = () => {
+    navigate(-1)
+  }
+
+  useEffect(() => {
+    const unsubToken = PubSub.subscribe('set user tweet count', (msg, count) => {
+      setTweetCount(count)
+    })
+
+    return () => {
+      PubSub.unsubscribe(unsubToken)
+    }
+  }, [])
+
+  return (
+    <HeaderContainerOuter className={props.className}>
+      <HeaderContainer>
+        <BackButtonContainer>
+          <BackButton onClick={navigateBack} title="Back" path="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z" />
+        </BackButtonContainer>
+        <div>
+          <ProfileH1Container>
+            <H1>{props.titleHeader}</H1>
+          </ProfileH1Container>
+          <TweetCount>{tweetCount} Tweets</TweetCount>
+        </div>
+      </HeaderContainer>
+    </HeaderContainerOuter>
+  )
+}
 
 export default Header

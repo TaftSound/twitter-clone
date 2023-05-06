@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import HomePage from './HomePage.js';
+import AppPage from './AppPage.js';
 
 jest.mock("../PageLayout/PageLayout", () => {
   return ({ centerContent }) => (
@@ -22,10 +22,10 @@ jest.mock('../Header/Header', () => () => (
 
 describe('HomePage component', () => {
   it('renders without crashing', () => {
-    render(<HomePage/>)
+    render(<AppPage/>)
   })
   it('Passes correct props to mocked page layout component', () => {
-    render(<HomePage/>)
+    render(<AppPage/>)
     
     expect(screen.getByTestId('mocked-page-layout')).toBeInTheDocument()
     expect(screen.getByTestId('mocked-new-tweet-entry')).toBeInTheDocument()

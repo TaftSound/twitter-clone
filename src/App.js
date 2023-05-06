@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import PubSub from 'pubsub-js';
 
-import HomePage from "./components/HomePage/HomePage"
+import AppPage from "./components/AppPage/AppPage"
 import LoginPage from "./components/LoginPage/LoginPage"
 import LogoutPage from './components/LogoutPage/LogoutPage';
 
@@ -79,8 +79,8 @@ const PageRoutes = (props) => {
   return (
     <Routes>
       <Route path="/" element={<LoginPage />}/>
-      <Route path="/home" element={<HomePage />}/>
-      <Route path="/user-profile" element={<HomePage/>}/>
+      <Route path="/home" element={<AppPage current={'home'} />}/>
+      <Route path="/user-profile" element={<AppPage current={'profile'} />}/>
       <Route path="/logout" element={<LogoutPage/>} />
     </Routes>
   )
