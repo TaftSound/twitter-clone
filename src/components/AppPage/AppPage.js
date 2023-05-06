@@ -8,6 +8,7 @@ import { UserContext } from "../../App"
 import LoadingPage from "../LoadingPage/LoadingPage"
 import { useMemo } from "react"
 import SidebarWhoToFollow from "../WhoToFollow/SidebarWhoToFollow"
+import ProfileDetails from "../ProfileDetails/ProfileDetails"
 
 
 const AppPage = (props) => {
@@ -49,6 +50,8 @@ const AppPage = (props) => {
         <PageLayout 
         header={<ProfileHeader titleHeader={userContext.displayName} />}
         centerContent={[
+          <ProfileDetails></ProfileDetails>,
+          <Header defaultTab="Tweets" tabsArray={["Tweets", "Likes"]}></Header>,
           pageDisplayed ? <MainFeed></MainFeed> : false
         ]}
         sidebarContent={[

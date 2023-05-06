@@ -13,6 +13,11 @@
   src: url('./fonts/GT-America-Standard-Bold-Trial.woff2') format('woff2');
   font-weight: 700;
 }
+@font-face {
+  font-family: 'GT-America';
+  src: url('./fonts/GT-America-Standard-Black-Trial.woff2') format('woff2');
+  font-weight: 900;
+}
 
 body {
   margin: 0;

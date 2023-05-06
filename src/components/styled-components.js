@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { USER_ICON_COLOR, MAIN_FONT_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FAMILY, BUTTON_TOOLTIP_BACKGROUND } from "./constants";
+import { USER_ICON_COLOR, MAIN_FONT_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FAMILY, BUTTON_TOOLTIP_BACKGROUND, SECONDARY_FONT_COLOR } from "./constants";
 
 export const UserCircle = styled.button`
   position: relative;
@@ -13,7 +13,7 @@ export const UserCircle = styled.button`
   justify-content: center;
   border: none;
   background-color: ${USER_ICON_COLOR};
-  color: ${MAIN_FONT_COLOR};
+  color: white;
 `
 
 export const SmallUserCircle = styled(UserCircle)`
@@ -78,7 +78,23 @@ const Logo = (props) => {
 }
 
 export const StyledLogo = styled(Logo)`
-height: 16px;
-width: 16px;
-fill: ${PRIMARY_COLOR};
+  height: 16px;
+  width: 16px;
+  fill: ${PRIMARY_COLOR};
+`
+export const SmallGreyLogo = styled(Logo)`
+  height: 18.75px;
+  width: 18.75px;
+  fill: ${SECONDARY_FONT_COLOR};
+`
+
+export const FlexBox = styled.div`
+  display: flex;
+  ${props => props.height && `height: ${props.height};`}
+  ${props => props.width && `width: ${props.width};`}
+  ${props => props.margin && `margin: ${props.margin};`}
+  ${props => props.padding && `padding: ${props.padding};`}
+  ${props => props.direction && `flex-direction: ${props.direction};`}
+  ${props => props.alignItems && `align-items: ${props.alignItems};`}
+  ${props => props.justifyContent && `justify-content: ${props.justifyContent};`}
 `

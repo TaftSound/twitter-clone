@@ -64,7 +64,8 @@ export const createNewUser = async (user, userName) => {
     batch.set(userDocRef, {
       displayName: user.displayName,
       userName: userName,
-      userId: user.uid
+      userId: user.uid,
+      timestamp: Date.now()
     });
     batch.set(userPrivateDataDocRef, {
       email: user.email,
