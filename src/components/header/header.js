@@ -137,9 +137,11 @@ const HeaderComponent = (props) => {
   )
 }
 const Header = styled(HeaderComponent)`
-  position: sticky;
-  top: 0;
+  position: relative;
+  z-index: 25;
   border-bottom: solid 1px ${DIVIDER_COLOR};
+  background-color: rgb(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
 `
 
 export default Header

@@ -11,6 +11,17 @@ const OuterSearchBarContainer = styled.div`
   position: relative;
   margin: 0px 4px;
   width: 100%;
+  ${props => props.sidebar && 'visibility: hidden;'}
+  ${props => props.sidebar && 'display: none;'}
+
+  @media (min-width: 988px) {
+    ${props => props.sidebar && 'visibility: visible;'}
+    ${props => props.sidebar && 'display: block;'}
+    ${props => props.sidebar && 'width: 288px;'}
+  }
+  @media (min-width: 1078px) {
+    ${props => props.sidebar && 'width: 348px;'}
+  }
 `
 
 const SearchBarContainer = styled.div`
@@ -79,7 +90,7 @@ const SearchBar = (props) => {
   }
 
   return (
-    <OuterSearchBarContainer>
+    <OuterSearchBarContainer sidebar={props.sidebar}>
       <SearchBarContainer isFocused={isFocused} onMouseDown={startInternalClick} onMouseUp={endInternalClick} >
         <SearchIcon isFocused={isFocused}
                     internalClick={internalClick}

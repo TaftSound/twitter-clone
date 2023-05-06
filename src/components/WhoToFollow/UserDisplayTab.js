@@ -11,19 +11,26 @@ const OuterContainer = styled.div`
 `
 
 const UserContainer = styled.div`
-  display: flex;
-  align-items: center;
+  flex: auto;
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  width: 100%;
 `
 
 const UserInfoContainer = styled.div`
+  flex: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
+  overflow: hidden;
 `
 
 const DisplayName = styled.h2`
-  display: flex;
-  align-items: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   height: 21.5px;
   margin: 0px;
   font-weight: 700;

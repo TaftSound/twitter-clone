@@ -9,9 +9,14 @@ import UserAccountButton from "./UserAccount"
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   width: 60px;
   padding: 0px 4px;
+  position: sticky;
+  top: 0px;
+  min-height: 562px;
+  height: 100vh;
 
   @media (min-width: 600px) {
     padding: 0px 8px;
@@ -39,6 +44,13 @@ const Container = styled.div`
   @media (min-width: 1200px) {
     
   }
+  
+`
+
+const InnerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 const LeftSidebar = (props) => {
@@ -54,9 +66,11 @@ const LeftSidebar = (props) => {
   } else {
     return (
       <Container>
-        <TwitterHomeButton></TwitterHomeButton>
-        <NavButtons loggedIn={true}></NavButtons>
-        <NewTweetButton></NewTweetButton>
+        <InnerContainer>
+          <TwitterHomeButton></TwitterHomeButton>
+          <NavButtons loggedIn={true}></NavButtons>
+          <NewTweetButton></NewTweetButton>
+        </InnerContainer>
         <UserAccountButton></UserAccountButton>
       </Container>
     )

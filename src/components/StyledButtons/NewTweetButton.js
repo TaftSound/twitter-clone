@@ -9,7 +9,7 @@ const TweetButtonContainer = styled(TooltipContainer)`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 52px;
+  min-height: 52px;
   width: 52px;
   border-radius: 50px;
   margin: 4px 0px;

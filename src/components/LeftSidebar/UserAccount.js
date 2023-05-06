@@ -96,7 +96,7 @@ const UserAccountMenu = (props) => {
 
 const OuterContainer = styled.div`
   position: relative;
-  margin: 16px 0px;
+  margin: 12px 0px;
 `
 const ButtonContainer = styled(TooltipContainer)`
   padding: 12px;

@@ -131,19 +131,21 @@ const FollowButton = ({ userId, userName }) => {
   }
 
   return (
+    <>
     <OuterContainer>
       <FormButtonWrapper onClick={toggleFollow} onMouseLeave={mouseLeave} onMouseEnter={mouseOver}>
         <StyledFormButton small={true} unfollowColors={displayUnfollowButton}>
             {buttonText}
         </StyledFormButton>
       </FormButtonWrapper>
-      {displayUnfollowWarning 
+    </OuterContainer>
+    {displayUnfollowWarning 
       ? <UnfollowWarning userName={userName} 
                          confirmFunction={unfollowThisUser}
                          cancelFunction={hidePopup}
                          hideFunction={hidePopup}/> 
       : ''}
-    </OuterContainer>  
+    </>
   )
 };
 

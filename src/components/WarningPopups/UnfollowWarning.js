@@ -2,9 +2,9 @@ import { unfollowUser } from "../../firebase/firestore/follower-list-functions";
 import ConfirmationPopup from "../ConfirmationPopup/ConfirmationPopup";
 
 const UnfollowWarning = (props) => {
-  const { userId, userName, cancelFunction, hideFunction } = props;
+  const { userId, userName, cancelFunction, confirmFunction, hideFunction } = props;
 
-  const unfollowThisUser = props.confirmFunction
+  const unfollowThisUser = confirmFunction
   ? async () => {
     if (hideFunction) { hideFunction() }
     await props.confirmFunction()

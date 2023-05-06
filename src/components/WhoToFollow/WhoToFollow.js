@@ -6,15 +6,27 @@ import UserDisplayTab from "./UserDisplayTab";
 
 
 const OuterContainer = styled.div`
-  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: none;
+  visibility: hidden;
+
+  @media (min-width: 988px) {
+    display: block;
+    visibility: visible;
+    width: 288px;
+  }
+  @media (min-width: 1078px) {
+    width: 348px;
+  }
 `
 const InnerContainer = styled.div`
-  width: 100%
+  width: 100%;
   display: flex;
   flex-direction: column;
   background-color: ${WHO_TO_FOLLOW_BACKGROUND};
   border-radius: 15px;
-  /* ${props => props.mainFeed ? 'margin: 12px 16px;' : ''} */
+  /* ${props => props.mainFeed ? '' : 'margin: 12px 16px;'} */
   ${props => props.mainFeed ? 'border-radius: 0px;' : ''}
 `
 const ItemContainer = styled.div`
@@ -34,10 +46,10 @@ const Header = styled.h1`
 const WhoToFollow = (props) => {
   const { userData } = props
 
-  if (!userData) { return false }
+  if (!userData || !userData[0]) { return false }
   
   return (
-    <OuterContainer className={props.className}>
+    <OuterContainer className={props.className} mainFeed={props.mainFeed}>
       <InnerContainer mainFeed={props.mainFeed}>
         <ItemContainer><Header>Who to follow</Header></ItemContainer>
         {userData.map((user) => {

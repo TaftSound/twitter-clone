@@ -14,9 +14,12 @@ const LoadingContainer = styled(LoadingPage)`
 `
 
 const CenterWhoToFollow = styled(WhoToFollow)`
+  display: block;
+  visibility: visible;
 
-  @media (min-width: 992px) {
+  @media (min-width: 988px) {
     display: none;
+    visibility: hidden;
   }
 `
 
@@ -26,7 +29,6 @@ const MainFeed = (props) => {
   const [hasLoaded, setHasLoaded] = useState(false)
   const [currentTab, setCurrentTab] = useState("For you")
   
-  const currentTabRef = useRef("For you")
   const sentinelRef = useRef(null)
   const observer = useRef(null)
   const loadCount = useRef(0)

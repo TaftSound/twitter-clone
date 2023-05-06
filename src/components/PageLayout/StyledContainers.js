@@ -1,12 +1,15 @@
 import styled from "styled-components"
-import { BACKGROUND_COLOR, DIVIDER_COLOR } from "../constants" 
+import { BACKGROUND_COLOR, DIVIDER_COLOR, PRIMARY_COLOR } from "../constants" 
 
 export const PageLayoutContainer = styled.div`
   display: grid;
-  grid-template-columns: min-content 1fr min-content;
+  grid-template-columns: min-content 1fr;
+  height: 100vh;
+  overflow: scroll;
+  background-color: ${BACKGROUND_COLOR};
 `
 
-export const LeftContainer = styled.div`
+export const SidebarContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
   border-right: solid 1px ${DIVIDER_COLOR};
   box-sizing: border-box;
@@ -17,7 +20,9 @@ export const LeftContainer = styled.div`
   flex-grow: 1;
   flex-shrink: 0;
   width: min-content;
-  min-height: 100vh;
+  height: 100vh;
+  position: sticky;
+  top: 0px;
   
   @media (min-width: 600px) {
     
@@ -44,31 +49,16 @@ export const LeftContainer = styled.div`
   }
 `
 
-export const RightContainer = styled.div`
+export const ContentContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
-  display: flex;
-  flex-direction: column;
-  flex-basis: auto;
-  flex-grow: 2;
-  flex-shrink: 1;
-  align-items: flex-start;
-  min-height: 100vh;
-  
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  height: 100vh;
+  position: sticky;
+  top: 0px;
   
   @media (min-width: 600px) {
-    
-  }
-
-  @media (min-width: 690px) {
-    
-  }
-
-  @media (min-width: 992px) {
-    
-  }
-
-  @media (min-width: 1200px) {
-    
+    grid-template-columns: 600px 1fr;
   }
 `
 
@@ -76,33 +66,56 @@ export const CenterContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
   border-right: solid 1px ${DIVIDER_COLOR};
   box-sizing: border-box;
-  height: 100vh;
-  overflow: scroll;
+  min-height: 100vh;
+  height: max-content;
   overflow-x: hidden;
   padding-bottom: 72px;
   width: 100%;
+  /* position: relative;
+  z-index: 0; */
 
   @media (min-width: 600px) {
     max-width: 600px;
   }
 
-  @media (min-width: 690px) {
-    
-  }
+`
+export const RightContainer = styled.div`
+  border-right: solid 1px ${DIVIDER_COLOR};
+  box-sizing: border-box;
+  height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 72px;
+  width: 100%;
+  overflow: hidden;
 
-  @media (min-width: 992px) {
-    
-  }
-
-  @media (min-width: 1200px) {
-    
+  @media (min-width: 1078px) {
+    padding-left: 10px;
   }
 `
 
 export const SubContainer = styled.div`
-  background-color: ${BACKGROUND_COLOR};
-  /* border-bottom: solid 1px ${DIVIDER_COLOR}; */
+  position: relative;
   box-sizing: border-box;
   max-width: 100%;
   overflow: visible;
+`
+
+export const SidebarScrollContent = styled.div`
+  background-color: ${BACKGROUND_COLOR};
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  padding-left: 20px;
+  padding-bottom: 100px;
+  position: relative;
+`
+
+export const SidebarSearchContainer = styled.div`
+  position: relative;
+  z-index: 10;
+  padding: 4px 16px;
+  background-color: ${BACKGROUND_COLOR};
 `

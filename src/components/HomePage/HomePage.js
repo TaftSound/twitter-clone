@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from "react"
 import { UserContext } from "../../App"
 import LoadingPage from "../LoadingPage/LoadingPage"
 import { useMemo } from "react"
+import SidebarWhoToFollow from "../WhoToFollow/SidebarWhoToFollow"
 
 
 const HomePage = (props) => {
@@ -25,11 +26,16 @@ const HomePage = (props) => {
   return pageDisplayed
   ? (
     <div className="home-page">
-      <PageLayout centerContent={[
-        <Header titleHeader="Home" defaultTab="For you" tabsArray={["For you", "Following"]} />,
+      <PageLayout 
+      header={<Header titleHeader="Home" defaultTab="For you" tabsArray={["For you", "Following"]} />}
+      centerContent={[
         <NewTweetEntry />,
         pageDisplayed ? <MainFeed></MainFeed> : false
-      ]}/>
+      ]}
+      sidebarContent={[
+        <SidebarWhoToFollow></SidebarWhoToFollow>
+      ]}
+      />
     </div>
   )
   : <LoadingPage logo={true}></LoadingPage>
