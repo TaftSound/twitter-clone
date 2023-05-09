@@ -127,3 +127,11 @@ export const getUserTweets = async (userId, loadCount) => {
   const tweetData = await getFeedChunk(sortedUserTweetKeys, loadCount)
   return tweetData
 }
+
+export const getLikedTweets = async (userId, loadCount) => {
+  // Need to do a query for all tweets where "likes" contains userId
+  // Need to limit the query to 5 results
+  // Need to order the query by timestamp
+  // Need to set the last document in the batch as the query cursor for the next batch of results
+  return []
+}

@@ -2,16 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { getForYouFeed, getFollowingFeed } from "../../firebase/firestore/user-feed";
 import { getUsersToFollow } from "../../firebase/firestore/follower-list-functions";
-import LoadingPage from "../LoadingPage/LoadingPage";
+import { LoadingContainer } from "../LoadingPage/LoadingPage";
 import TweetDisplay from "../TweetDisplay/TweetDisplay";
 import PubSub from "pubsub-js";
 import WhoToFollow from "../WhoToFollow/WhoToFollow";
 import { useMemo } from "react";
-
-const LoadingContainer = styled(LoadingPage)`
-  height: 100px;
-  width: 100%;
-`
 
 const CenterWhoToFollow = styled(WhoToFollow)`
   display: block;

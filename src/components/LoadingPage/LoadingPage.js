@@ -40,3 +40,8 @@ const LoadingPage = (props) => {
 }
 
 export default LoadingPage
+
+export const LoadingContainer = styled(LoadingPage)`
+  height: 100px;
+  width: 100%;
+`

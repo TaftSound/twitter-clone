@@ -48,7 +48,7 @@ export const TweetHeader = (props) => {
     : secondsElapsed < 86400
     ? `${Math.floor(secondsElapsed / 3600)}h`
     : (() => {
-      const date = new Date(timestamp)
+      const date = new Date(+timestamp)
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     })()
 
