@@ -116,8 +116,8 @@ const MainFeed = (props) => {
         <TweetDisplay key={tweetData.tweetId} tweetData={tweetData}></TweetDisplay>
       )
     })}
-    {hasLoaded ? '' : <LoadingContainer></LoadingContainer>}
     <div ref={sentinelRef}></div>
+    {hasLoaded ? '' : <LoadingContainer></LoadingContainer>}
     </>
   )
 }

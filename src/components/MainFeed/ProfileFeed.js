@@ -45,7 +45,7 @@ const ProfileFeed = (props) => {
         const newTweets = currentTab === "Tweets"
         ? await getUserTweets(userId, loadCount.current)
         : currentTab === "Likes"
-        ? await getLikedTweets(userId)
+        ? await getLikedTweets(userId, loadCount.current)
         : []
         setHasLoaded(true)
         if (!newTweets[0]) { return }
@@ -53,7 +53,7 @@ const ProfileFeed = (props) => {
           return [...loadedTweets, ...newTweets]
         })
         loadCount.current = loadCount.current + 1
-        
+        if (newTweets.length < 5) { return }
         if (sentinelRef.current) observer.current.observe(sentinelRef.current)
       } catch (error) {
         console.error("Failure to retrieve tweet feed:", error)
@@ -63,7 +63,6 @@ const ProfileFeed = (props) => {
     observer.current = new IntersectionObserver(async (entries) => {
       if (entries[0].isIntersecting) {
         await loadTweets()
-        console.log('run')
       }
     }, {threshold: 1})
 

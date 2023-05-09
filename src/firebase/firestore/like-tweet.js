@@ -9,9 +9,10 @@ import { db } from "./firestore";
 export const storeTweetLike = async (tweetId, userId) => {
   try {
     const tweetDocRef = doc(db, 'tweets', `${tweetId}`)
+    const timestamp = Date.now()
 
     await updateDoc(tweetDocRef, {
-      [`likes.${userId}`]: true,
+      [`likes.${userId}`]: timestamp,
     })
   } catch (error) {
     console.error("Failure to remove tweet like:", error)

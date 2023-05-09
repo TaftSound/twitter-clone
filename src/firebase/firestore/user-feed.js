@@ -1,4 +1,4 @@
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, where } from "firebase/firestore";
 import { db } from "./firestore";
 import { auth } from "../auth";
 
@@ -51,6 +51,25 @@ const getFeedChunk = async (keysList, loadCount) => {
   const userDataDocRefs = tweetDataArray.map((tweetData) => {
     const userId = tweetData.userId
     return doc(db, 'users', userId)
+  })
+
+  const userDataArray = await retrieveBatchData(userDataDocRefs)
+  const finalTweetData = mergeTweetAndUserData(tweetKeys, tweetDataArray, userDataArray)
+  
+  return finalTweetData
+}
+
+const getFeedChunkFromSnaps = async (tweetDocSnaps) => {
+  const tweetDataArray = tweetDocSnaps.map((docSnap) => {
+    return docSnap.data()
+  })
+
+  const userDataDocRefs = tweetDataArray.map((tweetData) => {
+    const userId = tweetData.userId
+    return doc(db, 'users', userId)
+  })
+  const tweetKeys = tweetDocSnaps.map((docSnap) => {
+    return docSnap.id
   })
 
   const userDataArray = await retrieveBatchData(userDataDocRefs)
@@ -128,10 +147,19 @@ export const getUserTweets = async (userId, loadCount) => {
   return tweetData
 }
 
+let nextQuery = null
+
 export const getLikedTweets = async (userId, loadCount) => {
-  // Need to do a query for all tweets where "likes" contains userId
-  // Need to limit the query to 5 results
-  // Need to order the query by timestamp
-  // Need to set the last document in the batch as the query cursor for the next batch of results
-  return []
+  if (loadCount === 0) {
+    nextQuery = query(collection(db, 'tweets'), where(`likes.${userId}`, ">", 0), orderBy(`likes.${userId}`, "desc"), limit(5))
+  }
+
+  const docSnaps = await getDocs(nextQuery)
+  const lastLoaded = docSnaps.docs[docSnaps.docs.length - 1]
+  if (!lastLoaded) { return [] }
+  nextQuery = query(collection(db, 'tweets'), where(`likes.${userId}`, ">", 0), orderBy(`likes.${userId}`, "desc"), limit(5), startAfter(lastLoaded))
+
+  const tweetData = await getFeedChunkFromSnaps(docSnaps.docs)
+  
+  return tweetData
 }
