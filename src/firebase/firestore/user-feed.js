@@ -106,3 +106,24 @@ export const getFollowingFeed = async (loadCount) => {
   }
   return getFeedChunk(sortedKeys, loadCount)
 }
+
+let currentUserId = ''
+let userTweetReferences = {}
+let sortedUserTweetKeys = []
+
+const storeUserTweetReferences = async (userId) => {
+  const tweetReferencesRef = doc(db, 'tweetReferences', userId)
+  const docSnap = await getDoc(tweetReferencesRef)
+  userTweetReferences = docSnap.data().userTweets
+}
+
+export const getUserTweets = async (userId, loadCount) => {
+  // Get and store user tweet references, only the first time it's called
+  if (currentUserId !== userId) {
+    currentUserId = userId
+    await storeUserTweetReferences(userId)
+    sortedUserTweetKeys = convertToSortedArray(userTweetReferences)
+  }
+  const tweetData = await getFeedChunk(sortedUserTweetKeys, loadCount)
+  return tweetData
+}

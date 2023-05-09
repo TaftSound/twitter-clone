@@ -9,6 +9,7 @@ import LoadingPage from "../LoadingPage/LoadingPage"
 import { useMemo } from "react"
 import SidebarWhoToFollow from "../WhoToFollow/SidebarWhoToFollow"
 import ProfileDetails from "../ProfileDetails/ProfileDetails"
+import ProfileFeed from "../MainFeed/ProfileFeed"
 
 
 const AppPage = (props) => {
@@ -52,7 +53,7 @@ const AppPage = (props) => {
         centerContent={[
           <ProfileDetails></ProfileDetails>,
           <Header defaultTab="Tweets" tabsArray={["Tweets", "Likes"]}></Header>,
-          pageDisplayed ? <MainFeed></MainFeed> : false
+          pageDisplayed ? <ProfileFeed></ProfileFeed> : false
         ]}
         sidebarContent={[
           <SidebarWhoToFollow></SidebarWhoToFollow>

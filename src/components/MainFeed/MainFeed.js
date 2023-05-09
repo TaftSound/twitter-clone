@@ -122,7 +122,7 @@ const MainFeed = (props) => {
       )
     })}
     {hasLoaded ? '' : <LoadingContainer></LoadingContainer>}
-    <div ref={sentinelRef}>herro</div>
+    <div ref={sentinelRef}></div>
     </>
   )
 }
