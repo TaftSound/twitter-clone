@@ -9,7 +9,7 @@ export const PageLayoutContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
 `
 
-export const SidebarContainer = styled.div`
+export const LeftSidebarContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
   border-right: solid 1px ${DIVIDER_COLOR};
   box-sizing: border-box;
@@ -23,6 +23,7 @@ export const SidebarContainer = styled.div`
   height: 100vh;
   position: sticky;
   top: 0px;
+  z-index: 99999;
   
   @media (min-width: 600px) {
     
@@ -56,8 +57,9 @@ export const ContentContainer = styled.div`
   height: 100vh;
   position: sticky;
   top: 0px;
-  
-  @media (min-width: 600px) {
+  width: 100%;
+
+  @media (min-width: 690px) {
     grid-template-columns: 600px 1fr;
   }
 `
@@ -87,7 +89,13 @@ export const RightContainer = styled.div`
   padding-bottom: 72px;
   width: 100%;
   overflow: hidden;
+  visibility: hidden;
+  display: none;
 
+  @media (min-width: 690px) {
+    visibility: visible;
+    display: block;
+  }
   @media (min-width: 1078px) {
     padding-left: 10px;
   }

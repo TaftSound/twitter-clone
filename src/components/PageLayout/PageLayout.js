@@ -4,7 +4,7 @@ import LeftSidebar from "../LeftSidebar/LeftSidebar"
 import uniqid from 'uniqid'
 
 import { PageLayoutContainer, 
-         SidebarContainer,
+         LeftSidebarContainer,
          ContentContainer,
          CenterContainer,
          RightContainer,
@@ -66,7 +66,7 @@ const PageLayout = (props) => {
 
   return (
     <PageLayoutContainer ref={scrollableRef}>
-      <SidebarContainer>{<LeftSidebar/>}</SidebarContainer>
+      <LeftSidebarContainer>{<LeftSidebar/>}</LeftSidebarContainer>
       <ContentContainer>
         <CenterContainer>
           {props.header}
