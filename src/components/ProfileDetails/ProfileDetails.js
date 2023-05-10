@@ -1,13 +1,14 @@
-import { useState } from "react"
-import { useMemo } from "react"
-import { useEffect } from "react"
-import { useContext } from "react"
+import { useMemo, useContext } from "react"
 import styled from "styled-components"
-import { FollowContext, UserContext } from "../../App"
-import { BACKGROUND_COLOR, DIVIDER_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants"
+
 import LoadingPage from "../LoadingPage/LoadingPage"
 import { UserCircle, SmallGreyLogo, FlexBox } from "../styled-components"
 import { FormButton } from "../StyledButtons/FormButton"
+import { BACKGROUND_COLOR, DIVIDER_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants"
+
+import { FollowContext, UserContext } from "../../App"
+import ProfileEditForm from "./ProfileEditForm"
+import { useState } from "react"
 
 
 const BannerContainer = styled.div`
@@ -56,16 +57,6 @@ const UserDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
 `
-const FlexContainer = styled.div`
-  display: flex;
-  ${props => props.height && `height: ${props.height};`}
-  ${props => props.width && `width: ${props.width};`}
-  ${props => props.margin && `margin: ${props.margin};`}
-  ${props => props.padding && `padding: ${props.padding};`}
-  ${props => props.direction && `flex-direction: ${props.direction};`}
-  ${props => props.alignItems && `align-items: ${props.alignItems};`}
-  ${props => props.justifyContent && `justify-content: ${props.justifyContent};`}
-`
 
 const EditProfileButton = styled(FormButton)`
   margin-top: 0px;
@@ -97,6 +88,15 @@ const BoldH3 = styled(H3)`
 const UserDetails = (props) => {
   const followContext = useContext(FollowContext)
   const userContext = useContext(UserContext)
+  const [editProfile, setEditProfile] = useState(false)
+
+  const startProfileEdit = () => {
+    setEditProfile(true)
+  }
+
+  const finishProfileEdit = () => {
+    setEditProfile(false)
+  }
 
   const memoizedJoinDate = useMemo(() => {
       const monthNames = ["January", "February", "March", "April", "May", "June", "July",
@@ -109,30 +109,33 @@ const UserDetails = (props) => {
   }, [userContext])
 
   return (
-    <UserDetailsContainer>
-      <FlexBox height="68.5px" justifyContent="space-between">
-        <div></div>
-        <EditProfileButton dark={true} small={true}>Edit profile</EditProfileButton>
-      </FlexBox>
-      <FlexBox margin="4px 0px 12px" direction="column" alignItems="flex-start">
-        <H1>{userContext.displayName}</H1>
-        <H2>@{userContext.userName}</H2>
-      </FlexBox>
-      <FlexBox margin="0px 0px 12px">
-        <FlexBox margin="0px 4px 0px 0px">
-          <SmallGreyLogo path="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"/>
+    <>
+      <UserDetailsContainer>
+        <FlexBox height="68.5px" justifyContent="space-between">
+          <div></div>
+          <EditProfileButton onClick={startProfileEdit} dark={true} small={true}>Edit profile</EditProfileButton>
         </FlexBox>
-        <H2>Joined {memoizedJoinDate}</H2>
-      </FlexBox>
-      <FlexBox>
-        <FlexBox margin="0px 20px 0px 0px">
-          <BoldH3>{followContext.following.length}</BoldH3>
-          <H3>Following</H3>
+        <FlexBox margin="4px 0px 12px" direction="column" alignItems="flex-start">
+          <H1>{userContext.displayName}</H1>
+          <H2>@{userContext.userName}</H2>
         </FlexBox>
-        <BoldH3>{followContext.followers.length}</BoldH3>
-        <H3>Followers</H3>
-      </FlexBox>
-    </UserDetailsContainer>
+        <FlexBox margin="0px 0px 12px">
+          <FlexBox margin="0px 4px 0px 0px">
+            <SmallGreyLogo path="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"/>
+          </FlexBox>
+          <H2>Joined {memoizedJoinDate}</H2>
+        </FlexBox>
+        <FlexBox>
+          <FlexBox margin="0px 20px 0px 0px">
+            <BoldH3>{followContext.following.length}</BoldH3>
+            <H3>Following</H3>
+          </FlexBox>
+          <BoldH3>{followContext.followers.length}</BoldH3>
+          <H3>Followers</H3>
+        </FlexBox>
+      </UserDetailsContainer>
+      {editProfile ? <ProfileEditForm finishProfileEdit={finishProfileEdit}></ProfileEditForm> : false}
+    </>
   )
 }
 

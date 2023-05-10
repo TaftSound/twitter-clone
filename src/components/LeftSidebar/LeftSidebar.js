@@ -13,8 +13,6 @@ const Container = styled.div`
   align-items: center;
   width: 60px;
   padding: 0px 4px;
-  position: sticky;
-  top: 0px;
   min-height: 562px;
   height: 100vh;
 

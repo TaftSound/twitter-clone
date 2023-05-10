@@ -1,14 +1,12 @@
-import { useEffect } from "react"
-import { useState } from "react"
+import { useEffect, useContext, useState, useRef } from "react"
+import PubSub from "pubsub-js"
+
 import { FlexBox } from "../styled-components"
 import TweetDisplay from "../TweetDisplay/TweetDisplay"
-import PubSub from "pubsub-js"
-import styled from "styled-components"
-import { getLikedTweets, getUserTweets } from "../../firebase/firestore/user-feed"
-import { useContext } from "react"
 import { UserContext } from "../../App"
-import { useRef } from "react"
 import { LoadingContainer } from "../LoadingPage/LoadingPage"
+
+import { getLikedTweets, getUserTweets } from "../../firebase/firestore/user-feed"
 
 
 const ProfileFeed = (props) => {

@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { createPortal } from "react-dom"
 
 import { ALERT_RED, BACKGROUND_COLOR, MAIN_FONT_COLOR, PAGE_OVERLAY_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 import { TwitterLogoLarge } from '../TwitterLogo'
@@ -71,23 +72,28 @@ const ConfirmationPopup = (props) => {
           tweeterLogo } = props
 
   return (
-    <BackgroundDiv transparent={transparent}>
-      <OverlayDiv>
-        <PopupContainer>
-          {tweeterLogo 
-          ? <LogoContainer>
-              <TwitterLogoLarge/>
-            </LogoContainer>
-          : false}
-          <Header>{header}</Header>
-          <Text>
-            {props.children}
-          </Text>
-          <ConfirmFormButton deleteButton={deleteButton} onClick={confirmFunction}>{confirmText}</ConfirmFormButton>
-          <ConfirmFormButton onClick={cancelFunction} dark={true}>Cancel</ConfirmFormButton>
-        </PopupContainer>
-      </OverlayDiv>
-    </BackgroundDiv>
+    <>
+      {createPortal(
+        <BackgroundDiv transparent={transparent}>
+          <OverlayDiv>
+            <PopupContainer>
+              {tweeterLogo
+              ? <LogoContainer>
+                  <TwitterLogoLarge/>
+                </LogoContainer>
+              : false}
+              <Header>{header}</Header>
+              <Text>
+                {props.children}
+              </Text>
+              <ConfirmFormButton deleteButton={deleteButton} onClick={confirmFunction}>{confirmText}</ConfirmFormButton>
+              <ConfirmFormButton onClick={cancelFunction} dark={true}>Cancel</ConfirmFormButton>
+            </PopupContainer>
+          </OverlayDiv>
+        </BackgroundDiv>,
+        document.body
+      )}
+    </>
   )
 }
 

@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { createPortal } from "react-dom";
+
 import { CloseButton } from "../StyledButtons/CloseButton";
 import { TwitterLogo } from "../TwitterLogo";
 import { PAGE_OVERLAY_COLOR, BACKGROUND_COLOR } from "../constants";
@@ -56,17 +58,22 @@ const CloseButtonContainer = styled.div`
 const PopupModal = (props) => {
 
   return (
-    <PopupPageOverlay> 
-      <PopupContainer scroll={props.scroll}>
-        <StickyHeader>
-          <CloseButtonContainer>
-            <CloseButton onClick={props.removePopup} />
-          </CloseButtonContainer>
-          {props.twitterLogo ? <TwitterLogo></TwitterLogo> : ""}
-        </StickyHeader>
-        {props.children}
-      </PopupContainer>
-    </PopupPageOverlay>
+    <>
+      {createPortal(
+        <PopupPageOverlay> 
+          <PopupContainer scroll={props.scroll}>
+            <StickyHeader>
+              <CloseButtonContainer>
+                <CloseButton onClick={props.removePopup} />
+              </CloseButtonContainer>
+              {props.twitterLogo ? <TwitterLogo></TwitterLogo> : ""}
+            </StickyHeader>
+            {props.children}
+          </PopupContainer>
+        </PopupPageOverlay>, 
+        document.body
+      )}
+    </>
   );
 };
 

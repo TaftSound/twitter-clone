@@ -4,7 +4,7 @@ import { BACKGROUND_COLOR, DIVIDER_COLOR, PRIMARY_COLOR } from "../constants"
 export const PageLayoutContainer = styled.div`
   display: grid;
   grid-template-columns: min-content 1fr;
-  height: 100vh;
+  max-height: 100vh;
   overflow: scroll;
   background-color: ${BACKGROUND_COLOR};
 `
@@ -23,7 +23,6 @@ export const LeftSidebarContainer = styled.div`
   height: 100vh;
   position: sticky;
   top: 0px;
-  z-index: 99999;
   
   @media (min-width: 600px) {
     
@@ -54,7 +53,7 @@ export const ContentContainer = styled.div`
   background-color: ${BACKGROUND_COLOR};
   display: grid;
   grid-template-columns: 1fr min-content;
-  height: 100vh;
+  max-height: 100vh;
   position: sticky;
   top: 0px;
   width: 100%;
