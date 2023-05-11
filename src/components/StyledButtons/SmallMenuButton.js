@@ -5,6 +5,8 @@ import { TooltipContainer } from "../styled-components";
 const SmallButtonContainer = styled(TooltipContainer)`
   height: 34px;
   width: 34px;
+  ${props => props.medium && 'height: 42px;'}
+  ${props => props.medium && 'width: 42px;'}
   border-radius: 50px;
   display: flex;
   justify-content: center;
@@ -24,6 +26,8 @@ const SmallButtonContainer = styled(TooltipContainer)`
 const StyledSvg = styled.svg`
   height: ${props => props.miniture? '18.75px' : '20px'};
   width: ${props => props.miniture? '18.75px' : '20px'};
+  ${props => props.medium && 'height: 22px;'}
+  ${props => props.medium && 'width: 22px;'}
   margin-bottom: ${props => props.miniture? '-3px' : '-4px'};
 `
 
@@ -33,12 +37,13 @@ export const SmallMenuButton = (props) => {
 
   return (
     <SmallButtonContainer color={props.color}
+                          medium={props.medium}
                           hoverColor={hoverColor}
                           className={props.className}
                           linkTitle={props.title}
                           onClick={props.onClick}>
       <a href={props.url} aria-label={props.title} name={props.title}>
-        <StyledSvg miniture={props.mini} viewBox="0 0 24 24">
+        <StyledSvg miniture={props.mini} medium={props.medium} viewBox="0 0 24 24">
           <path d={props.path}></path>
         </StyledSvg>
       </a>

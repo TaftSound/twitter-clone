@@ -140,10 +140,4 @@ const DynamicFormInput = (props) => {
   );
 };
 
-// Required props:
-  // name
-  // label
-  // value
-  // onChange function
-
 export default DynamicFormInput

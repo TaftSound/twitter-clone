@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { createPortal } from "react-dom";
 
 import { CloseButton } from "../StyledButtons/CloseButton";
+import BackButton from "../StyledButtons/BackButton";
 import { TwitterLogo } from "../TwitterLogo";
 import { PAGE_OVERLAY_COLOR, BACKGROUND_COLOR, MAIN_FONT_COLOR } from "../constants";
 
@@ -24,6 +25,9 @@ const PopupContainer = styled.div`
   border-radius: 16px;
   width: 100%;
   max-height: 90vh;
+  ${props => props.height && `height: ${props.height};`}
+  ${props => props.flexBox && `display: flex;`}
+  ${props => props.flexBox && `flex-direction: column;`}
   overflow: ${props => props.scroll ? 'scroll' : 'visible'};
   overflow-x: hidden;
   scrollbar-width: none;
@@ -66,24 +70,22 @@ const HeaderTitle = styled.h1`
 
 const PopupModal = (props) => {
 
-  // Create user display name input
-  // Create user Bio input
-  // Create functionality to update firestore for user profile
-  // Create display for user bio
-  // Create banner image form input
-  // Create user image form input
-  // Create image resizer component
-  // Create database storage and firestore url storage for image upload
-
   return (
     <>
       {createPortal(
         <PopupPageOverlay> 
-          <PopupContainer scroll={props.scroll}>
+          <PopupContainer scroll={props.scroll}
+                          height={props.height}
+                          flexBox={props.flexBox}>
             <StickyHeader>
-              <CloseButtonContainer>
-                <CloseButton onClick={props.removePopup} />
-              </CloseButtonContainer>
+              {props.removePopup 
+              && <CloseButtonContainer>
+                   <CloseButton onClick={props.removePopup} />
+                 </CloseButtonContainer>}
+              {props.backFunction
+              && <CloseButtonContainer>
+                   <BackButton onClick={props.backFunction} />
+                 </CloseButtonContainer>}
               {props.twitterLogo ? <TwitterLogo></TwitterLogo> : ""}
               <HeaderTitle>{props.title ? props.title : ''}</HeaderTitle>
               {props.headerButton ? props.headerButton : ""}

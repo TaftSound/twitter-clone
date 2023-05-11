@@ -90,6 +90,12 @@ export const SmallGreyLogo = styled(Logo)`
 
 export const FlexBox = styled.div`
   display: flex;
+  ${props => props.flex && `flex: ${props.flex};`}
+  ${props => props.position && `position: ${props.position};`}
+  ${props => props.top && `top: ${props.top};`}
+  ${props => props.right && `right: ${props.right};`}
+  ${props => props.bottom && `bottom: ${props.bottom};`}
+  ${props => props.left && `left: ${props.left};`}
   ${props => props.height && `height: ${props.height};`}
   ${props => props.width && `width: ${props.width};`}
   ${props => props.margin && `margin: ${props.margin};`}
