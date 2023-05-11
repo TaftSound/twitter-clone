@@ -8,10 +8,6 @@ import PageLayout from "../PageLayout/PageLayout"
 import { UserLoginPopup } from "../UserLoginPopup/UserLoginPopup"
 
 
-const LoginPageContainer = styled.div`
-  min-height: 100vh;
-`
-
 const LoginPage = (props) => {
   const parent = useRef(null)
   
@@ -20,17 +16,16 @@ const LoginPage = (props) => {
   }, [parent])
   
   return (
-    <LoginPageContainer ref={parent}>
-      <PageLayout userName={null}
-                  centerContent={[
-        <Header searchBar={true}
-                defaultTab="For you"
-                tabsArray={["For you", "Trending", "News", "Sports", "Entertainment"]}>
-        </Header>
-      ]} />
-      <UserLoginPopup/>
-      <CallToAction></CallToAction>
-    </LoginPageContainer>
+      <>
+        <PageLayout userName={null}
+                    header={<Header searchBar={true}
+                              defaultTab="For you"
+                              tabsArray={["For you", "Trending", "News", "Sports", "Entertainment"]}>
+                            </Header>}
+                    centerContent={[<div></div>]} />
+        <UserLoginPopup/>
+        <CallToAction></CallToAction>
+      </>
   )
 }
 

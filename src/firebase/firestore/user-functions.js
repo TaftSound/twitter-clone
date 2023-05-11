@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, writeBatch, arrayUnion } from "firebase/firestore";
+import { doc, setDoc, getDoc, writeBatch, arrayUnion, updateDoc } from "firebase/firestore";
 import { auth } from "../auth";
 import { db } from "./firestore";
 
@@ -88,6 +88,15 @@ export const createNewUser = async (user, userName) => {
     console.error("Failure to create new user account:", error);
   }
 };
+
+export const updateUserProfile = async (newData) => {
+  try {
+    const userDocRef = doc(db, 'users', auth.currentUser.uid);
+    await updateDoc(userDocRef, newData)
+  } catch (error) {
+    console.error("Failure to update user profile data in firestore:", error)
+  }
+}
 
 export const createGuestUser = async (user, userName) => {
   try {

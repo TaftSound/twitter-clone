@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { DIVIDER_COLOR, MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants";
+import { DIVIDER_COLOR, FONT_FAMILY, MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants";
 import { useRef } from "react";
 import { useLayoutEffect } from "react";
 import PubSub from "pubsub-js";
@@ -54,6 +54,7 @@ const Input = styled.input`
   background-color: transparent;
   border: none;
   outline: none;
+  font-family: ${FONT_FAMILY};
   font-size: 18px;
   font-weight: 500;
   padding: 0px;

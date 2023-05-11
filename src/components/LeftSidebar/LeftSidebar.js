@@ -42,7 +42,6 @@ const Container = styled.div`
   @media (min-width: 1200px) {
     
   }
-  
 `
 
 const InnerContainer = styled.div`
@@ -57,8 +56,10 @@ const LeftSidebar = (props) => {
   if (location.pathname === '/') {
     return (
       <Container>
-        <TwitterHomeButton></TwitterHomeButton>
-        <NavButtons loggedIn={false}></NavButtons>
+        <InnerContainer>
+          <TwitterHomeButton></TwitterHomeButton>
+          <NavButtons loggedIn={false}></NavButtons>
+        </InnerContainer>
       </Container>
     )
   } else {

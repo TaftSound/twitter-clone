@@ -30,16 +30,25 @@ const ContextProvider = (props) => {
       PubSub.unsubscribe(unsubToken)
     }
   }, [])
+  useEffect(() => {
+    const unsubToken = PubSub.subscribe('update user data', async (msg, data) => {
+      const userDataCopy = userData
+      if (data.displayName) { userDataCopy.displayName = data.displayName }
+      if (data.bio) { userDataCopy.bio = data.bio }
+      setUserData(userDataCopy)
+    })
+    return () => { PubSub.unsubscribe(unsubToken) }
+  }, [userData])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userData = await getUserData(user)
+        const currentUserData = await getUserData(user)
         const currentFollowData = await getFollowerList()
         const followers = currentFollowData.followers ? currentFollowData.followers : []
         const following = currentFollowData.following ? currentFollowData.following : []
 
-        setUserData(userData)
+        setUserData(currentUserData)
         setFollowData({ followers, following })
         listenForFollowerData()
       } else {

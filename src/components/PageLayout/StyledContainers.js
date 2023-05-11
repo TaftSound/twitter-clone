@@ -23,6 +23,7 @@ export const LeftSidebarContainer = styled.div`
   height: 100vh;
   position: sticky;
   top: 0px;
+  z-index: 10;
   
   @media (min-width: 600px) {
     
@@ -110,6 +111,7 @@ export const SubContainer = styled.div`
 export const SidebarScrollContent = styled.div`
   background-color: ${BACKGROUND_COLOR};
   min-height: 100vh;
+  box-sizing: border-box;
   width: 100%;
   display: flex;
   flex-direction: column;

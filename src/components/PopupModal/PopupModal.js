@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 
 import { CloseButton } from "../StyledButtons/CloseButton";
 import { TwitterLogo } from "../TwitterLogo";
-import { PAGE_OVERLAY_COLOR, BACKGROUND_COLOR } from "../constants";
+import { PAGE_OVERLAY_COLOR, BACKGROUND_COLOR, MAIN_FONT_COLOR } from "../constants";
 
 const PopupPageOverlay = styled.div`
   position: fixed;
@@ -44,18 +44,36 @@ const StickyHeader = styled.div`
   padding: 0px 16px;
   border-radius: 16px;
   background-color: ${BACKGROUND_COLOR};
+  display: flex;
+  align-items: center;
 `;
 const CloseButtonContainer = styled.div`
   position: relative;
   height: 53px;
   width: 34px;
+  margin-right: 22px;
   left: -7px;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
+const HeaderTitle = styled.h1`
+  color: ${MAIN_FONT_COLOR};
+  font-size: 21px;
+  margin: 0px;
+  flex: 1;
+`
 
 const PopupModal = (props) => {
+
+  // Create user display name input
+  // Create user Bio input
+  // Create functionality to update firestore for user profile
+  // Create display for user bio
+  // Create banner image form input
+  // Create user image form input
+  // Create image resizer component
+  // Create database storage and firestore url storage for image upload
 
   return (
     <>
@@ -67,6 +85,8 @@ const PopupModal = (props) => {
                 <CloseButton onClick={props.removePopup} />
               </CloseButtonContainer>
               {props.twitterLogo ? <TwitterLogo></TwitterLogo> : ""}
+              <HeaderTitle>{props.title ? props.title : ''}</HeaderTitle>
+              {props.headerButton ? props.headerButton : ""}
             </StickyHeader>
             {props.children}
           </PopupContainer>
