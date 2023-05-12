@@ -91,6 +91,7 @@ export const SmallGreyLogo = styled(Logo)`
 export const FlexBox = styled.div`
   display: flex;
   ${props => props.flex && `flex: ${props.flex};`}
+  ${props => props.gap && `gap: ${props.gap};`}
   ${props => props.position && `position: ${props.position};`}
   ${props => props.top && `top: ${props.top};`}
   ${props => props.right && `right: ${props.right};`}

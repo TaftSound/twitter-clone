@@ -1,5 +1,6 @@
 
 export const PRIMARY_COLOR = "rgb(29, 155, 240)"
+export const PRIMARY_COLOR_LIGHT = "rgb(142, 205, 248)"
 export const BACKGROUND_COLOR = "rgb(0, 0, 0)"
 export const DIVIDER_COLOR_LIGHT = "rgb(47,51,54)"
 export const DIVIDER_COLOR = "rgb(51,54,57)"
