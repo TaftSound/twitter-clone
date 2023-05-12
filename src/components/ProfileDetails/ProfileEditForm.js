@@ -6,15 +6,33 @@ import { updateUserProfile } from "../../firebase/firestore/user-functions"
 
 import DynamicFormInput from "../DynamicFormInput"
 import PopupModal from "../PopupModal/PopupModal"
-import { FlexBox } from "../styled-components"
+import { FlexBox, UserCircle } from "../styled-components"
 import { FormButton } from "../StyledButtons/FormButton"
 import { SmallMenuButton } from "../StyledButtons/SmallMenuButton"
 import { useRef } from "react"
 import ImageAdjuster from "./ImageAdjuster"
+import { BACKGROUND_COLOR, DARK_OVERLAY_COLOR, TRANSPARENT_DARK_GREY } from "../constants"
 
 const SaveButton = styled(FormButton)`
   height: 32px;
   font-size: 15px;
+`
+
+const LargeUserCircle = styled(UserCircle)`
+  box-sizing: content-box;
+  padding: 0px;
+  height: 112px;
+  width: 112px;
+  font-size: 60px;
+  border: solid 4px ${BACKGROUND_COLOR};
+  position: relative;
+  overflow: hidden;
+  opacity: ${props => props.imageLoaded ? '100%' : '70%'};
+`
+
+const PhotoButton = styled(SmallMenuButton)`
+  height: 44px;
+  width: 44px;
 `
 
 const ImageUploadButton = (props) => {
@@ -32,10 +50,20 @@ const ImageUploadButton = (props) => {
   return (
     <>
       <FlexBox position="absolute" left="-9999px"><input ref={inputRef} type="file" accept="image/*" onChange={getImage} aria-label="user image upload"></input></FlexBox>
-      <SmallMenuButton title='Add photo' onClick={clickInput} medium={true} path="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z" />
+      <PhotoButton title='Add photo' className={props.className} onClick={clickInput} medium={true} path="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z" />
     </>
   )
 }
+
+const ProfileImageUploadButton = styled(ImageUploadButton)`
+  background-color: ${TRANSPARENT_DARK_GREY};
+  opacity: 80%;
+  transition: background-color 200ms;
+
+  &:hover {
+    background-color: rgb(35, 40, 45, 0.75);
+  }
+`
 
 const ProfileEditForm = (props) => {
   const [nameValue, setNameValue] = useState('')
@@ -116,11 +144,18 @@ const ProfileEditForm = (props) => {
     <PopupModal removePopup={props.finishProfileEdit}
                 headerButton={<SaveButton onClick={updateUserInfo}>Save</SaveButton>}
                 title="Edit profile">
-      {/* banner image input */}
       <FlexBox height="198px" direction="column" alignItems="center" justifyContent="center">
         <ImageUploadButton uploadImage={uploadBannerImage}></ImageUploadButton>
       </FlexBox>
       {/* user image input */}
+      <FlexBox position="relative" width="max-content" margin="-43px 0px 0px 17px">
+        <LargeUserCircle imageLoaded={profileImageUrl}>
+          {props.name[0]}
+        </LargeUserCircle>
+        <FlexBox position="absolute" top="50%" left="50%" transform="translate(-50%, -50%)" zIndex="15">
+          <ProfileImageUploadButton uploadImage={uploadProfileImage}></ProfileImageUploadButton>
+        </FlexBox>
+      </FlexBox>
       <FlexBox padding="0px 16px" direction="column">
         <DynamicFormInput name="name" label="Name" value={nameValue} onChange={changeNameValue}></DynamicFormInput>
       </FlexBox>
@@ -139,7 +174,8 @@ export default ProfileEditForm
   // Create user Bio input - DONE
   // Create functionality to update firestore for user profile - DONE
   // Create display for user bio - DONE
-  // Create banner image form input
-  // Create user image form input
-  // Create image resizer component
+  // Create banner image form input - DONE
+  // Create user image form input - DONE
+  // Create image resizer component - DONE
+  // Implement saving of image adjustment
   // Create database storage and firestore url storage for image upload
