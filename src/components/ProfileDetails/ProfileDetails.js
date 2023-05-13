@@ -24,8 +24,7 @@ const BannerImage = styled.img`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  ${props => props.top && `top: ${props.top}%;`}
-  ${props => props.left && `left: ${props.left}%;`}
+  ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
   ${props => props.zoom && `width: ${props.zoom * 100}%;`}
 `
 
@@ -36,8 +35,8 @@ const ProfileImageBanner = (props) => {
   return (
     <BannerContainer>
       <BannerImage src={userContext.bannerImageUrl}
-                   top={bannerImageAdjustment.top}
-                   left={bannerImageAdjustment.left}
+                   transformX={bannerImageAdjustment.transformX}
+                   transformY={bannerImageAdjustment.transformY}
                    zoom={bannerImageAdjustment.zoom}></BannerImage>
     </BannerContainer>
   )

@@ -24,9 +24,7 @@ const BannerImage = styled.img`
   position: absolute;
   top: 50%;
   left: 50%;
-  ${props => props.top && `top: ${props.top}%;`}
-  ${props => props.left && `left: ${props.left}%;`}
-  transform: translate(-50%, -50%);
+  ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);` }
   box-sizing: border-box;
   width: 100%;
   ${props => props.zoom && `width: ${props.zoom * 100}%;`}
@@ -186,7 +184,7 @@ const ProfileEditForm = (props) => {
                      imageUrl={profileImageUrl} />
     )
   }
-
+  console.log(bannerImageAdjustment)
   return (
     <PopupModal removePopup={props.finishProfileEdit}
                 headerButton={<SaveButton onClick={updateUserInfo}>Save</SaveButton>}
@@ -194,8 +192,8 @@ const ProfileEditForm = (props) => {
       <FlexBox height="198px" direction="column" alignItems="center" justifyContent="center" overflow="hidden" position="relative">
         {bannerImageUrl && <BannerImage src={bannerImageUrl} 
                                         zoom={bannerImageAdjustment.zoom}
-                                        top={bannerImageAdjustment.top}
-                                        left={bannerImageAdjustment.left}></BannerImage>}
+                                        transformX={bannerImageAdjustment.transformX}
+                                        transformY={bannerImageAdjustment.transformY}></BannerImage>}
         <FlexBox z-index="10" backgroundColor={IMAGE_OVERLAY_GREY} position="absolute" top="0" right="0" bottom="0" left="0"></FlexBox>
         <FlexBox gap="20px">
           <ImageUploadButton uploadImage={uploadBannerImage}></ImageUploadButton>

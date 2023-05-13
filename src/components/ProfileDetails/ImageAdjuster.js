@@ -282,13 +282,13 @@ const ImageAdjuster = (props) => {
     const imageWidth = imageRef.current.offsetWidth
     const imageHeight = imageRef.current.offsetHeight
 
-    const left = ((adjustedX / imageWidth).toFixed(2) * 100) + 50
-    const top = ((adjustedY / imageHeight).toFixed(2) * 100) + 50
+    const transformX = ((adjustedX / imageWidth).toFixed(2) * 100)
+    const transformY = ((adjustedY / imageHeight).toFixed(2) * 100)
 
     const changesObject = {
       zoom: zoom,
-      left: left,
-      top: top,
+      transformX: transformX,
+      transformY: transformY,
     }
     
     props.applyFunction(changesObject)
