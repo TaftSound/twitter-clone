@@ -24,3 +24,36 @@ export const storeTweetImages = async (imageFiles, tweetId) => {
     console.error("failure to upload tweet image:", error)
   }
 }
+
+const storeSingleImage = async (ref, imageFile) => {
+  try {
+    const result = await uploadBytes(ref, imageFile)
+    const imageUrl = await getDownloadURL(result.ref)
+    
+    return imageUrl
+  } catch (error) {
+    console.error("Failure to store image", error)
+  }
+}
+
+export const storeProfileImage = async (userId, imageFile) => {
+  try {
+    const profileImageRef = ref(storageRef, `users/${userId}/images/profileImage/${imageFile.name}`)
+    const imageUrl = await storeSingleImage(profileImageRef, imageFile)
+    
+    return imageUrl
+  } catch (error) {
+    console.error("Failure to store profile image", error)
+  }
+}
+
+export const storeBannerImage = async (userId, imageFile) => {
+  try {
+    const bannerImageRef = ref(storageRef, `users/${userId}/images/bannerImage/${imageFile.name}`)
+    const imageUrl = await storeSingleImage(bannerImageRef, imageFile)
+    
+    return imageUrl
+  } catch (error) {
+    console.error("Failure to store profile image", error)
+  }
+}

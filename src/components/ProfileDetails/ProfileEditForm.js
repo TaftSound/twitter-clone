@@ -11,11 +11,26 @@ import { FormButton } from "../StyledButtons/FormButton"
 import { SmallMenuButton } from "../StyledButtons/SmallMenuButton"
 import { useRef } from "react"
 import ImageAdjuster from "./ImageAdjuster"
-import { BACKGROUND_COLOR, DARK_OVERLAY_COLOR, TRANSPARENT_DARK_GREY } from "../constants"
+import { BACKGROUND_COLOR, IMAGE_OVERLAY_GREY, TRANSPARENT_DARK_GREY } from "../constants"
+import { useContext } from "react"
+import { UserContext } from "../../App"
 
 const SaveButton = styled(FormButton)`
   height: 32px;
   font-size: 15px;
+`
+
+const BannerImage = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  ${props => props.top && `top: ${props.top}%;`}
+  ${props => props.left && `left: ${props.left}%;`}
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  width: 100%;
+  ${props => props.zoom && `width: ${props.zoom * 100}%;`}
+  border: solid 2px ${BACKGROUND_COLOR};
 `
 
 const LargeUserCircle = styled(UserCircle)`
@@ -30,9 +45,16 @@ const LargeUserCircle = styled(UserCircle)`
   opacity: ${props => props.imageLoaded ? '100%' : '70%'};
 `
 
-const PhotoButton = styled(SmallMenuButton)`
+const EditButton = styled(SmallMenuButton)`
   height: 44px;
   width: 44px;
+  background-color: ${TRANSPARENT_DARK_GREY};
+  opacity: 80%;
+  transition: background-color 200ms;
+  
+  &:hover {
+    background-color: rgb(35, 40, 45, 0.75);
+  }
 `
 
 const ImageUploadButton = (props) => {
@@ -50,30 +72,31 @@ const ImageUploadButton = (props) => {
   return (
     <>
       <FlexBox position="absolute" left="-9999px"><input ref={inputRef} type="file" accept="image/*" onChange={getImage} aria-label="user image upload"></input></FlexBox>
-      <PhotoButton title='Add photo' className={props.className} onClick={clickInput} medium={true} path="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z" />
+      <EditButton title='Add photo' onClick={clickInput} medium={true} path="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h1.697l3-2zM12 10.5c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-4 2c0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4-4-1.791-4-4zM17 2c0 1.657-1.343 3-3 3v1c1.657 0 3 1.343 3 3h1c0-1.657 1.343-3 3-3V5c-1.657 0-3-1.343-3-3h-1z" />
     </>
   )
 }
 
-const ProfileImageUploadButton = styled(ImageUploadButton)`
-  background-color: ${TRANSPARENT_DARK_GREY};
-  opacity: 80%;
-  transition: background-color 200ms;
+const DeleteImageButton = (props) => {
+  return (
+    <EditButton title="Remove photo" onClick={props.onClick} medium={true} path="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></EditButton>
+  )
+}
 
-  &:hover {
-    background-color: rgb(35, 40, 45, 0.75);
-  }
-`
 
 const ProfileEditForm = (props) => {
+  const userContext = useContext(UserContext)
+
   const [nameValue, setNameValue] = useState('')
   const [bioValue, setBioValue] = useState('')
-  const [bannerFile, setBannerFile] = useState(false)
-  const [bannerUrl, setBannerUrl] = useState(false)
+  const [bannerImageFile, setBannerImageFile] = useState(false)
+  const [bannerImageUrl, setBannerImageUrl] = useState(false)
   const [profileImageFile, setProfileImageFile] = useState(false)
   const [profileImageUrl, setProfileImageUrl] = useState(false)
   const [bannerImageAdjuster, setBannerImageAdjuster] = useState(false)
   const [profileImageAdjuster, setProfileImageAdjuster] = useState(false)
+  const [bannerImageAdjustment, setBannerImageAdjustment] = useState(false)
+  const [profileImageAdjustment, setProfileImageAdjustment] = useState(false)
 
   const changeNameValue = (event) => {
     const newValue = event.target.value
@@ -85,15 +108,33 @@ const ProfileEditForm = (props) => {
   }
 
   useEffect(() => {
-    if (props.name) { setNameValue(props.name) }
-    if (props.bio) { setBioValue(props.bio) }
-  }, [props.bio, props.name])
+    if (userContext.displayName) { setNameValue(userContext.displayName) }
+    if (userContext.bio) { setBioValue(userContext.bio) }
+    if (userContext.bannerImageUrl) { setBannerImageUrl(userContext.bannerImageUrl) }
+    if (userContext.profileImageUrl) { setProfileImageUrl(userContext.profileImageUrl) }
+    if (userContext.bannerImageAdjustment) { setBannerImageAdjustment(userContext.bannerImageAdjustment) }
+    if (userContext.profileImageAdjustment) { setProfileImageAdjustment(userContext.profileImageAdjustment) }
+  }, [userContext])
 
   const updateUserInfo = async () => {
     try {
       const newProfileData = {}
-      if (nameValue !== props.name) { newProfileData.displayName = nameValue }
-      if (bioValue !== props.bio) { newProfileData.bio = bioValue }
+      if (nameValue !== userContext.displayName) { newProfileData.displayName = nameValue }
+      if (bioValue !== userContext.bio) { newProfileData.bio = bioValue }
+      if (bannerImageUrl !== userContext.bannerImageUrl) {
+        newProfileData.bannerImageUrl = bannerImageUrl
+        newProfileData.bannerImageFile = bannerImageFile
+      }
+      if (profileImageUrl !== userContext.profileImageUrl) {
+        newProfileData.profileImageUrl = profileImageUrl
+        newProfileData.profileImageFile = profileImageFile
+      }
+      if (bannerImageAdjustment !== userContext.bannerImageAdjustment) {
+        newProfileData.bannerImageAdjustment = bannerImageAdjustment
+      }
+      if (profileImageAdjustment !== userContext.profileImageAdjustment) {
+        newProfileData.profileImageAdjustment = profileImageAdjustment
+      }
       await updateUserProfile(newProfileData)
       PubSub.publish('update user data', newProfileData)
       props.finishProfileEdit()
@@ -104,12 +145,13 @@ const ProfileEditForm = (props) => {
 
   const uploadBannerImage = async (imgFile) => {
     const imgUrl = URL.createObjectURL(imgFile)
-    setBannerFile(imgFile)
-    setBannerUrl(imgUrl)
+    setBannerImageFile(imgFile)
+    setBannerImageUrl(imgUrl)
     setBannerImageAdjuster(true)
   }
   const applyBannerAdjustment = async (bannerDisplayData) => {
-
+    setBannerImageAdjustment(bannerDisplayData)
+    setBannerImageAdjuster(false)
   }
   const uploadProfileImage = async (imgFile) => {
     const imgUrl = URL.createObjectURL(imgFile)
@@ -124,12 +166,17 @@ const ProfileEditForm = (props) => {
     setBannerImageAdjuster(false)
     setProfileImageAdjuster(false)
   }
+  const deleteBannerImage = () => {
+    setBannerImageUrl(false)
+    setBannerImageFile(false)
+    setBannerImageAdjustment({})
+  }
 
   if (bannerImageAdjuster) {
     return (
       <ImageAdjuster applyFunction={applyBannerAdjustment} 
                      backFunction={hideImageAdjuster}
-                     imageUrl={bannerUrl} />
+                     imageUrl={bannerImageUrl} />
     )
   }
   if (profileImageAdjuster) {
@@ -144,16 +191,24 @@ const ProfileEditForm = (props) => {
     <PopupModal removePopup={props.finishProfileEdit}
                 headerButton={<SaveButton onClick={updateUserInfo}>Save</SaveButton>}
                 title="Edit profile">
-      <FlexBox height="198px" direction="column" alignItems="center" justifyContent="center">
-        <ImageUploadButton uploadImage={uploadBannerImage}></ImageUploadButton>
+      <FlexBox height="198px" direction="column" alignItems="center" justifyContent="center" overflow="hidden" position="relative">
+        {bannerImageUrl && <BannerImage src={bannerImageUrl} 
+                                        zoom={bannerImageAdjustment.zoom}
+                                        top={bannerImageAdjustment.top}
+                                        left={bannerImageAdjustment.left}></BannerImage>}
+        <FlexBox z-index="10" backgroundColor={IMAGE_OVERLAY_GREY} position="absolute" top="0" right="0" bottom="0" left="0"></FlexBox>
+        <FlexBox gap="20px">
+          <ImageUploadButton uploadImage={uploadBannerImage}></ImageUploadButton>
+          {bannerImageUrl && <DeleteImageButton onClick={deleteBannerImage}></DeleteImageButton>}
+        </FlexBox>
       </FlexBox>
       {/* user image input */}
-      <FlexBox position="relative" width="max-content" margin="-43px 0px 0px 17px">
+      <FlexBox position="relative" width="max-content" margin="-43px 0px 0px 17px" borderRadius="1000px" backgroundColor={BACKGROUND_COLOR}>
         <LargeUserCircle imageLoaded={profileImageUrl}>
-          {props.name[0]}
+          {userContext.displayName[0]}
         </LargeUserCircle>
         <FlexBox position="absolute" top="50%" left="50%" transform="translate(-50%, -50%)" zIndex="15">
-          <ProfileImageUploadButton uploadImage={uploadProfileImage}></ProfileImageUploadButton>
+          <ImageUploadButton uploadImage={uploadProfileImage}></ImageUploadButton>
         </FlexBox>
       </FlexBox>
       <FlexBox padding="0px 16px" direction="column">

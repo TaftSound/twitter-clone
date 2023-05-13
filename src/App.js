@@ -35,7 +35,13 @@ const ContextProvider = (props) => {
       const userDataCopy = userData
       if (data.displayName) { userDataCopy.displayName = data.displayName }
       if (data.bio) { userDataCopy.bio = data.bio }
-      setUserData(userDataCopy)
+      if (data.bannerImageUrl) { userDataCopy.bannerImageUrl = data.bannerImageUrl }
+      if (data.profileImageUrl) { userDataCopy.profileImageUrl = data.profileImageUrl }
+      if (data.bannerImageUrl === false) { userDataCopy.bannerImageUrl = "" }
+      if (data.profileImageUrl === false) { userDataCopy.profileImageUrl = "" }
+      if (data.bannerImageAdjustment) { userDataCopy.bannerImageAdjustment = data.bannerImageAdjustment }
+      if (data.profileImageAdjustment) { userDataCopy.profileImageAdjustment = data.profileImageAdjustment }
+      setUserData({ ...userDataCopy })
     })
     return () => { PubSub.unsubscribe(unsubToken) }
   }, [userData])

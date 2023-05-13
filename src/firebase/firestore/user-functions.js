@@ -1,5 +1,7 @@
 import { doc, setDoc, getDoc, writeBatch, arrayUnion, updateDoc } from "firebase/firestore";
 import { auth } from "../auth";
+import { deleteBannerImage, deleteProfileImage } from "../storage/delete-image";
+import { storeBannerImage, storeProfileImage } from "../storage/store-image";
 import { db } from "./firestore";
 
 
@@ -91,8 +93,35 @@ export const createNewUser = async (user, userName) => {
 
 export const updateUserProfile = async (newData) => {
   try {
+    const userData = {}
+    if (newData.displayName) { userData.displayName = newData.displayName }
+    if (newData.bio) { userData.bio = newData.bio }
+    if (newData.profileImageFile) {
+      await deleteProfileImage(auth.currentUser.uid)
+      const profileImageUrl = await storeProfileImage(auth.currentUser.uid, newData.profileImageFile)
+      userData.profileImageUrl = profileImageUrl
+    }
+    if (newData.bannerImageFile) {
+      await deleteBannerImage(auth.currentUser.uid)
+      const bannerImageUrl = await storeBannerImage(auth.currentUser.uid, newData.bannerImageFile)
+      userData.bannerImageUrl = bannerImageUrl
+    }
+    if (newData.bannerImageFile === false) {
+      await deleteBannerImage(auth.currentUser.uid)
+      userData.bannerImageUrl = ""
+    }
+    if (newData.profileImageFile === false) {
+      await deleteProfileImage(auth.currentUser.uid)
+      userData.profileImageUrl = ""
+    }
+    if (newData.bannerImageAdjustment) {
+      userData.bannerImageAdjustment = newData.bannerImageAdjustment
+    }
+    if (newData.profileImageAdjustment) {
+      userData.profileImageAdjustment = newData.profileImageAdjustment
+    }
     const userDocRef = doc(db, 'users', auth.currentUser.uid);
-    await updateDoc(userDocRef, newData)
+    await updateDoc(userDocRef, userData)
   } catch (error) {
     console.error("Failure to update user profile data in firestore:", error)
   }

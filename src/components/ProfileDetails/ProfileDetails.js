@@ -12,19 +12,33 @@ import { useState } from "react"
 
 
 const BannerContainer = styled.div`
+  position: relative;
   height: 200px;
   background-color: ${DIVIDER_COLOR};
+  overflow: hidden;
 `
 
 const BannerImage = styled.img`
-
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  ${props => props.top && `top: ${props.top}%;`}
+  ${props => props.left && `left: ${props.left}%;`}
+  ${props => props.zoom && `width: ${props.zoom * 100}%;`}
 `
 
 const ProfileImageBanner = (props) => {
+  const userContext = useContext(UserContext)
+  const { bannerImageAdjustment } = userContext
 
   return (
     <BannerContainer>
-      <BannerImage></BannerImage>
+      <BannerImage src={userContext.bannerImageUrl}
+                   top={bannerImageAdjustment.top}
+                   left={bannerImageAdjustment.left}
+                   zoom={bannerImageAdjustment.zoom}></BannerImage>
     </BannerContainer>
   )
 }
@@ -99,7 +113,7 @@ const UserDetails = (props) => {
     setEditProfile(true)
   }
 
-  const finishProfileEdit = (newProfileData) => {
+  const finishProfileEdit = () => {
     setEditProfile(false)
   }
 
@@ -144,9 +158,7 @@ const UserDetails = (props) => {
           <H3>Followers</H3>
         </FlexBox>
       </UserDetailsContainer>
-      {editProfile ? <ProfileEditForm name={userContext.displayName}
-                                      bio={userContext.bio}
-                                      finishProfileEdit={finishProfileEdit}></ProfileEditForm> : false}
+      {editProfile ? <ProfileEditForm finishProfileEdit={finishProfileEdit}></ProfileEditForm> : false}
     </>
   )
 }

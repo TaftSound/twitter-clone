@@ -117,9 +117,7 @@ const ZoomSlider = (props) => {
       if (movedX.current >= trackWidth.current) { movedX.current = trackWidth.current }
       if (movedX.current <= 0) { movedX.current = 0 }
       const movePercentage = movedX.current / trackWidth.current
-      // const zoomValue = ((movePercentage * 4 + 1))
       const zoomValue = interpolateValue(movePercentage)
-      console.log(zoomValue)
       
       requestAnimationFrame(() => {
         props.changeZoom(zoomValue)
@@ -204,7 +202,6 @@ const ImageAdjuster = (props) => {
     } else {
       setAdjustedY(moveCoordinates[1])
     }
-    console.log(moveCoordinates)
   }
 
   const setLastAdjusted = (moveCoordinates) => {
@@ -281,10 +278,25 @@ const ImageAdjuster = (props) => {
     })
   }
 
+  const applyChanges = () => {
+    const imageWidth = imageRef.current.offsetWidth
+    const imageHeight = imageRef.current.offsetHeight
+
+    const left = ((adjustedX / imageWidth).toFixed(2) * 100) + 50
+    const top = ((adjustedY / imageHeight).toFixed(2) * 100) + 50
+
+    const changesObject = {
+      zoom: zoom,
+      left: left,
+      top: top,
+    }
+    
+    props.applyFunction(changesObject)
+  }
 
   return (
     <PopupModal backFunction={props.backFunction}
-                headerButton={<ApplyButton onClick={props.applyFunction}>Apply</ApplyButton>}
+                headerButton={<ApplyButton onClick={applyChanges}>Apply</ApplyButton>}
                 height="90vh"
                 maxHeight="650px"
                 flexBox={true}

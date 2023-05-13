@@ -99,6 +99,7 @@ export const FlexBox = styled.div`
   ${props => props.left && `left: ${props.left};`}
   ${props => props.transform && `transform: ${props.transform};`}
   ${props => props.zIndex && `z-index: ${props.zIndex};`}
+  ${props => props.overflow && `overflow: ${props.overflow};`}
   ${props => props.height && `height: ${props.height};`}
   ${props => props.width && `width: ${props.width};`}
   ${props => props.margin && `margin: ${props.margin};`}
@@ -106,4 +107,6 @@ export const FlexBox = styled.div`
   ${props => props.direction && `flex-direction: ${props.direction};`}
   ${props => props.alignItems && `align-items: ${props.alignItems};`}
   ${props => props.justifyContent && `justify-content: ${props.justifyContent};`}
+  ${props => props.backgroundColor && `background-color: ${props.backgroundColor};`}
+  ${props => props.borderRadius && `border-radius: ${props.borderRadius};`}
 `

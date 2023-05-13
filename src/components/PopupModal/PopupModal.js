@@ -46,7 +46,7 @@ const StickyHeader = styled.div`
   z-index: 9;
   top: 0;
   padding: 0px 16px;
-  border-radius: 16px;
+  border-radius: 16px 16px 0px 0px;
   background-color: ${BACKGROUND_COLOR};
   display: flex;
   align-items: center;
