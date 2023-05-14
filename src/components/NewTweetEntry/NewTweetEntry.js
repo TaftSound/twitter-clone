@@ -198,8 +198,7 @@ const NewTweetEntry = (props) => {
       <NewTweetEntryContainer popup={props.popup}>
         {tweetUploadingState && !props.popup ? <LoadingBar></LoadingBar> : false}
         <UserAccountContainer>
-          <UserCircle data-testid="user-initial" ref={userParent}>
-            {accountInitial}
+          <UserCircle data-testid="user-initial" userData={userContext} reference={userParent}>
             {tweetUploadingState && <UserCircleOverlay/>}
           </UserCircle>
         </UserAccountContainer>

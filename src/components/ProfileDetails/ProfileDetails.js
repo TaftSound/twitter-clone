@@ -18,13 +18,13 @@ const BannerContainer = styled.div`
   overflow: hidden;
 `
 
-const BannerImage = styled.img`
+const Image = styled.img`
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
+  ${props => props.transformX && `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
   ${props => props.zoom && `width: ${props.zoom * 100}%;`}
 `
 
@@ -34,10 +34,11 @@ const ProfileImageBanner = (props) => {
 
   return (
     <BannerContainer>
-      <BannerImage src={userContext.bannerImageUrl}
+      {userContext.bannerImageUrl
+       && <Image src={userContext.bannerImageUrl}
                    transformX={bannerImageAdjustment.transformX}
                    transformY={bannerImageAdjustment.transformY}
-                   zoom={bannerImageAdjustment.zoom}></BannerImage>
+                   zoom={bannerImageAdjustment.zoom}></Image>}
     </BannerContainer>
   )
 }
@@ -48,19 +49,29 @@ const LargeUserCircle = styled(UserCircle)`
   height: 133.5px;
   width: 133.5px;
   font-size: 75px;
+  background-color: ${BACKGROUND_COLOR};
   border: solid 4px ${BACKGROUND_COLOR};
   position: absolute;
   left: 16px;
   transform: translateY(-50%);
+  overflow: hidden;
 `
 
-const ProfileUserCircle = (props) => {
-  const userContext = useContext(UserContext)
+// const ProfileUserCircle = (props) => {
+//   const userContext = useContext(UserContext)
+//   const { profileImageAdjustment } = userContext
 
-  return (
-    <LargeUserCircle>{userContext.displayName[0]}</LargeUserCircle>
-  )
-}
+//   return (
+//     <LargeUserCircle>
+//       {!userContext.profileImageUrl && userContext.displayName[0]}
+//       {userContext.profileImageUrl
+//       && <Image src={userContext.profileImageUrl}
+//                    transformX={profileImageAdjustment.transformX}
+//                    transformY={profileImageAdjustment.transformY}
+//                    zoom={profileImageAdjustment.zoom}></Image>}
+//     </LargeUserCircle>
+//   )
+// }
 
 const UserDetailsContainer = styled.div`
   box-sizing: border-box;
@@ -173,7 +184,7 @@ const ProfileDetails = (props) => {
     return (
       <ProfileDetailsContainer>
         <ProfileImageBanner></ProfileImageBanner>
-        <ProfileUserCircle></ProfileUserCircle>
+        <LargeUserCircle userData={userContext}></LargeUserCircle>
         <UserDetails></UserDetails>
       </ProfileDetailsContainer>
     )

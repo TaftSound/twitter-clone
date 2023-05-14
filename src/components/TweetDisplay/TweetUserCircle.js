@@ -10,9 +10,10 @@ const UserAccountContainer = styled.div`
   overflow: visible;
 `;
 export const TweetUserCircle = (props) => {
+  const { tweetData } = props
   return (
     <UserAccountContainer>
-      <UserCircle>{props.children}</UserCircle>
+      <UserCircle userData={tweetData} ></UserCircle>
     </UserAccountContainer>
   );
 };

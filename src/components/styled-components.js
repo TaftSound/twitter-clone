@@ -1,7 +1,8 @@
-import styled from "styled-components";
-import { USER_ICON_COLOR, MAIN_FONT_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FAMILY, BUTTON_TOOLTIP_BACKGROUND, SECONDARY_FONT_COLOR } from "./constants";
 
-export const UserCircle = styled.button`
+import styled from "styled-components";
+import { USER_ICON_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FAMILY, BUTTON_TOOLTIP_BACKGROUND, SECONDARY_FONT_COLOR } from "./constants";
+
+const UserCircleContainer = styled.button`
   position: relative;
   z-index: 5;
   border-radius: 50%;
@@ -13,9 +14,44 @@ export const UserCircle = styled.button`
   justify-content: center;
   border: none;
   background-color: ${USER_ICON_COLOR};
+  ${props => props.imageUrl && 'background-color: transparent;'}
   color: white;
+  overflow: hidden;
 `
 
+const ProfileImage = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  ${props => props.transformX && `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
+  ${props => props.zoom && `width: ${props.zoom * 100}%;`}
+`
+
+export const UserCircle = (props) => {
+  const { userData } = props
+  const { profileImageAdjustment } = userData
+
+  if (props.children) {
+    return (
+      <UserCircleContainer imageUrl={userData.profileImageUrl} className={props.className} onClick={props.onClick}>
+        {props.children}
+      </UserCircleContainer>
+    )
+  }
+
+  return (
+    <UserCircleContainer imageUrl={userData.profileImageUrl} className={props.className} onClick={props.onClick}>
+      {!userData.profileImageUrl && userData.displayName[0]}
+      {userData.profileImageUrl
+      && <ProfileImage src={userData.profileImageUrl}
+                   transformX={profileImageAdjustment.transformX}
+                   transformY={profileImageAdjustment.transformY}
+                   zoom={profileImageAdjustment.zoom}></ProfileImage>}
+    </UserCircleContainer>
+  )
+}
 export const SmallUserCircle = styled(UserCircle)`
   font-size: 24px;
   height: 40px;

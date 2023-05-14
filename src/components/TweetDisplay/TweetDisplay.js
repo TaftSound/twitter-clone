@@ -45,7 +45,7 @@ const TweetImage = styled.img`
 `
 
 const TweetDisplay = ({ tweetData }) => {
-  const { text, imageUrls, displayName, } = tweetData
+  const { text, imageUrls } = tweetData
   const [hidden, setHidden] = useState(false)
 
   const hideTweet = (boolean) => {
@@ -56,7 +56,7 @@ const TweetDisplay = ({ tweetData }) => {
   return (
     <OuterContainer>
       <PaddingDiv></PaddingDiv>
-      <TweetUserCircle>{displayName[0]}</TweetUserCircle>
+      <TweetUserCircle tweetData={tweetData}></TweetUserCircle>
       <InnerContainer>
         <TweetHeader tweetData={tweetData} hideTweet={hideTweet}></TweetHeader>
         <TweetText>{text}</TweetText>

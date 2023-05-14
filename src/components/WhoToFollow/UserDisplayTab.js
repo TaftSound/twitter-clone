@@ -54,7 +54,7 @@ const UserDisplayTab = (props) => {
   return (
     <OuterContainer>
       <UserContainer>
-        <StyledUserCircle>{userInitial}</StyledUserCircle>
+        <StyledUserCircle userData={userObject}></StyledUserCircle>
         <UserInfoContainer>
           <DisplayName>{userObject.displayName}</DisplayName>
           <UserName>@{userObject.userName}</UserName>

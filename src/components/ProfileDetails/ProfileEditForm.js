@@ -24,11 +24,15 @@ const BannerImage = styled.img`
   position: absolute;
   top: 50%;
   left: 50%;
-  ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);` }
+  transform: translate(-50%, -50%);
+  ${props => props.transformX && `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);` }
   box-sizing: border-box;
   width: 100%;
   ${props => props.zoom && `width: ${props.zoom * 100}%;`}
   border: solid 2px ${BACKGROUND_COLOR};
+`
+const ProfileImage = styled(BannerImage)`
+  border: none;
 `
 
 const LargeUserCircle = styled(UserCircle)`
@@ -93,8 +97,16 @@ const ProfileEditForm = (props) => {
   const [profileImageUrl, setProfileImageUrl] = useState(false)
   const [bannerImageAdjuster, setBannerImageAdjuster] = useState(false)
   const [profileImageAdjuster, setProfileImageAdjuster] = useState(false)
-  const [bannerImageAdjustment, setBannerImageAdjustment] = useState(false)
-  const [profileImageAdjustment, setProfileImageAdjustment] = useState(false)
+  const [bannerImageAdjustment, setBannerImageAdjustment] = useState({
+    transformX: 0,
+    transformY: 0,
+    zoom: 1
+  })
+  const [profileImageAdjustment, setProfileImageAdjustment] = useState({
+    transformX: 0,
+    transformY: 0,
+    zoom: 1
+  })
 
   const changeNameValue = (event) => {
     const newValue = event.target.value
@@ -130,6 +142,7 @@ const ProfileEditForm = (props) => {
       if (bannerImageAdjustment !== userContext.bannerImageAdjustment) {
         newProfileData.bannerImageAdjustment = bannerImageAdjustment
       }
+      console.log(profileImageAdjustment, userContext.profileImageAdjustment)
       if (profileImageAdjustment !== userContext.profileImageAdjustment) {
         newProfileData.profileImageAdjustment = profileImageAdjustment
       }
@@ -157,8 +170,9 @@ const ProfileEditForm = (props) => {
     setProfileImageUrl(imgUrl)
     setProfileImageAdjuster(true)
   }
-  const applyProfileImageAdjustment = async (bannerDisplayData) => {
-
+  const applyProfileImageAdjustment = async (profileDisplayData) => {
+    setProfileImageAdjustment(profileDisplayData)
+    setProfileImageAdjuster(false)
   }
   const hideImageAdjuster = () => {
     setBannerImageAdjuster(false)
@@ -174,17 +188,21 @@ const ProfileEditForm = (props) => {
     return (
       <ImageAdjuster applyFunction={applyBannerAdjustment} 
                      backFunction={hideImageAdjuster}
-                     imageUrl={bannerImageUrl} />
+                     imageUrl={bannerImageUrl}
+                     windowWidth={550}
+                     windowHeight={183} />
     )
   }
   if (profileImageAdjuster) {
     return (
       <ImageAdjuster applyFunction={applyProfileImageAdjustment}
                      backFunction={hideImageAdjuster}
-                     imageUrl={profileImageUrl} />
+                     imageUrl={profileImageUrl}
+                     windowWidth={389}
+                     windowHeight={389} />
     )
   }
-  console.log(bannerImageAdjustment)
+  
   return (
     <PopupModal removePopup={props.finishProfileEdit}
                 headerButton={<SaveButton onClick={updateUserInfo}>Save</SaveButton>}
@@ -202,8 +220,15 @@ const ProfileEditForm = (props) => {
       </FlexBox>
       {/* user image input */}
       <FlexBox position="relative" width="max-content" margin="-43px 0px 0px 17px" borderRadius="1000px" backgroundColor={BACKGROUND_COLOR}>
-        <LargeUserCircle imageLoaded={profileImageUrl}>
-          {userContext.displayName[0]}
+        <LargeUserCircle imageLoaded={profileImageUrl} userData={{
+          profileImageUrl: profileImageUrl,
+          displayName: userContext.displayName,
+          profileImageAdjustment: {
+            zoom: profileImageAdjustment.zoom,
+            transformX: profileImageAdjustment.transformX,
+            transformY: profileImageAdjustment.transformY
+          }
+        }}>
         </LargeUserCircle>
         <FlexBox position="absolute" top="50%" left="50%" transform="translate(-50%, -50%)" zIndex="15">
           <ImageUploadButton uploadImage={uploadProfileImage}></ImageUploadButton>
@@ -221,14 +246,3 @@ const ProfileEditForm = (props) => {
 }
 
 export default ProfileEditForm
-
-
-  // Create user display name input - DONE
-  // Create user Bio input - DONE
-  // Create functionality to update firestore for user profile - DONE
-  // Create display for user bio - DONE
-  // Create banner image form input - DONE
-  // Create user image form input - DONE
-  // Create image resizer component - DONE
-  // Implement saving of image adjustment
-  // Create database storage and firestore url storage for image upload

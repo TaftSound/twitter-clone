@@ -28,25 +28,22 @@ const Image = styled.img`
   ${props => `top: calc(50% + ${props.adjustedY}px);`}
   ${props => `left: calc(50% + ${props.adjustedX}px);`}
   transform: translate(-50%, -50%);
-  width: 550px;
-  ${props => props.zoom && `width: ${props.zoom * 550}px;`}
+  ${props => `width: ${props.width}px;`}
+  ${props => props.zoom && `width: ${props.zoom * props.width}px;`}
   user-select: none;
 `
 const ImageWindow = styled(FlexBox)`
   box-sizing: border-box;
   position: absolute;
-  height: 183px;
+  ${props => `height: ${props.height}px;`}
+  ${props => `width: ${props.width}px;`}
   top: 50%;
   transform: translateY(-50%);
-  width: 550px;
   border: solid 4px ${PRIMARY_COLOR};
   box-shadow: rgba(18, 21, 23, 0.7) 0px 0px 0px 9999px;
   user-select: none; 
 `
-// STEPS
-  // IMPLEMENT ZOOM SLIDER
-    // will have 5x zoom
-    // will zoom by multiplying the width value
+
 const Label = styled.label`
   position: absolute;
   left: -99999px;
@@ -77,7 +74,6 @@ const SliderThumb = styled.div`
   width: 16px;
   margin: 0px -2.5px;
   background-color: ${PRIMARY_COLOR};
-  /* background-color: rgb(230, 230, 230, 0.5); */
   border-radius: 50px;
 `
 const ZoomSlider = (props) => {
@@ -90,14 +86,6 @@ const ZoomSlider = (props) => {
   const [value, setValue] = useState(1)
   const [thumbX, setThumbX] = useState(0)
 
-  // Need to start mousemove listen when clicking on thumb
-  // Need to store starting slider value on mousedown
-  // Need to store startX on mouseDown
-  // Need to measure X movement on move
-  // Need to get percentage of slider length represented by that mouse movement
-  // need to add that percentage to the starting slider value
-  // need to set the slider value as that newly added value
-  // need to set limits, if value is over 5, or under 1, need to do nothing
   const interpolateValue = (inputValue) => {
     const outputMin = 1;
     const outputMax = 5;
@@ -303,8 +291,8 @@ const ImageAdjuster = (props) => {
                 title="Edit media">
       <FlexBox flex="1" direction="column" alignItems="center" justifyContent="center" position="relative">
         <ImageContainer ref={containerRef} direction="column" justifyContent="center" alignItems="center">
-          <Image zoom={zoom} draggable={false} adjustedX={adjustedX} adjustedY={adjustedY} ref={imageRef} src={props.imageUrl}></Image>
-          <ImageWindow ref={windowRef} display="flex"></ImageWindow>
+          <Image width={props.windowWidth} zoom={zoom} draggable={false} adjustedX={adjustedX} adjustedY={adjustedY} ref={imageRef} src={props.imageUrl}></Image>
+          <ImageWindow width={props.windowWidth} height={props.windowHeight} ref={windowRef} display="flex"></ImageWindow>
         </ImageContainer>
       </FlexBox>
       <FlexBox height="40px" padding="4px 0px" justifyContent="center" alignItems="center" gap="12px">

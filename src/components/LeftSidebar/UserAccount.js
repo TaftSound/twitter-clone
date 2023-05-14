@@ -115,7 +115,6 @@ const UserAccountButton = (props) => {
   const parent = useRef(null)
   const userContext = useContext(UserContext)
 
-  const [accountInitial, setAccountInitial] = useState('')
   const [menuDisplayed, setMenuDisplayed] = useState(false)
   const [clickable, setClickable] = useState(true)
 
@@ -138,14 +137,11 @@ const UserAccountButton = (props) => {
       return () => { window.removeEventListener('click', toggleAccountMenu) }
     }
   })
-  useEffect(() => {
-    if (userContext) { setAccountInitial(userContext.displayName[0]) }
-  }, [userContext])
 
   return (
     <OuterContainer>
       <ButtonContainer clickable={clickable} linkTitle={menuDisplayed ? "" : "Accounts"} displayAbove={true} ref={parent}>
-        <SmallUserCircle onClick={toggleAccountMenu}>{accountInitial}</SmallUserCircle>
+        <SmallUserCircle userData={userContext} onClick={toggleAccountMenu}></SmallUserCircle>
       </ButtonContainer>
       {menuDisplayed ? <UserAccountMenu></UserAccountMenu> : false }
     </OuterContainer>
