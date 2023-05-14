@@ -1,6 +1,6 @@
 import { onAuthStateChanged } from 'firebase/auth';
 import { createContext, useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import PubSub from 'pubsub-js';
 
 import AppPage from "./components/AppPage/AppPage"
@@ -73,9 +73,20 @@ const ContextProvider = (props) => {
   }, [])
   useEffect(() => {
     const unsubToken = PubSub.subscribe('visit user profile', async (msg, data) => {
-      setVisitData(data)
       const userFollowData = await getFollowerList(data.userId)
+      setVisitData(data)
       setVisitFollowData(userFollowData)
+    })
+    
+    return () => {
+      PubSub.unsubscribe(unsubToken)
+    }
+  }, [])
+
+  useEffect(() => {
+    const unsubToken = PubSub.subscribe('clear visited profile', async (msg, data) => {
+      setVisitData(null)
+      setVisitFollowData(null)
     })
     
     return () => {
@@ -99,6 +110,7 @@ const ContextProvider = (props) => {
 const PageRoutes = (props) => {
 
   const navigate = useNavigate()
+  const location = useLocation()
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -108,7 +120,19 @@ const PageRoutes = (props) => {
     return unsubscribe
   }, [navigate])
 
+  useEffect(() => {
+    if (location.pathname !== '/visit-profile') {
+      PubSub.publish('clear visited profile')
+    }
+    if (location.pathname === '/visit-profile') {
+      PubSub.publish('visit user profile', location.state)
+    }
+  }, [location])
 
+
+  useEffect(() => {
+    console.log(location.state)
+  }, [location])
 
   return (
     <Routes>

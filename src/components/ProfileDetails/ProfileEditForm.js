@@ -13,7 +13,7 @@ import { useRef } from "react"
 import ImageAdjuster from "./ImageAdjuster"
 import { BACKGROUND_COLOR, IMAGE_OVERLAY_GREY, TRANSPARENT_DARK_GREY } from "../constants"
 import { useContext } from "react"
-import { UserContext } from "../../App"
+import { UserContext, VisitContext } from "../../App"
 
 const SaveButton = styled(FormButton)`
   height: 32px;
@@ -87,7 +87,9 @@ const DeleteImageButton = (props) => {
 
 
 const ProfileEditForm = (props) => {
-  const userContext = useContext(UserContext)
+  let userContext = useContext(UserContext)
+  const visitContext = useContext(VisitContext)
+  if (props.visit) { userContext = visitContext }
 
   const [nameValue, setNameValue] = useState('')
   const [bioValue, setBioValue] = useState('')
@@ -128,6 +130,7 @@ const ProfileEditForm = (props) => {
 
   const updateUserInfo = async () => {
     try {
+      console.log(userContext)
       const newProfileData = {}
       if (nameValue !== userContext.displayName) { newProfileData.displayName = nameValue }
       if (bioValue !== userContext.bio) { newProfileData.bio = bioValue }

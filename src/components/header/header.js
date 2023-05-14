@@ -9,7 +9,7 @@ import uniqid from 'uniqid'
 
 import SearchBar from "../SearchBar/SearchBar";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const HeaderContainerOuter = styled.div`
   position: relative;

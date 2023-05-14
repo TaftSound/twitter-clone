@@ -121,13 +121,13 @@ const UserDetails = (props) => {
       return `${month} ${year}`
   }, [visitContext])
 
-  if (visitFollowContext) { 
+  if (visitContext && visitFollowContext) { 
     return (
       <>
         <UserDetailsContainer>
           <FlexBox height="68.5px" justifyContent="space-between">
             <div></div>
-            {/* <EditProfileButton onClick={startProfileEdit} dark={true} small={true}>Edit profile</EditProfileButton> */}
+            <EditProfileButton onClick={startProfileEdit} dark={true} small={true}>Edit profile</EditProfileButton>
           </FlexBox>
           <FlexBox margin="4px 0px 15px" direction="column" alignItems="flex-start">
             <H1>{visitContext.displayName}</H1>
@@ -153,7 +153,7 @@ const UserDetails = (props) => {
             <H3>Followers</H3>
           </FlexBox>
         </UserDetailsContainer>
-        {editProfile ? <ProfileEditForm finishProfileEdit={finishProfileEdit}></ProfileEditForm> : false}
+        {editProfile ? <ProfileEditForm visit={true} finishProfileEdit={finishProfileEdit}></ProfileEditForm> : false}
       </>
     )
   } else {

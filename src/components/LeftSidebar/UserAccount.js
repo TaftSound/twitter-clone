@@ -138,7 +138,7 @@ const UserAccountButton = (props) => {
     }
   })
 
-  return (
+  if (userContext) return (
     <OuterContainer>
       <ButtonContainer clickable={clickable} linkTitle={menuDisplayed ? "" : "Accounts"} displayAbove={true} ref={parent}>
         <SmallUserCircle userData={userContext} onClick={toggleAccountMenu}></SmallUserCircle>

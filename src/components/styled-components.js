@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import { USER_ICON_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FAMILY, BUTTON_TOOLTIP_BACKGROUND, SECONDARY_FONT_COLOR } from "./constants";
-import PubSub from "pubsub-js";
 
 const UserCircleContainer = styled.button`
   position: relative;
@@ -43,8 +42,7 @@ export const UserCircle = (props) => {
     if (userContext.userId === userData.userId) {
       navigate('/user-profile')
     } else {
-      PubSub.publish('visit user profile', userData)
-      navigate('/visit-profile')
+      navigate('/visit-profile', { state: userData })
     }
   }
 

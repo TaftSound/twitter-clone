@@ -1,11 +1,13 @@
+import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import styled from "styled-components";
+import { UserContext } from "../../App";
 import { getUsersToFollow } from "../../firebase/firestore/follower-list-functions";
 
 import WhoToFollow from "./WhoToFollow";
 
 const SidebarWhoToFollow = (props) => {
+  const userContext = useContext(UserContext)
   const [usersToFollow, setUsersToFollow] = useState([])
   const [loadCount, setLoadCount] = useState(0)
 
@@ -19,8 +21,8 @@ const SidebarWhoToFollow = (props) => {
       setUsersToFollow(usersArray)
     }
 
-    loadUsersToFollow()
-  }, [])
+    if (userContext) loadUsersToFollow()
+  }, [userContext])
 
   
   return (
