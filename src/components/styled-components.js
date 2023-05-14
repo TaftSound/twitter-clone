@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import { USER_ICON_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FAMILY, BUTTON_TOOLTIP_BACKGROUND, SECONDARY_FONT_COLOR } from "./constants";
+import { USER_ICON_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FAMILY, BUTTON_TOOLTIP_BACKGROUND, SECONDARY_FONT_COLOR, BACKGROUND_COLOR } from "./constants";
 
 const UserCircleContainer = styled.button`
   position: relative;
@@ -20,6 +20,7 @@ const UserCircleContainer = styled.button`
   ${props => props.imageUrl && 'background-color: transparent;'}
   color: white;
   overflow: hidden;
+  cursor: pointer;
 `
 
 const ProfileImage = styled.img`
@@ -28,7 +29,7 @@ const ProfileImage = styled.img`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  ${props => props.transformX && `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
+  ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
   ${props => props.zoom && `width: ${props.zoom * 100}%;`}
 `
 
@@ -65,6 +66,21 @@ export const UserCircle = (props) => {
     </UserCircleContainer>
   )
 }
+
+export const LargeUserCircle = styled(UserCircle)`
+  box-sizing: content-box;
+  padding: 0px;
+  height: 133.5px;
+  width: 133.5px;
+  font-size: 75px;
+  ${props => props.userData.profileImageUrl ? `background-color: ${BACKGROUND_COLOR};` : ''}
+  border: solid 4px ${BACKGROUND_COLOR};
+  position: absolute;
+  left: 16px;
+  transform: translateY(-50%);
+  overflow: hidden;
+`
+
 export const SmallUserCircle = styled(UserCircle)`
   font-size: 24px;
   height: 40px;

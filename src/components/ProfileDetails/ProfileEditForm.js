@@ -26,10 +26,10 @@ const BannerImage = styled.img`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  ${props => props.transformX && `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);` }
+  ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);` }
   box-sizing: border-box;
   width: 100%;
-  ${props => props.zoom && `width: ${props.zoom * 100}%;`}
+  ${props => `width: ${props.zoom * 100}%;`}
   border: solid 2px ${BACKGROUND_COLOR};
 `
 const ProfileImage = styled(BannerImage)`
@@ -88,10 +88,10 @@ const DeleteImageButton = (props) => {
 
 
 const ProfileEditForm = (props) => {
-  let userContext = useContext(UserContext)
+  const userContext = useContext(UserContext)
   const visitContext = useContext(VisitContext)
-  if (props.visit) { userContext = visitContext }
 
+  const [savedUserData, setSavedUserData] = useState(userContext)
   const [nameValue, setNameValue] = useState('')
   const [bioValue, setBioValue] = useState('')
   const [bannerImageFile, setBannerImageFile] = useState(false)
@@ -111,6 +111,14 @@ const ProfileEditForm = (props) => {
     zoom: 1
   })
 
+  useEffect(() => {
+    if (props.visit) {
+      setSavedUserData(visitContext)
+    } else {
+      setSavedUserData(userContext)
+    }
+  }, [userContext, visitContext, props.visit])
+
   const changeNameValue = (event) => {
     const newValue = event.target.value
     setNameValue(newValue)
@@ -121,37 +129,47 @@ const ProfileEditForm = (props) => {
   }
 
   useEffect(() => {
-    if (userContext.displayName) { setNameValue(userContext.displayName) }
-    if (userContext.bio) { setBioValue(userContext.bio) }
-    if (userContext.bannerImageUrl) { setBannerImageUrl(userContext.bannerImageUrl) }
-    if (userContext.profileImageUrl) { setProfileImageUrl(userContext.profileImageUrl) }
-    if (userContext.bannerImageAdjustment) { setBannerImageAdjustment(userContext.bannerImageAdjustment) }
-    if (userContext.profileImageAdjustment) { setProfileImageAdjustment(userContext.profileImageAdjustment) }
-    console.log(userContext)
-  }, [userContext])
+    savedUserData.displayName ? setNameValue(savedUserData.displayName) : setNameValue('')
+    savedUserData.bio ? setBioValue(savedUserData.bio) : setBioValue('')
+    savedUserData.bannerImageUrl ? setBannerImageUrl(savedUserData.bannerImageUrl) : setBannerImageUrl(false)
+    savedUserData.profileImageUrl ? setProfileImageUrl(savedUserData.profileImageUrl) : setProfileImageUrl(false)
+    savedUserData.bannerImageAdjustment ? setBannerImageAdjustment(savedUserData.bannerImageAdjustment)
+    : setBannerImageAdjustment({
+      transformX: 0,
+      transformY: 0,
+      zoom: 1})
+    savedUserData.profileImageAdjustment ? setProfileImageAdjustment(savedUserData.profileImageAdjustment)
+    : setProfileImageAdjustment({
+      transformX: 0,
+      transformY: 0,
+      zoom: 1})
+  }, [savedUserData])
 
   const updateUserInfo = async () => {
     try {
       const newProfileData = {}
-      if (nameValue !== userContext.displayName) { newProfileData.displayName = nameValue }
-      if (bioValue !== userContext.bio) { newProfileData.bio = bioValue }
-      if (bannerImageUrl !== userContext.bannerImageUrl) {
+      if (nameValue !== savedUserData.displayName) { newProfileData.displayName = nameValue }
+      if (bioValue !== savedUserData.bio) { newProfileData.bio = bioValue }
+      if (bannerImageUrl !== savedUserData.bannerImageUrl) {
         newProfileData.bannerImageUrl = bannerImageUrl
         newProfileData.bannerImageFile = bannerImageFile
       }
-      if (profileImageUrl !== userContext.profileImageUrl) {
+      if (profileImageUrl !== savedUserData.profileImageUrl) {
         newProfileData.profileImageUrl = profileImageUrl
         newProfileData.profileImageFile = profileImageFile
       }
-      if (bannerImageAdjustment !== userContext.bannerImageAdjustment) {
+      if (bannerImageAdjustment !== savedUserData.bannerImageAdjustment) {
         newProfileData.bannerImageAdjustment = bannerImageAdjustment
       }
-      console.log(profileImageAdjustment, userContext.profileImageAdjustment)
-      if (profileImageAdjustment !== userContext.profileImageAdjustment) {
+      if (profileImageAdjustment !== savedUserData.profileImageAdjustment) {
         newProfileData.profileImageAdjustment = profileImageAdjustment
       }
-      await updateUserProfile(newProfileData, userContext.userId)
-      PubSub.publish('update user data', newProfileData)
+      await updateUserProfile(newProfileData, savedUserData.userId)
+      if (!props.visit) {
+        PubSub.publish('update user data', newProfileData)
+      } else {
+        PubSub.publish('update visit data', newProfileData)
+      }
       props.finishProfileEdit()
     } catch (error) {
       console.error("Failure to update profile info", error)
@@ -222,11 +240,10 @@ const ProfileEditForm = (props) => {
           {bannerImageUrl && <DeleteImageButton onClick={deleteBannerImage}></DeleteImageButton>}
         </FlexBox>
       </FlexBox>
-      {/* user image input */}
       <FlexBox position="relative" width="max-content" margin="-43px 0px 0px 17px" borderRadius="1000px" backgroundColor={BACKGROUND_COLOR}>
         <LargeUserCircle imageLoaded={profileImageUrl} userData={{
           profileImageUrl: profileImageUrl,
-          displayName: userContext.displayName,
+          displayName: savedUserData.displayName,
           profileImageAdjustment: {
             zoom: profileImageAdjustment.zoom,
             transformX: profileImageAdjustment.transformX,

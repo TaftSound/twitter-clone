@@ -2,7 +2,7 @@ import { useMemo, useContext } from "react"
 import styled from "styled-components"
 
 import LoadingPage from "../LoadingPage/LoadingPage"
-import { UserCircle, SmallGreyLogo, FlexBox } from "../styled-components"
+import { UserCircle, SmallGreyLogo, FlexBox, LargeUserCircle } from "../styled-components"
 import { FormButton } from "../StyledButtons/FormButton"
 import { BACKGROUND_COLOR, DIVIDER_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 
@@ -24,7 +24,7 @@ const Image = styled.img`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  ${props => props.transformX && `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
+  ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
   ${props => props.zoom && `width: ${props.zoom * 100}%;`}
 `
 
@@ -42,20 +42,6 @@ const ProfileImageBanner = (props) => {
     </BannerContainer>
   )
 }
-
-const LargeUserCircle = styled(UserCircle)`
-  box-sizing: content-box;
-  padding: 0px;
-  height: 133.5px;
-  width: 133.5px;
-  font-size: 75px;
-  background-color: ${BACKGROUND_COLOR};
-  border: solid 4px ${BACKGROUND_COLOR};
-  position: absolute;
-  left: 16px;
-  transform: translateY(-50%);
-  overflow: hidden;
-`
 
 const ProfileUserCircle = (props) => {
   const userContext = useContext(UserContext)

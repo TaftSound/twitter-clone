@@ -278,7 +278,6 @@ const ImageAdjuster = (props) => {
       transformX: transformX,
       transformY: transformY,
     }
-    
     props.applyFunction(changesObject)
   }
 

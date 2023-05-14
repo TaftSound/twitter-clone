@@ -15,6 +15,7 @@ import { useLocation } from "react-router-dom"
 import { getUserDataById } from "../../firebase/firestore/current-user-data"
 import { getFollowerList } from "../../firebase/firestore/follower-list-functions"
 import { createContext } from "react"
+import PubSub from "pubsub-js"
 
 
 export const VisitContext = createContext(null)
@@ -46,6 +47,25 @@ const AppPage = (props) => {
       getVisitedUserData(user)
     }
   }, [location])
+
+  useEffect(() => {
+    const unsubToken = PubSub.subscribe('update visit data', (msg, data) => {
+      const visitDataCopy = visitData
+      if (data.displayName) { visitDataCopy.displayName = data.displayName }
+      if (data.bio) { visitDataCopy.bio = data.bio }
+      if (data.bannerImageUrl) { visitDataCopy.bannerImageUrl = data.bannerImageUrl }
+      if (data.profileImageUrl) { visitDataCopy.profileImageUrl = data.profileImageUrl }
+      if (data.bannerImageUrl === false) { visitDataCopy.bannerImageUrl = "" }
+      if (data.profileImageUrl === false) { visitDataCopy.profileImageUrl = "" }
+      if (data.bannerImageAdjustment) { visitDataCopy.bannerImageAdjustment = data.bannerImageAdjustment }
+      if (data.profileImageAdjustment) { visitDataCopy.profileImageAdjustment = data.profileImageAdjustment }
+      setVisitData({ ...visitDataCopy })
+    })
+
+    return () => {
+      PubSub.unsubscribe(unsubToken)
+    }
+  }, [visitData])
 
   const memoizedUserData = useMemo(() => {
     const userId = userContext ? userContext.userId : false
