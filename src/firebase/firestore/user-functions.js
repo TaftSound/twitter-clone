@@ -91,27 +91,27 @@ export const createNewUser = async (user, userName) => {
   }
 };
 
-export const updateUserProfile = async (newData) => {
+export const updateUserProfile = async (newData, userId = auth.currentUser.uid) => {
   try {
     const userData = {}
     if (newData.displayName) { userData.displayName = newData.displayName }
     if (newData.bio) { userData.bio = newData.bio }
     if (newData.profileImageFile) {
-      await deleteProfileImage(auth.currentUser.uid)
-      const profileImageUrl = await storeProfileImage(auth.currentUser.uid, newData.profileImageFile)
+      await deleteProfileImage(userId)
+      const profileImageUrl = await storeProfileImage(userId, newData.profileImageFile)
       userData.profileImageUrl = profileImageUrl
     }
     if (newData.bannerImageFile) {
-      await deleteBannerImage(auth.currentUser.uid)
-      const bannerImageUrl = await storeBannerImage(auth.currentUser.uid, newData.bannerImageFile)
+      await deleteBannerImage(userId)
+      const bannerImageUrl = await storeBannerImage(userId, newData.bannerImageFile)
       userData.bannerImageUrl = bannerImageUrl
     }
     if (newData.bannerImageFile === false) {
-      await deleteBannerImage(auth.currentUser.uid)
+      await deleteBannerImage(userId)
       userData.bannerImageUrl = ""
     }
     if (newData.profileImageFile === false) {
-      await deleteProfileImage(auth.currentUser.uid)
+      await deleteProfileImage(userId)
       userData.profileImageUrl = ""
     }
     if (newData.bannerImageAdjustment) {
@@ -120,7 +120,7 @@ export const updateUserProfile = async (newData) => {
     if (newData.profileImageAdjustment) {
       userData.profileImageAdjustment = newData.profileImageAdjustment
     }
-    const userDocRef = doc(db, 'users', auth.currentUser.uid);
+    const userDocRef = doc(db, 'users', userId);
     await updateDoc(userDocRef, userData)
   } catch (error) {
     console.error("Failure to update user profile data in firestore:", error)

@@ -42,7 +42,7 @@ export const UserCircle = (props) => {
     if (userContext.userId === userData.userId) {
       navigate('/user-profile')
     } else {
-      navigate('/visit-profile', { state: userData })
+      navigate(`/visit-profile/${userData.userId}`)
     }
   }
 

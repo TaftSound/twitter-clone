@@ -13,7 +13,8 @@ import { useRef } from "react"
 import ImageAdjuster from "./ImageAdjuster"
 import { BACKGROUND_COLOR, IMAGE_OVERLAY_GREY, TRANSPARENT_DARK_GREY } from "../constants"
 import { useContext } from "react"
-import { UserContext, VisitContext } from "../../App"
+import { UserContext } from "../../App"
+import { VisitContext } from "../AppPage/AppPage"
 
 const SaveButton = styled(FormButton)`
   height: 32px;
@@ -126,11 +127,11 @@ const ProfileEditForm = (props) => {
     if (userContext.profileImageUrl) { setProfileImageUrl(userContext.profileImageUrl) }
     if (userContext.bannerImageAdjustment) { setBannerImageAdjustment(userContext.bannerImageAdjustment) }
     if (userContext.profileImageAdjustment) { setProfileImageAdjustment(userContext.profileImageAdjustment) }
+    console.log(userContext)
   }, [userContext])
 
   const updateUserInfo = async () => {
     try {
-      console.log(userContext)
       const newProfileData = {}
       if (nameValue !== userContext.displayName) { newProfileData.displayName = nameValue }
       if (bioValue !== userContext.bio) { newProfileData.bio = bioValue }
@@ -149,7 +150,7 @@ const ProfileEditForm = (props) => {
       if (profileImageAdjustment !== userContext.profileImageAdjustment) {
         newProfileData.profileImageAdjustment = profileImageAdjustment
       }
-      await updateUserProfile(newProfileData)
+      await updateUserProfile(newProfileData, userContext.userId)
       PubSub.publish('update user data', newProfileData)
       props.finishProfileEdit()
     } catch (error) {

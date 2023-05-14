@@ -6,9 +6,9 @@ import { UserCircle, SmallGreyLogo, FlexBox } from "../styled-components"
 import { FormButton } from "../StyledButtons/FormButton"
 import { BACKGROUND_COLOR, DIVIDER_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 
-import { VisitContext, VisitFollowContext } from "../../App"
 import ProfileEditForm from "./ProfileEditForm"
 import { useState } from "react"
+import { VisitContext, VisitFollowContext } from "../AppPage/AppPage"
 
 
 const BannerContainer = styled.div`

@@ -18,3 +18,13 @@ export const getUserData = async (user) => {
   }
 };
 
+export const getUserDataById = async (userId) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    const userDocSnap = await getDoc(userDocRef);
+    return userDocSnap.data();
+  } catch (error) {
+    console.error("Failure to retrieve user data", error);
+  }
+};
+
