@@ -4,16 +4,18 @@ import NewTweetEntry from "../NewTweetEntry/NewTweetEntry"
 import Header, { ProfileHeader } from "../Header/Header"
 import MainFeed from "../MainFeed/MainFeed"
 import { useContext, useEffect, useState } from "react"
-import { UserContext } from "../../App"
+import { UserContext, VisitContext } from "../../App"
 import LoadingPage from "../LoadingPage/LoadingPage"
 import { useMemo } from "react"
 import SidebarWhoToFollow from "../WhoToFollow/SidebarWhoToFollow"
 import ProfileDetails from "../ProfileDetails/ProfileDetails"
 import ProfileFeed from "../MainFeed/ProfileFeed"
+import VisitProfileDetails from "../ProfileDetails/VisitProfileDetails"
 
 
 const AppPage = (props) => {
   const userContext = useContext(UserContext)
+  const visitContext = useContext(VisitContext)
   const [pageDisplayed, setPageDisplayed] = useState(false)
 
   const memoizedUserData = useMemo(() => {
@@ -54,6 +56,27 @@ const AppPage = (props) => {
           <ProfileDetails></ProfileDetails>,
           <Header defaultTab="Tweets" tabsArray={["Tweets", "Likes"]}></Header>,
           pageDisplayed ? <ProfileFeed></ProfileFeed> : false
+        ]}
+        sidebarContent={[
+          <SidebarWhoToFollow></SidebarWhoToFollow>
+        ]}
+        />
+      </div>
+    )
+    : <LoadingPage logo={true}></LoadingPage>
+  }
+
+  if (props.current === 'visit-profile') {
+    console.log(visitContext)
+    return visitContext
+    ? (
+      <div className="home-page">
+        <PageLayout 
+        header={<ProfileHeader titleHeader={visitContext.displayName} />}
+        centerContent={[
+          <VisitProfileDetails></VisitProfileDetails>,
+          <Header defaultTab="Tweets" tabsArray={["Tweets", "Likes"]}></Header>,
+          pageDisplayed ? <ProfileFeed targetUserId={visitContext.userId}></ProfileFeed> : false
         ]}
         sidebarContent={[
           <SidebarWhoToFollow></SidebarWhoToFollow>

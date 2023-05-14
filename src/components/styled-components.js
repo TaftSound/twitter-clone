@@ -1,6 +1,10 @@
 
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { UserContext } from "../App";
 import { USER_ICON_COLOR, DIVIDER_COLOR, PRIMARY_COLOR, FONT_FAMILY, BUTTON_TOOLTIP_BACKGROUND, SECONDARY_FONT_COLOR } from "./constants";
+import PubSub from "pubsub-js";
 
 const UserCircleContainer = styled.button`
   position: relative;
@@ -30,19 +34,30 @@ const ProfileImage = styled.img`
 `
 
 export const UserCircle = (props) => {
+  const userContext = useContext(UserContext)
   const { userData } = props
   const { profileImageAdjustment } = userData
+  const navigate = useNavigate()
+
+  const visitProfile = () => {
+    if (userContext.userId === userData.userId) {
+      navigate('/user-profile')
+    } else {
+      PubSub.publish('visit user profile', userData)
+      navigate('/visit-profile')
+    }
+  }
 
   if (props.children) {
     return (
-      <UserCircleContainer imageUrl={userData.profileImageUrl} className={props.className} onClick={props.onClick}>
+      <UserCircleContainer className={props.className} onClick={props.onClick}>
         {props.children}
       </UserCircleContainer>
     )
   }
 
   return (
-    <UserCircleContainer imageUrl={userData.profileImageUrl} className={props.className} onClick={props.onClick}>
+    <UserCircleContainer imageUrl={userData.profileImageUrl} className={props.className} onClick={props.onClick || visitProfile}>
       {!userData.profileImageUrl && userData.displayName[0]}
       {userData.profileImageUrl
       && <ProfileImage src={userData.profileImageUrl}

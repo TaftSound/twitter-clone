@@ -13,10 +13,14 @@ import { getFollowerList, listenForFollowerData, unsubscribeFromFollowerData } f
 
 export const UserContext = createContext()
 export const FollowContext = createContext()
+export const VisitContext = createContext()
+export const VisitFollowContext = createContext()
 
 const ContextProvider = (props) => {
   const [userData, setUserData] = useState(null)
   const [followData, setFollowData] = useState(null)
+  const [visitData, setVisitData] = useState(null)
+  const [visitFollowData, setVisitFollowData] = useState(null)
 
   useEffect(() => {
     const unsubToken = PubSub.subscribe('update follow list', async (msg, data) => {
@@ -45,7 +49,6 @@ const ContextProvider = (props) => {
     })
     return () => { PubSub.unsubscribe(unsubToken) }
   }, [userData])
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -61,17 +64,33 @@ const ContextProvider = (props) => {
         setUserData(null)
       }
     })
+    
 
     return () => {
       unsubscribeFromFollowerData()
       unsubscribe()
     }
   }, [])
+  useEffect(() => {
+    const unsubToken = PubSub.subscribe('visit user profile', async (msg, data) => {
+      setVisitData(data)
+      const userFollowData = await getFollowerList(data.userId)
+      setVisitFollowData(userFollowData)
+    })
+    
+    return () => {
+      PubSub.unsubscribe(unsubToken)
+    }
+  }, [])
 
   return (
     <FollowContext.Provider value={followData}>
       <UserContext.Provider value={userData}>
-        {props.children}
+        <VisitContext.Provider value={visitData}>
+          <VisitFollowContext.Provider value={visitFollowData}>
+            {props.children}
+          </VisitFollowContext.Provider>
+        </VisitContext.Provider>
       </UserContext.Provider>
     </FollowContext.Provider>
   )
@@ -96,6 +115,7 @@ const PageRoutes = (props) => {
       <Route path="/" element={<LoginPage />}/>
       <Route path="/home" element={<AppPage current={'home'} />}/>
       <Route path="/user-profile" element={<AppPage current={'profile'} />}/>
+      <Route path="/visit-profile" element={<AppPage current={'visit-profile'} />}/>
       <Route path="/logout" element={<LogoutPage/>} />
     </Routes>
   )

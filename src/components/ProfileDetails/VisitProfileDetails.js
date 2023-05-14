@@ -1,12 +1,12 @@
 import { useMemo, useContext } from "react"
 import styled from "styled-components"
 
-import LoadingPage from "../LoadingPage/LoadingPage"
+import LoadingPage, { LoadingContainer } from "../LoadingPage/LoadingPage"
 import { UserCircle, SmallGreyLogo, FlexBox } from "../styled-components"
 import { FormButton } from "../StyledButtons/FormButton"
 import { BACKGROUND_COLOR, DIVIDER_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 
-import { FollowContext, UserContext } from "../../App"
+import { VisitContext, VisitFollowContext } from "../../App"
 import ProfileEditForm from "./ProfileEditForm"
 import { useState } from "react"
 
@@ -29,13 +29,13 @@ const Image = styled.img`
 `
 
 const ProfileImageBanner = (props) => {
-  const userContext = useContext(UserContext)
-  const { bannerImageAdjustment } = userContext
+  const visitContext = useContext(VisitContext)
+  const { bannerImageAdjustment } = visitContext
 
   return (
     <BannerContainer>
-      {userContext.bannerImageUrl
-       && <Image src={userContext.bannerImageUrl}
+      {visitContext.bannerImageUrl
+       && <Image src={visitContext.bannerImageUrl}
                    transformX={bannerImageAdjustment.transformX}
                    transformY={bannerImageAdjustment.transformY}
                    zoom={bannerImageAdjustment.zoom}></Image>}
@@ -56,22 +56,6 @@ const LargeUserCircle = styled(UserCircle)`
   transform: translateY(-50%);
   overflow: hidden;
 `
-
-const ProfileUserCircle = (props) => {
-  const userContext = useContext(UserContext)
-  const { profileImageAdjustment } = userContext
-
-  return (
-    <LargeUserCircle userData={userContext}>
-      {!userContext.profileImageUrl && userContext.displayName[0]}
-      {userContext.profileImageUrl
-      && <Image src={userContext.profileImageUrl}
-                   transformX={profileImageAdjustment.transformX}
-                   transformY={profileImageAdjustment.transformY}
-                   zoom={profileImageAdjustment.zoom}></Image>}
-    </LargeUserCircle>
-  )
-}
 
 const UserDetailsContainer = styled.div`
   box-sizing: border-box;
@@ -115,8 +99,8 @@ const BioText = styled.span`
 `
 
 const UserDetails = (props) => {
-  const followContext = useContext(FollowContext)
-  const userContext = useContext(UserContext)
+  const visitContext = useContext(VisitContext)
+  const visitFollowContext = useContext(VisitFollowContext)
   const [editProfile, setEditProfile] = useState(false)
 
   const startProfileEdit = () => {
@@ -130,61 +114,67 @@ const UserDetails = (props) => {
   const memoizedJoinDate = useMemo(() => {
       const monthNames = ["January", "February", "March", "April", "May", "June", "July",
                           "August", "September", "October", "November", "December"]
-      const { timestamp } = userContext
+      const { timestamp } = visitContext
       const date = new Date(+timestamp)
       const month = monthNames[date.getMonth()]
       const year = date.getFullYear()
       return `${month} ${year}`
-  }, [userContext])
+  }, [visitContext])
 
-  return (
-    <>
-      <UserDetailsContainer>
-        <FlexBox height="68.5px" justifyContent="space-between">
-          <div></div>
-          <EditProfileButton onClick={startProfileEdit} dark={true} small={true}>Edit profile</EditProfileButton>
-        </FlexBox>
-        <FlexBox margin="4px 0px 15px" direction="column" alignItems="flex-start">
-          <H1>{userContext.displayName}</H1>
-          <H2>@{userContext.userName}</H2>
-        </FlexBox>
-        {userContext.bio
-        ? <FlexBox margin="0px 0px 12px">
-          <BioText>{userContext.bio}</BioText>
-        </FlexBox>
-        : false }
-        <FlexBox margin="0px 0px 12px">
-          <FlexBox margin="0px 4px 0px 0px">
-            <SmallGreyLogo path="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"/>
+  if (visitFollowContext) { 
+    return (
+      <>
+        <UserDetailsContainer>
+          <FlexBox height="68.5px" justifyContent="space-between">
+            <div></div>
+            {/* <EditProfileButton onClick={startProfileEdit} dark={true} small={true}>Edit profile</EditProfileButton> */}
           </FlexBox>
-          <H2>Joined {memoizedJoinDate}</H2>
-        </FlexBox>
-        <FlexBox>
-          <FlexBox margin="0px 20px 0px 0px">
-            <BoldH3>{followContext.following.length}</BoldH3>
-            <H3>Following</H3>
+          <FlexBox margin="4px 0px 15px" direction="column" alignItems="flex-start">
+            <H1>{visitContext.displayName}</H1>
+            <H2>@{visitContext.userName}</H2>
           </FlexBox>
-          <BoldH3>{followContext.followers.length}</BoldH3>
-          <H3>Followers</H3>
-        </FlexBox>
-      </UserDetailsContainer>
-      {editProfile ? <ProfileEditForm finishProfileEdit={finishProfileEdit}></ProfileEditForm> : false}
-    </>
-  )
+          {visitContext.bio
+          ? <FlexBox margin="0px 0px 12px">
+            <BioText>{visitContext.bio}</BioText>
+          </FlexBox>
+          : false }
+          <FlexBox margin="0px 0px 12px">
+            <FlexBox margin="0px 4px 0px 0px">
+              <SmallGreyLogo path="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"/>
+            </FlexBox>
+            <H2>Joined {memoizedJoinDate}</H2>
+          </FlexBox>
+          <FlexBox>
+            <FlexBox margin="0px 20px 0px 0px">
+              <BoldH3>{visitFollowContext.following.length}</BoldH3>
+              <H3>Following</H3>
+            </FlexBox>
+            <BoldH3>{visitFollowContext.followers.length}</BoldH3>
+            <H3>Followers</H3>
+          </FlexBox>
+        </UserDetailsContainer>
+        {editProfile ? <ProfileEditForm finishProfileEdit={finishProfileEdit}></ProfileEditForm> : false}
+      </>
+    )
+  } else {
+    return (
+      <LoadingContainer></LoadingContainer>
+    )
+  }
 }
 
 const ProfileDetailsContainer = styled.div`
 
 `
 
-const ProfileDetails = (props) => {
-  const userContext = useContext(UserContext)
+const VisitProfileDetails = (props) => {
+  const visitContext = useContext(VisitContext)
 
-  if (userContext) {
+  if (visitContext) {
     return (
       <ProfileDetailsContainer>
         <ProfileImageBanner></ProfileImageBanner>
-        <ProfileUserCircle userData={userContext}></ProfileUserCircle>
+        <LargeUserCircle userData={visitContext}></LargeUserCircle>
         <UserDetails></UserDetails>
       </ProfileDetailsContainer>
     )
@@ -195,4 +185,4 @@ const ProfileDetails = (props) => {
   }
 }
 
-export default ProfileDetails
+export default VisitProfileDetails

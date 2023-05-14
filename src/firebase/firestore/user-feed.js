@@ -1,6 +1,7 @@
 import { collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, where } from "firebase/firestore";
 import { db } from "./firestore";
 import { auth } from "../auth";
+import PubSub from "pubsub-js";
 
 
 let tweetReferences = {}
@@ -142,6 +143,8 @@ export const getUserTweets = async (userId, loadCount) => {
     currentUserId = userId
     await storeUserTweetReferences(userId)
     sortedUserTweetKeys = convertToSortedArray(userTweetReferences)
+    const userTweetCount = sortedUserTweetKeys.length
+    PubSub.publish('set user tweet count', userTweetCount)
   }
   const tweetData = await getFeedChunk(sortedUserTweetKeys, loadCount)
   return tweetData
