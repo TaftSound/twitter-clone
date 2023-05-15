@@ -9,6 +9,8 @@ import { BACKGROUND_COLOR, DIVIDER_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR 
 import ProfileEditForm from "./ProfileEditForm"
 import { useState } from "react"
 import { VisitContext, VisitFollowContext } from "../AppPage/AppPage"
+import { useEffect } from "react"
+import { UserContext } from "../../App"
 
 
 const BannerContainer = styled.div`
@@ -85,6 +87,7 @@ const BioText = styled.span`
 `
 
 const UserDetails = (props) => {
+  const userContext = useContext(UserContext)
   const visitContext = useContext(VisitContext)
   const visitFollowContext = useContext(VisitFollowContext)
   const [editProfile, setEditProfile] = useState(false)
@@ -107,13 +110,13 @@ const UserDetails = (props) => {
       return `${month} ${year}`
   }, [visitContext])
 
-  if (visitContext && visitFollowContext) { 
+  if (visitContext && visitFollowContext && userContext) { 
     return (
       <>
         <UserDetailsContainer>
           <FlexBox height="68.5px" justifyContent="space-between">
             <div></div>
-            <EditProfileButton onClick={startProfileEdit} dark={true} small={true}>Edit profile</EditProfileButton>
+            {userContext.isAdmin && <EditProfileButton onClick={startProfileEdit} dark={true} small={true}>Edit profile</EditProfileButton>}
           </FlexBox>
           <FlexBox margin="4px 0px 15px" direction="column" alignItems="flex-start">
             <H1>{visitContext.displayName}</H1>

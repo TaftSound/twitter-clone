@@ -10,6 +10,7 @@ import LogoutPage from './components/LogoutPage/LogoutPage';
 import { auth } from './firebase/auth';
 import { getUserData } from "./firebase/firestore/current-user-data";
 import { getFollowerList, listenForFollowerData, unsubscribeFromFollowerData } from './firebase/firestore/follower-list-functions';
+import checkIfAdmin from './firebase/firestore/check-admin';
 
 export const UserContext = createContext()
 export const FollowContext = createContext()
@@ -52,6 +53,12 @@ const ContextProvider = (props) => {
         const currentFollowData = await getFollowerList()
         const followers = currentFollowData.followers ? currentFollowData.followers : []
         const following = currentFollowData.following ? currentFollowData.following : []
+        const isAdmin = await checkIfAdmin()
+        if (isAdmin) {
+          currentUserData.isAdmin = true
+        } else {
+          currentUserData.isAdmin = false
+        }
 
         setUserData(currentUserData)
         setFollowData({ followers, following })
