@@ -1,7 +1,6 @@
 import styled from "styled-components"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import PubSub from "pubsub-js"
-import autoAnimate from "@formkit/auto-animate"
 
 import { MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 
@@ -13,6 +12,9 @@ import { UserNameInput } from "./UserNameInput"
 import { anonymousGuestSignin, googlePopupSignin, googlePopupSignup  } from "../../firebase/auth"
 import { checkUserNameAvailability } from "../../firebase/firestore/user-functions"
 import { useNavigate } from "react-router-dom"
+import GuestUserExplanation from "./GuestUserExplanation"
+import { FlexBox } from "../styled-components"
+import { useRef } from "react"
 
 
 const LoginFormContainer = styled.div`
@@ -26,6 +28,14 @@ const LoginHeader = styled.h1`
   font-size: 32px;
   font-weight: 700;
   color: ${MAIN_FONT_COLOR};
+`
+const LoginText = styled.p`
+  font-size: 18px;
+  font-weight: 400;
+  color: ${MAIN_FONT_COLOR};
+  margin: 0px;
+  margin-top: -5px;
+  margin-bottom: 53px;
 `
 
 const SignUpSpanContainer = styled.div`
@@ -65,21 +75,16 @@ const SignInFooter = (props) => {
   )
 }
 
-
-// open user login
-// open user signup
-// open guest login
-// alert username required
-// alert username taken
-
-
 export const UserLoginPopup = (props) => {
   const [loginDisplayed, setLoginDisplayed] = useState(false)
   const [signupDisplayed, setSignupDisplayed] = useState(false)
+  const [signupAlertDisplayed, setSignupAlertDisplayed] = useState(false)
+  const [explanationDisplayed, setExplanationDisplayed] = useState(false)
   const [userNameText, setUserNameText] = useState("")
   const [userNameInputFocused, setUserNameInputFocused] = useState(false)
 
-  const parent = useRef(null)
+  const currentPopupRef = useRef(null)
+
   const navigate = useNavigate()
 
   const updateUsernameText = (event) => {
@@ -88,35 +93,60 @@ export const UserLoginPopup = (props) => {
   }
   
   const displayLoginPopup = () => {
+    currentPopupRef.current = "login"
     setSignupDisplayed(false)
     setUserNameInputFocused(false)
     setLoginDisplayed(true)
+    PubSub.publish('clear username alert')
   }
   const displaySignupPopup = () => {
-    setLoginDisplayed(false)
+    currentPopupRef.current = "signup"
+    setLoginDisplayed(true)
     setSignupDisplayed(true)
+    setUserNameInputFocused(true)
+    PubSub.publish('focus username input', currentPopupRef.current)
+    PubSub.publish('clear username alert')
   }
   const removePopup = () => {
+    currentPopupRef.current = null
+    setSignupAlertDisplayed(false)
     setLoginDisplayed(false)
     setSignupDisplayed(false)
+    setUserNameInputFocused(false)
+    setUserNameText("")
     setUserNameInputFocused(false)
   }
   const displayGuestLogin = () => {
+    currentPopupRef.current = "login"
     setSignupDisplayed(false)
     setLoginDisplayed(true)
     setUserNameInputFocused(true)
+    PubSub.publish('focus username input', currentPopupRef.current)
+    PubSub.publish('clear username alert')
   }
+  const displayExplanation = () => {
+   setExplanationDisplayed(true)
+  }
+  const removeExplanation = () => {
+    setExplanationDisplayed(false)
+    if (currentPopupRef.current === 'signup') {
+      PubSub.publish('focus username input', currentPopupRef.current)
+    }
+    PubSub.publish('clear username alert')
+   }
 
   const checkValidUserName = async () => {
     try {
       if (!userNameText) {
         PubSub.publish('alert username required')
+        PubSub.publish('focus username input', currentPopupRef.current)
         return false
       }
       const nameAvailable = await checkUserNameAvailability(userNameText)
       if (nameAvailable) { return true }
       
       PubSub.publish('alert username taken')
+      PubSub.publish('focus username input', currentPopupRef.current)
       return false
 
     } catch (error) {
@@ -137,11 +167,24 @@ export const UserLoginPopup = (props) => {
 
   const logInWithGoogle = async () => {
     try {
-      await googlePopupSignin()
-      navigate('/home')
+      const loggedIn = await googlePopupSignin()
+      if (loggedIn) {
+        navigate('/home')
+      } else {
+        setSignupAlertDisplayed(true)
+      }
     } catch (error) {
       console.error("Failure to sign in with Google:", error)
     }
+  }
+
+  const refuseSignup = () => {
+    setSignupAlertDisplayed(false)
+  }
+
+  const agreeToSignup = () => {
+    setTimeout(() => { setSignupAlertDisplayed(false) }, 250)
+    displaySignupPopup()
   }
 
   const loginAsGuest = async () => {
@@ -156,7 +199,6 @@ export const UserLoginPopup = (props) => {
   }
 
   useEffect(() => {
-    parent.current && autoAnimate(parent.current)
 
     const loginToken = PubSub.subscribe('open user login', displayLoginPopup)
     const userSignupToken = PubSub.subscribe('open user signup', displaySignupPopup)
@@ -170,35 +212,46 @@ export const UserLoginPopup = (props) => {
   })
 
   return (
-    <div ref={parent}>
-      {loginDisplayed 
-      ? <PopupModal removePopup={removePopup} twitterLogo={true} scroll={true} >
-          <LoginFormContainer>
-            <LoginHeader>Sign in to Tweeter</LoginHeader>
-            <FormButton google={true} onClick={logInWithGoogle}>Sign in with Google</FormButton>
-            <FormButton apple={true}>Sign in with Apple</FormButton>
-            <OrDivider></OrDivider>
-            <UserNameInput inputFocused={userNameInputFocused} guest={true} value={userNameText} onChange={updateUsernameText} ></UserNameInput>
-            <FormButton small={true} onClick={loginAsGuest}>Sign in as guest</FormButton>
-            <FormButton dark={true} small={true}>What's the difference?</FormButton>
-            <SignUpFooter onClick={displaySignupPopup}></SignUpFooter>
-          </LoginFormContainer>
+    <>
+      {loginDisplayed
+      && <PopupModal removePopup={removePopup} twitterLogo={true} scroll={true} slideLeft={explanationDisplayed || signupDisplayed}>
+          {signupAlertDisplayed 
+          ? <LoginFormContainer>
+              <FlexBox height="40px"></FlexBox>
+              <LoginHeader>Create an account?</LoginHeader>
+              <LoginText>It appears that there is no Tweeter acount associated with this email, 
+                would you like to create a new account?</LoginText>
+              <FormButton onClick={agreeToSignup} colorButton={true}>Sign up</FormButton>
+              <FormButton dark={true} onClick={refuseSignup}>No thanks</FormButton>
+              <FlexBox height="40px"></FlexBox>
+            </LoginFormContainer>
+          : <LoginFormContainer>
+              <LoginHeader>Sign in to Tweeter</LoginHeader>
+              <FormButton google={true} onClick={logInWithGoogle}>Sign in with Google</FormButton>
+              {/* <FormButton apple={true}>Sign in with Apple</FormButton> */}
+              <OrDivider></OrDivider>
+              <UserNameInput form="login" inputFocused={userNameInputFocused} guest={true} value={userNameText} onChange={updateUsernameText} ></UserNameInput>
+              <FormButton small={true} onClick={loginAsGuest}>Sign in as guest</FormButton>
+              <FormButton dark={true} small={true} onClick={displayExplanation}>What's the difference?</FormButton>
+              <SignUpFooter onClick={displaySignupPopup}></SignUpFooter>
+            </LoginFormContainer>}
         </PopupModal>
-      : '' }
-      {signupDisplayed
-      ? <PopupModal removePopup={removePopup} twitterLogo={true} scroll={true} >
+        }
+      {loginDisplayed
+      && <PopupModal removePopup={removePopup} twitterLogo={true} scroll={true} slideLeft={explanationDisplayed} slideRight={!signupDisplayed}>
           <LoginFormContainer>
             <LoginHeader>Join Tweeter today</LoginHeader>
-            <UserNameInput inputFocused={true} value={userNameText} onChange={updateUsernameText}></UserNameInput>
+            <UserNameInput form="signup" value={userNameText} onChange={updateUsernameText}></UserNameInput>
             <FormButton google={true} onClick={signUpWithGoogle}>Sign up with Google</FormButton>
-            <FormButton apple={true}>Sign up with Apple</FormButton>
+            {/* <FormButton apple={true}>Sign up with Apple</FormButton> */}
             <OrDivider></OrDivider>
             <FormButton onClick={loginAsGuest} small={true}>Sign in as guest</FormButton>
-            <FormButton dark={true} small={true}>What's the difference?</FormButton>
+            <FormButton dark={true} small={true} onClick={displayExplanation}>What's the difference?</FormButton>
             <SignInFooter onClick={displayLoginPopup}></SignInFooter>
           </LoginFormContainer>
-        </PopupModal>
-      : '' }
-    </div>
+        </PopupModal>}
+      {loginDisplayed 
+      && <GuestUserExplanation slideRight={!explanationDisplayed} backFunction={removeExplanation}></GuestUserExplanation>}
+    </>
   )
 }

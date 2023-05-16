@@ -1,10 +1,15 @@
 import styled from "styled-components";
 import { createPortal } from "react-dom";
+import autoAnimate from "@formkit/auto-animate";
 
 import { CloseButton } from "../StyledButtons/CloseButton";
 import BackButton from "../StyledButtons/BackButton";
 import { TwitterLogo } from "../TwitterLogo";
 import { PAGE_OVERLAY_COLOR, BACKGROUND_COLOR, MAIN_FONT_COLOR } from "../constants";
+import { useRef } from "react";
+import { useEffect } from "react";
+import { FlexBox } from "../styled-components";
+import { useState } from "react";
 
 const PopupPageOverlay = styled.div`
   position: fixed;
@@ -14,10 +19,17 @@ const PopupPageOverlay = styled.div`
   right: 0px;
   bottom: 0px;
   display: flex;
+  ${props => props.slideLeft || props.slideRight ? 'display: none;' : ''}
+  ${props => props.sidesDisplayed && 'display: flex;'}
   justify-content: center;
   align-items: flex-start;
   padding-top: 5vh;
-  background-color: ${PAGE_OVERLAY_COLOR};
+  ${props => props.isShown && `background-color: ${PAGE_OVERLAY_COLOR};`}
+  
+  transition: transform 450ms;
+
+  ${props => props.slideLeft && `transform: translateX(-100%);`}
+  ${props => props.slideRight && `transform: translateX(100%);`}
 `;
 const PopupContainer = styled.div`
   position: relative;
@@ -69,29 +81,50 @@ const HeaderTitle = styled.h1`
 `
 
 const PopupModal = (props) => {
+  const [sidesDisplayed, setSidesDisplayed] = useState(false)
+  const [show, setShow] = useState(false)
+  const parent = useRef(null)
+  
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current, { duration: 150 })
+    parent.current && setShow(true)
+  }, [parent])
+
+  const closePopup = () => {
+    setShow(false)
+    props.removePopup()
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSidesDisplayed(true)
+    }, 250)
+  }, [])
 
   return (
     <>
       {createPortal(
-        <PopupPageOverlay> 
-          <PopupContainer scroll={props.scroll}
+        <PopupPageOverlay ref={parent} isShown={show} slideRight={props.slideRight} slideLeft={props.slideLeft} sidesDisplayed={sidesDisplayed}>
+          {show
+          && <PopupContainer scroll={props.scroll}
                           height={props.height}
-                          flexBox={props.flexBox}>
+                          flexBox={props.flexBox}
+                          className={props.className}>
             <StickyHeader>
-              {props.removePopup 
+              {props.removePopup
               && <CloseButtonContainer>
-                   <CloseButton onClick={props.removePopup} />
-                 </CloseButtonContainer>}
+                    <CloseButton onClick={closePopup} />
+                  </CloseButtonContainer>}
               {props.backFunction
               && <CloseButtonContainer>
-                   <BackButton onClick={props.backFunction} />
-                 </CloseButtonContainer>}
+                    <BackButton onClick={props.backFunction} />
+                  </CloseButtonContainer>}
               {props.twitterLogo ? <TwitterLogo></TwitterLogo> : ""}
               <HeaderTitle>{props.title ? props.title : ''}</HeaderTitle>
               {props.headerButton ? props.headerButton : ""}
             </StickyHeader>
             {props.children}
-          </PopupContainer>
+          </PopupContainer>}
         </PopupPageOverlay>, 
         document.body
       )}

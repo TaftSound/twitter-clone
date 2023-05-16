@@ -32,9 +32,9 @@ export const googlePopupSignin = async () => {
     const isUser = await confirmExistingUser(user.uid)
     if (!isUser) {
       await getAuth().signOut()
-      PubSub.publish('open user signup')
+      return false
     } else {
-
+      return true
     }
   } catch (error) {
     console.error('Google sign in failure:', error)

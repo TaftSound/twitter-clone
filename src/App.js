@@ -1,4 +1,4 @@
-import { onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { createContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import PubSub from 'pubsub-js';
@@ -12,8 +12,11 @@ import { getUserData } from "./firebase/firestore/current-user-data";
 import { getFollowerList, listenForFollowerData, unsubscribeFromFollowerData } from './firebase/firestore/follower-list-functions';
 import checkIfAdmin from './firebase/firestore/check-admin';
 
+
 export const UserContext = createContext()
 export const FollowContext = createContext()
+
+// getAuth().signOut()
 
 const ContextProvider = (props) => {
   const [userData, setUserData] = useState(null)
@@ -46,25 +49,31 @@ const ContextProvider = (props) => {
     })
     return () => { PubSub.unsubscribe(unsubToken) }
   }, [userData])
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const currentUserData = await getUserData(user)
-        const currentFollowData = await getFollowerList()
-        const followers = currentFollowData.followers ? currentFollowData.followers : []
-        const following = currentFollowData.following ? currentFollowData.following : []
-        const isAdmin = await checkIfAdmin()
-        if (isAdmin) {
-          currentUserData.isAdmin = true
-        } else {
-          currentUserData.isAdmin = false
-        }
+      try {
+        if (user) {
+          const currentUserData = await getUserData(user)
+          if (!currentUserData) { return }
+          const currentFollowData = await getFollowerList()
+          const followers = currentFollowData.followers ? currentFollowData.followers : []
+          const following = currentFollowData.following ? currentFollowData.following : []
+          const isAdmin = await checkIfAdmin()
+          if (isAdmin) {
+            currentUserData.isAdmin = true
+          } else {
+            currentUserData.isAdmin = false
+          }
 
-        setUserData(currentUserData)
-        setFollowData({ followers, following })
-        listenForFollowerData()
-      } else {
-        setUserData(null)
+          setUserData(currentUserData)
+          setFollowData({ followers, following })
+          listenForFollowerData()
+        } else {
+          setUserData(null)
+        }
+      } catch (error) {
+        console.error("Failure to retrieve user data:", error)
       }
     })
     

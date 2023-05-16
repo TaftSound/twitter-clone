@@ -11,7 +11,7 @@ const BackgroundDiv = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 100;
+  z-index: 99999;
   ${props => props.transparent ? '' : `background-color: ${BACKGROUND_COLOR};`}
 `
 const OverlayDiv = styled.div`
@@ -20,10 +20,11 @@ const OverlayDiv = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: ${PAGE_OVERLAY_COLOR};
+  ${props => props.noOverlay ? '' : `background-color: ${PAGE_OVERLAY_COLOR}};`}
 `
 const PopupContainer = styled.div`
   position: absolute;
+  z-index: 999999;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -75,7 +76,7 @@ const ConfirmationPopup = (props) => {
     <>
       {createPortal(
         <BackgroundDiv transparent={transparent}>
-          <OverlayDiv>
+          <OverlayDiv noOverlay={props.noOverlay}>
             <PopupContainer>
               {tweeterLogo
               ? <LogoContainer>

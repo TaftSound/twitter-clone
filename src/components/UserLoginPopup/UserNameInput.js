@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { DIVIDER_COLOR, FONT_FAMILY, MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants";
+import { ALERT_RED, DIVIDER_COLOR, FONT_FAMILY, MAIN_FONT_COLOR, PRIMARY_COLOR, SECONDARY_FONT_COLOR } from "../constants";
 import { useRef } from "react";
 import { useLayoutEffect } from "react";
 import PubSub from "pubsub-js";
+import { useEffect } from "react";
 
 const NameInputContainer = styled.div`
   position: relative;
@@ -60,39 +61,70 @@ const Input = styled.input`
   padding: 0px;
   color: ${MAIN_FONT_COLOR};
 `;
+const AlertMessage = styled.p`
+  position: absolute;
+  top: -21px;
+  right: -10px;
+  width: max-content;
+  margin: 0px;
+  font-size: 14px;
+  color: ${ALERT_RED};
+`
 
 export const UserNameInput = (props) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [alertText, setAlertText] = useState("")
+
   const inputRef = useRef(null);
+  const formNameRef = useRef(props.form)
 
   const focusInput = () => {
-    const input = inputRef.current;
-    input.focus();
     setIsFocused(true);
   };
 
-  const defocusInput = () => { setIsFocused(false); };
+  const defocusInput = () => {
+    setAlertText('')
+    setIsFocused(false)
+  }
 
   useLayoutEffect(() => {
-    if (props.inputFocused) { focusInput() }
-
     const userNameRequiredToken = PubSub.subscribe('alert username required', () => {
-
+      setAlertText('Username required *')
     })
     const userNameTakenToken = PubSub.subscribe('alert username taken', () => {
-
+      setAlertText('User name is taken *')
+    })
+    const focusInputToken = PubSub.subscribe('focus username input', (msg, data) => {
+      if (formNameRef.current === data) { setIsFocused(true) }
+    })
+    const clearAlertToken = PubSub.subscribe('clear username alert', () => {
+      setAlertText('')
     })
 
     return () => {
       PubSub.unsubscribe(userNameRequiredToken)
       PubSub.unsubscribe(userNameTakenToken)
+      PubSub.unsubscribe(focusInputToken)
+      PubSub.unsubscribe(clearAlertToken)
     }
-  }, [props.inputFocused])
+  }, [])
+
+  useEffect(() => {
+    if (isFocused) {
+      const input = inputRef.current;
+      input.focus();
+    }
+  }, [isFocused])
+
+  const changeFunction = (event) => {
+    setAlertText('')
+    props.onChange(event)
+  }
 
   return (
-    <NameInputContainer onFocus={focusInput} isFocused={isFocused}>
+    <NameInputContainer onClick={focusInput} isFocused={isFocused}>
       <FocusBorder isFocused={isFocused}></FocusBorder>
-      <LabelOuterContainer onClick={focusInput} isFocused={isFocused}>
+      <LabelOuterContainer isFocused={isFocused}>
         <LabelInnerContainer isFocused={isFocused} textContent={props.value}>
           {props.guest
             ? <Label isFocused={isFocused} textContent={props.value} htmlFor="username-input">Guest Username</Label>
@@ -100,8 +132,9 @@ export const UserNameInput = (props) => {
         </LabelInnerContainer>
       </LabelOuterContainer>
       <InputContainer>
-        <Input ref={inputRef} name="username-input" value={props.value} onChange={props.onChange} onBlur={defocusInput}></Input>
+        <Input ref={inputRef} name="username-input" value={props.value} onChange={changeFunction} onBlur={defocusInput}></Input>
       </InputContainer>
+      <AlertMessage>{alertText}</AlertMessage>
     </NameInputContainer>
   );
 };
