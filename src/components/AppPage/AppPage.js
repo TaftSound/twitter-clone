@@ -27,6 +27,7 @@ const AppPage = (props) => {
   const [pageDisplayed, setPageDisplayed] = useState(false)
   const [visitData, setVisitData] = useState(false)
   const [visitFollowData, setVisitFollowData] = useState(false)
+  const [currentTab, setCurrentTab] = useState(null)
 
   const location = useLocation()
 
@@ -46,6 +47,8 @@ const AppPage = (props) => {
       const user = locationSegments[2]
       getVisitedUserData(user)
     }
+
+    setCurrentTab(null)
   }, [location])
 
   useEffect(() => {
@@ -67,6 +70,14 @@ const AppPage = (props) => {
     }
   }, [visitData])
 
+  useEffect(() => {
+    const unsubToken = PubSub.subscribe('set current tab', (msg, data) => {
+      setCurrentTab(data)
+    })
+
+    return () => { PubSub.unsubscribe(unsubToken) }
+  }, [])
+
   const memoizedUserData = useMemo(() => {
     const userId = userContext ? userContext.userId : false
     return userId
@@ -77,15 +88,14 @@ const AppPage = (props) => {
   }, [memoizedUserData])
 
   if (props.current === 'home' ) {
-    sessionStorage.clear()
     return pageDisplayed
     ? (
       <div className="home-page">
         <PageLayout 
-        header={<Header titleHeader="Home" defaultTab="For you" tabsArray={["For you", "Following"]} />}
+        header={<Header titleHeader="Home" defaultTab="For you" currentTab={currentTab} tabsArray={["For you", "Following"]}/>}
         centerContent={[
           <NewTweetEntry />,
-          pageDisplayed ? <MainFeed></MainFeed> : false
+          <MainFeed currentTab={currentTab}></MainFeed>
         ]}
         sidebarContent={[
           <SidebarWhoToFollow></SidebarWhoToFollow>
@@ -97,7 +107,6 @@ const AppPage = (props) => {
   }
 
   if (props.current === 'profile') {
-    sessionStorage.clear()
     return pageDisplayed
     ? (
       <div className="home-page">
@@ -105,8 +114,8 @@ const AppPage = (props) => {
         header={<ProfileHeader titleHeader={userContext.displayName} />}
         centerContent={[
           <ProfileDetails></ProfileDetails>,
-          <Header defaultTab="Tweets" tabsArray={["Tweets", "Likes"]}></Header>,
-          pageDisplayed ? <ProfileFeed></ProfileFeed> : false
+          <Header defaultTab="Tweets" currentTab={currentTab} tabsArray={["Tweets", "Likes"]}/>,
+          <ProfileFeed currentTab={currentTab}></ProfileFeed>
         ]}
         sidebarContent={[
           <SidebarWhoToFollow></SidebarWhoToFollow>
@@ -127,8 +136,8 @@ const AppPage = (props) => {
             header={<ProfileHeader titleHeader={visitData.displayName} />}
             centerContent={[
               <VisitProfileDetails></VisitProfileDetails>,
-              <Header defaultTab="Tweets" tabsArray={["Tweets", "Likes"]}></Header>,
-              pageDisplayed ? <ProfileFeed targetUserId={visitData.userId}></ProfileFeed> : false
+              <Header defaultTab="Tweets" currentTab={currentTab} tabsArray={["Tweets", "Likes"]} ></Header>,
+              pageDisplayed ? <ProfileFeed targetUserId={visitData.userId} currentTab={currentTab}></ProfileFeed> : false
             ]}
             sidebarContent={[
               <SidebarWhoToFollow></SidebarWhoToFollow>

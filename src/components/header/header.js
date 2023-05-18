@@ -4,12 +4,13 @@ import { PRIMARY_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR, BUTTON_HOVER_BACK
 import { SmallMenuButton } from "../StyledButtons/SmallMenuButton";
 import PubSub from "pubsub-js";
 
-import PropTypes from 'prop-types';
 import uniqid from 'uniqid'
 
 import SearchBar from "../SearchBar/SearchBar";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../../App";
 
 const HeaderContainerOuter = styled.div`
   position: relative;
@@ -28,6 +29,7 @@ const NavButtonOuter = styled.div`
   transition: background-color;
   transition-duration: 200ms;
   padding: 0px 16px;
+  position: relative;
 
   &:hover {
     background-color: ${BUTTON_HOVER_BACKGROUND};
@@ -58,31 +60,29 @@ const ButtonUnderline = styled.div`
   bottom: 0px;
 `
 
+
 function NavButton(props) {
+  const userContext = useContext(UserContext)
 
   const changeTab = () => {
-    props.setCurrentTab(props.title)
+    if (userContext.guest) {
+      PubSub.publish('trigger guest update')  
+    }
     PubSub.publish('set current tab', props.title)
   }
 
   return (
-    <NavButtonOuter data-testid={props.title} role="button" onClick={changeTab} >
-      <NavButtonInner tabMargin={props.tabMargin}>
-        { props.currentTab === props.title 
-            ? <H2 $focused data-testid="focused-tab">{props.title}</H2>
-            : <H2>{props.title}</H2> }
-        { props.currentTab === props.title
-            ? <ButtonUnderline data-testid="underline"></ButtonUnderline> 
-            : false }
-      </NavButtonInner>
-    </NavButtonOuter>
+      <NavButtonOuter data-testid={props.title} role="button" onClick={changeTab}>
+        <NavButtonInner tabMargin={props.tabMargin}>
+          { props.currentTab === props.title
+              ? <H2 $focused data-testid="focused-tab">{props.title}</H2>
+              : <H2>{props.title}</H2> }
+          { props.currentTab === props.title
+              ? <ButtonUnderline data-testid="underline"></ButtonUnderline>
+              : false }
+        </NavButtonInner>
+      </NavButtonOuter>
   )
-}
-
-NavButton.propTypes = {
-  title: PropTypes.string.isRequired,
-  currentTab: PropTypes.string.isRequired,
-  setCurrentTab: PropTypes.func.isRequired
 }
 
 const HeaderContainer = styled.div`
@@ -120,7 +120,11 @@ const displayLogin = () => {
 
 const Header = (props) => {
 
-  const [currentTab, setCurrentTab] = useState(props.defaultTab)
+  useEffect(() => {
+    if (!props.currentTab) {
+      PubSub.publish('set current tab', props.defaultTab)
+    }
+  }, [props.currentTab])
 
   return (
     <HeaderContainerOuter data-testid="home-header" className={props.className}>
@@ -134,11 +138,10 @@ const Header = (props) => {
           </HeaderContainer>
         : false }
       <TabContainer columns={props.tabsArray.length}>
-        {props.tabsArray.map((tab) => {
+        {props.tabsArray.map((tab, index) => {
           return <NavButton title={tab} 
                             key={uniqid()} 
-                            currentTab={currentTab} 
-                            setCurrentTab={setCurrentTab} />
+                            currentTab={props.currentTab} />
         })}
       </TabContainer>
     </HeaderContainerOuter>
@@ -189,7 +192,7 @@ export const ProfileHeader = (props) => {
           <ProfileH1Container>
             <H1>{props.titleHeader}</H1>
           </ProfileH1Container>
-          <TweetCount>{tweetCount} Tweets</TweetCount>
+          <TweetCount>{tweetCount} {tweetCount === 1 ? 'Tweet' : 'Tweets'}</TweetCount>
         </div>
       </HeaderContainer>
     </HeaderContainerOuter>

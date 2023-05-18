@@ -3,7 +3,7 @@ import { db } from "./firestore";
 
 export const getUserData = async (user) => {
   try {
-    if (user && !user.displayName) {
+    if (user && user.isAnonymous) {
       const userDocRef = doc(db, 'guestUsers', user.uid);
       const userDocSnap = await getDoc(userDocRef);
       return userDocSnap.data();

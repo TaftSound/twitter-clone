@@ -142,6 +142,13 @@ export const UserLoginPopup = (props) => {
         PubSub.publish('focus username input', currentPopupRef.current)
         return false
       }
+      let regex = /^\w+$/
+      const isCorrectFormat = regex.test(userNameText)
+      if (!isCorrectFormat) {
+        PubSub.publish('alert username characters')
+        PubSub.publish('focus username input', currentPopupRef.current)
+        return false
+      }
       const nameAvailable = await checkUserNameAvailability(userNameText)
       if (nameAvailable) { return true }
       

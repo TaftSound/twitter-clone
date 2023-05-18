@@ -8,12 +8,26 @@ let tweetReferences = {}
 let sortedKeys = []
 
 const storeTweetReferences = async () => {
-  const docRef = doc(db, 'tweetReferences', auth.currentUser.uid)
-  const docSnap = await getDoc(docRef)
-  tweetReferences = docSnap.data()
+  try {
+    if (auth.currentUser.isAnonymous) {
+      const guestUserDocRef = doc(db, 'guestUsers', auth.currentUser.uid)
+      const guestUserDocSnap = await getDoc(guestUserDocRef)
+      const guestUserData = guestUserDocSnap.data()
+      tweetReferences = guestUserData.userFeed
+    } else {
+      const docRef = doc(db, 'tweetReferences', auth.currentUser.uid)
+      const docSnap = await getDoc(docRef)
+      tweetReferences = docSnap.data()
+    }
+  } catch (error) {
+    console.error("Failure to store user tweet references:", error)
+  }
 }
 
 const mergeTweetReferences = (tweetReferences) => {
+  if (auth.currentUser.isAnonymous) {
+    return tweetReferences
+  }
   return {
     ...tweetReferences.userFeed,
     ...tweetReferences.userTweets
@@ -21,7 +35,7 @@ const mergeTweetReferences = (tweetReferences) => {
 }
 
 const convertToSortedArray = (tweetReferences) => {
-  const entries = Object.entries(tweetReferences).sort((a, b) => a[1] - b[1])
+  const entries = Object.entries(tweetReferences).sort((a, b) => b[1] - a[1])
   return entries.map((entry) => { return entry[0] })
 }
 
@@ -36,15 +50,19 @@ const mergeTweetAndUserData = (tweetKeys, tweetData, userData) => {
   return tweetData.map((tweet, index) => {
     return {
       ...tweet,
-      ...userData[index],
+      displayName: userData[index].displayName,
+      userName: userData[index].userName,
+      userId: userData[index].userId,
+      profileImageUrl: userData[index].profileImageUrl,
+      profileImageAdjustment: userData[index].profileImageAdjustment,
       tweetId: tweetKeys[index],
     }
   })
 }
 
-const getFeedChunk = async (keysList, loadCount) => {
-  const startIndex = loadCount * 5
-  const tweetKeys = keysList.slice(startIndex, startIndex + 5)
+const getFeedChunk = async (keysList, loadCount, chunkSize = 10) => {
+  const startIndex = loadCount * chunkSize
+  const tweetKeys = keysList.slice(startIndex, startIndex + chunkSize)
   
   const tweetDataDocRefs = tweetKeys.map((key) => { return doc(db, 'tweets', key) })
   const tweetDataArray = await retrieveBatchData(tweetDataDocRefs)
@@ -139,6 +157,35 @@ const storeUserTweetReferences = async (userId) => {
 
 export const getUserTweets = async (userId, loadCount) => {
   // Get and store user tweet references, only the first time it's called
+  if (auth.currentUser.isAnonymous && userId === auth.currentUser.uid) {
+    const guestUserDocRef = doc(db, 'guestUsers', auth.currentUser.uid)
+    const guestUserDocSnap = await getDoc(guestUserDocRef)
+    const guestUserData = guestUserDocSnap.data()
+
+    if (!guestUserData.tweets) { return [] }
+    
+    let userTweetCount = 0
+
+    const entries = Object.entries(guestUserData.tweets)
+    entries.sort((a, b) => { return b[1].timestamp - a[1].timestamp})
+    const tweetData = entries.map((entry) => {
+      userTweetCount++
+      return {
+        ...entry[1],
+        displayName: guestUserData.displayName,
+        userName: guestUserData.userName,
+        userId: guestUserData.userId,
+        tweetId: entry[0],
+        profileImageUrl: guestUserData.profileImageUrl || '',
+        profileImageAdjustment: guestUserData.profileImageAdjustment || {},
+      }
+    })
+
+    PubSub.publish('set user tweet count', userTweetCount)
+
+    return tweetData
+  }
+  
   if (currentUserId !== userId) {
     currentUserId = userId
     await storeUserTweetReferences(userId)
@@ -147,22 +194,64 @@ export const getUserTweets = async (userId, loadCount) => {
     PubSub.publish('set user tweet count', userTweetCount)
   }
   const tweetData = await getFeedChunk(sortedUserTweetKeys, loadCount)
+
   return tweetData
 }
 
 let nextQuery = null
 
+let guestUserData = null
+let guestLikedTweetKeys = null
+
 export const getLikedTweets = async (userId, loadCount) => {
-  if (loadCount === 0) {
-    nextQuery = query(collection(db, 'tweets'), where(`likes.${userId}`, ">", 0), orderBy(`likes.${userId}`, "desc"), limit(5))
+  try {
+    if (auth.currentUser.isAnonymous && auth.currentUser.uid === userId) {
+      if (loadCount === 0) {
+        const userDocRef = doc(db, 'guestUsers', auth.currentUser.uid)
+        const userDocSnap = await getDoc(userDocRef)
+        guestUserData = userDocSnap.data()
+        const likedTweets = guestUserData.likes ? guestUserData.likes : {}
+        guestLikedTweetKeys = convertToSortedArray(likedTweets)
+      }
+
+      let chunkSize = 10
+      const guestOwnLikedTweets = []
+      guestLikedTweetKeys.forEach((key, index) => {
+        if (guestUserData.tweets[key]) {
+          guestOwnLikedTweets.push({
+            ...guestUserData.tweets[key],
+            displayName: guestUserData.displayName,
+            userName: guestUserData.userName,
+            userId: guestUserData.userID,
+            tweetId: key,
+            profileImageUrl: guestUserData.profileImageUrl || '',
+            profileImageAdjustment: guestUserData.profileImageAdjustment || {},
+          })
+          guestLikedTweetKeys.splice(index, 1)
+          chunkSize = chunkSize - 1
+        }
+      })
+
+      const tweetData = await getFeedChunk(guestLikedTweetKeys, loadCount, chunkSize)
+      tweetData.push(...guestOwnLikedTweets)
+      tweetData.sort((a, b) => { return b.timestamp - a.timestamp })
+
+      return tweetData
+    }
+
+    if (loadCount === 0) {
+      nextQuery = query(collection(db, 'tweets'), where(`likes.${userId}`, ">", 0), orderBy(`likes.${userId}`, "desc"), limit(5))
+    }
+
+    const docSnaps = await getDocs(nextQuery)
+    const lastLoaded = docSnaps.docs[docSnaps.docs.length - 1]
+    if (!lastLoaded) { return [] }
+    nextQuery = query(collection(db, 'tweets'), where(`likes.${userId}`, ">", 0), orderBy(`likes.${userId}`, "desc"), limit(5), startAfter(lastLoaded))
+
+    const tweetData = await getFeedChunkFromSnaps(docSnaps.docs)
+    
+    return tweetData
+  } catch (error) {
+    console.error("Failure to get liked tweets feed:", error)
   }
-
-  const docSnaps = await getDocs(nextQuery)
-  const lastLoaded = docSnaps.docs[docSnaps.docs.length - 1]
-  if (!lastLoaded) { return [] }
-  nextQuery = query(collection(db, 'tweets'), where(`likes.${userId}`, ">", 0), orderBy(`likes.${userId}`, "desc"), limit(5), startAfter(lastLoaded))
-
-  const tweetData = await getFeedChunkFromSnaps(docSnaps.docs)
-  
-  return tweetData
 }

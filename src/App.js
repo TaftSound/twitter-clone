@@ -1,6 +1,6 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { createContext, useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import PubSub from 'pubsub-js';
 
 import AppPage from "./components/AppPage/AppPage"
@@ -11,6 +11,8 @@ import { auth } from './firebase/auth';
 import { getUserData } from "./firebase/firestore/current-user-data";
 import { getFollowerList, listenForFollowerData, unsubscribeFromFollowerData } from './firebase/firestore/follower-list-functions';
 import checkIfAdmin from './firebase/firestore/check-admin';
+import { useContext } from 'react';
+import { useRef } from 'react';
 
 
 export const UserContext = createContext()
@@ -34,6 +36,7 @@ const ContextProvider = (props) => {
       PubSub.unsubscribe(unsubToken)
     }
   }, [])
+
   useEffect(() => {
     const unsubToken = PubSub.subscribe('update user data', async (msg, data) => {
       const userDataCopy = userData
@@ -45,8 +48,40 @@ const ContextProvider = (props) => {
       if (data.profileImageUrl === false) { userDataCopy.profileImageUrl = "" }
       if (data.bannerImageAdjustment) { userDataCopy.bannerImageAdjustment = data.bannerImageAdjustment }
       if (data.profileImageAdjustment) { userDataCopy.profileImageAdjustment = data.profileImageAdjustment }
+      if (data.likes) { userDataCopy.likes = data.likes }
       setUserData({ ...userDataCopy })
     })
+    return () => { PubSub.unsubscribe(unsubToken) }
+  }, [userData])
+
+  useEffect(() => {
+    const deepEqual = (object1, object2) => {
+      if (object1 === object2) return true
+
+      if (object1 === null || object2 === null) {
+        return false;
+      }
+      if (typeof object1 !== "object" || typeof object2 !== "object") {
+        return false
+      }
+
+      const keys1 = Object.keys(object1)
+      const keys2 = Object.keys(object2)
+
+      if (keys1.length !== keys2.length) return false
+
+      for (let key of keys1) {
+        if (!keys2.includes(key) || !deepEqual(object1[key], object2[key])) return false
+      }
+
+      return true
+    }
+
+    const unsubToken = PubSub.subscribe('update guest data', async (msg, data) => {
+      if (deepEqual(data, userData)) return
+      setUserData(data)
+    })
+
     return () => { PubSub.unsubscribe(unsubToken) }
   }, [userData])
 
@@ -56,7 +91,8 @@ const ContextProvider = (props) => {
         if (user) {
           const currentUserData = await getUserData(user)
           if (!currentUserData) { return }
-          const currentFollowData = await getFollowerList()
+          const currentFollowData = currentUserData.guest
+          ? currentUserData.followData : await getFollowerList()
           const followers = currentFollowData.followers ? currentFollowData.followers : []
           const following = currentFollowData.following ? currentFollowData.following : []
           const isAdmin = await checkIfAdmin()
@@ -94,8 +130,10 @@ const ContextProvider = (props) => {
 }
 
 const PageRoutes = (props) => {
-
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const lastLocationRef = useRef(location.pathname)
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -105,12 +143,38 @@ const PageRoutes = (props) => {
     return unsubscribe
   }, [navigate])
 
+  useEffect(() => {
+    const triggerGuestDataUpdate = async () => {
+      const currentUserData = await getUserData(auth.currentUser)
+      if (!currentUserData) { return }
+      PubSub.publish('update guest data', currentUserData)
+      lastLocationRef.current = location.pathname
+    }
+
+    const unsubToken = PubSub.subscribe('trigger guest update', () => {
+      if (auth.currentUser) {
+        if (auth.currentUser.isAnonymous) {
+          triggerGuestDataUpdate()
+        }
+      }
+    })
+
+    if (auth.currentUser) {
+      if (auth.currentUser.isAnonymous) {
+        if (location.pathname === '/') { return () => { PubSub.unsubscribe(unsubToken) } }
+        if (location.pathname === lastLocationRef.current) { return () => { PubSub.unsubscribe(unsubToken) } }
+        triggerGuestDataUpdate()
+      }
+    }
+
+    return () => { PubSub.unsubscribe(unsubToken) }
+  }, [location])
 
   return (
     <Routes>
       <Route path="/" element={<LoginPage />}/>
-      <Route path="/home" element={<AppPage current={'home'} />}/>
-      <Route path="/user-profile" element={<AppPage current={'profile'} />}/>
+      <Route path="/home/*" element={<AppPage current={'home'} />}/>
+      <Route path="/user-profile/*" element={<AppPage current={'profile'} />}/>
       <Route path="/visit-profile/*" element={<AppPage current={'visit-profile'} />}/>
       <Route path="/logout" element={<LogoutPage/>} />
     </Routes>

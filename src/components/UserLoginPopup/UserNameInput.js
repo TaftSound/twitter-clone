@@ -94,6 +94,9 @@ export const UserNameInput = (props) => {
     const userNameTakenToken = PubSub.subscribe('alert username taken', () => {
       setAlertText('User name is taken *')
     })
+    const userNameCharactersToken = PubSub.subscribe('alert username characters', () => {
+      setAlertText('No spaces or special characters allowed *')
+    })
     const focusInputToken = PubSub.subscribe('focus username input', (msg, data) => {
       if (formNameRef.current === data) { setIsFocused(true) }
     })
@@ -104,6 +107,7 @@ export const UserNameInput = (props) => {
     return () => {
       PubSub.unsubscribe(userNameRequiredToken)
       PubSub.unsubscribe(userNameTakenToken)
+      PubSub.unsubscribe(userNameCharactersToken)
       PubSub.unsubscribe(focusInputToken)
       PubSub.unsubscribe(clearAlertToken)
     }

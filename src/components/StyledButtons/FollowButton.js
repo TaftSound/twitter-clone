@@ -1,11 +1,12 @@
 import styled from "styled-components";
+import PubSub from "pubsub-js";
 
-import { FormButton } from "../StyledButtons/FormButton";
+import { FormButton } from "./FormButton";
 import UnfollowWarning from "../WarningPopups/UnfollowWarning"
 
 import { ALERT_RED, ALERT_RED_DARK, ALERT_RED_TRANSPARENT, BUTTON_BORDER_COLOR, MAIN_FONT_COLOR, WHO_TO_FOLLOW_BACKGROUND } from "../constants";
 import { followUser, unfollowUser } from "../../firebase/firestore/follower-list-functions";
-import { FollowContext } from "../../App";
+import { FollowContext, UserContext } from "../../App";
 import { useContext, useEffect, useState } from "react";
 import { useRef } from "react";
 
@@ -20,6 +21,8 @@ const FormButtonWrapper = styled.div`
 const StyledFormButton = styled(FormButton)`
   font-size: 15px;
   height: 32px;
+  ${props => props.profile ? `height: 34px;` : ''}
+  ${props => props.profile ? `box-sizing: content-box;` : ''}
   margin: 0px;
   transition: background-color, color, border-color, ease-out 150ms;
 
@@ -38,12 +41,13 @@ const StyledFormButton = styled(FormButton)`
 `
 
 
-const FollowButton = ({ userId, userName }) => {
+const FollowButton = ({ userId, userName, profile}) => {
   const [isFollowed, setIsFollowed] = useState(false)
   const [displayUnfollowButton, setDisplayUnfollowButton] = useState(false)
   const [displayUnfollowWarning, setDisplayUnfollowWarning] = useState(false)
   const [buttonText, setButtonText] = useState('Follow')
 
+  const userContext = useContext(UserContext)
   const followContext = useContext(FollowContext)
 
   const isFollowedRef = useRef(isFollowed)
@@ -57,7 +61,11 @@ const FollowButton = ({ userId, userName }) => {
       setIsFollowed(true)
       setButtonText('Following')
       await followUser(userIdToFollow)
-
+      if (userContext.guest) {
+        const followingDataArray = [...followContext.following]
+        followingDataArray.push(userIdToFollow)
+        PubSub.publish('update follow list', { following: followingDataArray })
+      }
     } catch (error) {
       console.log("Follow button failure:", error)
       setIsFollowed(false)
@@ -73,7 +81,12 @@ const FollowButton = ({ userId, userName }) => {
       setDisplayUnfollowButton(false)
       setButtonText('Follow')
       await unfollowUser(userId)
-
+      if (userContext.guest) {
+        const followingDataArray = [...followContext.following]
+        const userToRemove = userId
+        const updatedfollowingArray = followingDataArray.filter(user => user !== userToRemove)
+        PubSub.publish('update follow list', { following: updatedfollowingArray })
+      }
     } catch (error) {
       console.log("Follow button failure:", error)
       setIsFollowed(true)
@@ -134,7 +147,7 @@ const FollowButton = ({ userId, userName }) => {
     <>
     <OuterContainer>
       <FormButtonWrapper onClick={toggleFollow} onMouseLeave={mouseLeave} onMouseEnter={mouseOver}>
-        <StyledFormButton small={true} unfollowColors={displayUnfollowButton}>
+        <StyledFormButton small={true} profile={profile} unfollowColors={displayUnfollowButton}>
             {buttonText}
         </StyledFormButton>
       </FormButtonWrapper>

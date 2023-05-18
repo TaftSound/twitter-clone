@@ -11,6 +11,7 @@ import { useState } from "react"
 import { VisitContext, VisitFollowContext } from "../AppPage/AppPage"
 import { useEffect } from "react"
 import { UserContext } from "../../App"
+import FollowButton from "../StyledButtons/FollowButton"
 
 
 const BannerContainer = styled.div`
@@ -116,7 +117,10 @@ const UserDetails = (props) => {
         <UserDetailsContainer>
           <FlexBox height="68.5px" justifyContent="space-between">
             <div></div>
-            {userContext.isAdmin && <EditProfileButton onClick={startProfileEdit} dark={true} small={true}>Edit profile</EditProfileButton>}
+            <FlexBox>
+              {userContext.isAdmin && <EditProfileButton onClick={startProfileEdit} dark={true} small={true}>Edit profile</EditProfileButton>}
+              <FollowButton profile={true} userId={visitContext.userId} userName={visitContext.userName}></FollowButton>
+            </FlexBox>
           </FlexBox>
           <FlexBox margin="4px 0px 15px" direction="column" alignItems="flex-start">
             <H1>{visitContext.displayName}</H1>

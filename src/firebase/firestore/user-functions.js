@@ -120,7 +120,11 @@ export const updateUserProfile = async (newData, userId = auth.currentUser.uid) 
     if (newData.profileImageAdjustment) {
       userData.profileImageAdjustment = newData.profileImageAdjustment
     }
-    const userDocRef = doc(db, 'users', userId);
+    
+    const userDocRef = auth.currentUser.isAnonymous
+    ? doc(db, 'guestUsers', userId)
+    : doc(db, 'users', userId)
+
     await updateDoc(userDocRef, userData)
   } catch (error) {
     console.error("Failure to update user profile data in firestore:", error)
@@ -132,12 +136,51 @@ export const createGuestUser = async (user, userName) => {
     const userDocRef = doc(db, 'guestUsers', user.uid);
     await setDoc(userDocRef, {
       displayName: "Guest",
-      userName: userName
+      userName: userName,
+      userId: user.uid,
+      timestamp: Date.now(),
+      guest: true,
+      followData: {
+        following: [],
+        followers: []
+      },
+      userFeed: {},
+      isAdmin: false
     });
   } catch (error) {
     console.error("Failure to create new guest user account:", error);
   }
 };
+
+// GUEST USER OBJECT STRUCTURE
+
+  // const guestUserObject = {
+  //   displayName: 'Guest',
+  //   userName: 'chosen  username',
+  //   userId: 'user id from auth',
+  //   timestamp: 'Date.now()',
+  //   guest: true,
+  //   tweets: {
+  //     tweet1: {
+  //       ...tweetData
+  //     },
+  //     tweet2: {
+  //       ...tweetData
+  //     }
+  //   },
+  //   likes: {
+  //     tweetId: 'timestamp',
+  //     tweetId2: 'timestamp'
+  //   },
+  //   followData: {
+  //     following: [ 'userId', 'userId2' ],
+  //     followers: []
+  //   }
+  // }
+
+  // Re-write initial data loading for user data
+  // Re-write getting of followData
+
 
 export const checkUserNameAvailability = async (userName) => {
   try {

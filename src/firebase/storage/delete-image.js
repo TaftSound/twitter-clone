@@ -1,5 +1,6 @@
 import { storage } from "../firebase"
 import { deleteObject, listAll, ref } from "firebase/storage"
+import { auth } from "../auth"
 
 const storageRef = ref(storage)
 
@@ -19,7 +20,10 @@ const deleteFolderImages = async (ref) => {
 
 export const deleteTweetImages = async (tweetId) => {
   try {
-    const tweetStorageRef = ref(storageRef, `tweets/${tweetId}/images`)
+    const tweetStorageRef = auth.currentUser.isAnonymous
+    ? ref(storageRef, `guestTweets/${tweetId}/images`)
+    : ref(storageRef, `tweets/${tweetId}/images`)
+    
     return await deleteFolderImages(tweetStorageRef)
   } catch (error) {
     console.error("Failure to delete tweet images from storage:", error)

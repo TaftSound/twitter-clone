@@ -211,6 +211,8 @@ const ImageAdjuster = (props) => {
   }
 
   useEffect(() => {
+    if (!imageLoaded) { return }
+  
     const container = containerRef.current
     const image = imageRef.current
     const startCoordinates = [0, 0]
@@ -236,13 +238,8 @@ const ImageAdjuster = (props) => {
       document.removeEventListener('mousemove', moveImage)
     }
 
-    const onImageLoad = () => {
-      setImageLoaded(true)
-      setAvailableMovement()
-      container.addEventListener('mousedown', startDrag)
-      document.addEventListener('mouseup', endDrag)
-    }
-
+    container.addEventListener('mousedown', startDrag)
+    document.addEventListener('mouseup', endDrag)
     image.addEventListener('load', onImageLoad)
 
     return () => {
@@ -251,7 +248,7 @@ const ImageAdjuster = (props) => {
       document.removeEventListener('mousemove', moveImage)
       image.removeEventListener('load', onImageLoad)
     }
-  }, [setAvailableMovement])
+  }, [setAvailableMovement, imageLoaded])
 
   useEffect(() => {
     if (!imageLoaded) { return }
@@ -281,6 +278,10 @@ const ImageAdjuster = (props) => {
     props.applyFunction(changesObject)
   }
 
+  const onImageLoad = () => {
+    setImageLoaded(true)
+  }
+
   return (
     <PopupModal backFunction={props.backFunction}
                 headerButton={<ApplyButton onClick={applyChanges}>Apply</ApplyButton>}
@@ -290,7 +291,7 @@ const ImageAdjuster = (props) => {
                 title="Edit media">
       <FlexBox flex="1" direction="column" alignItems="center" justifyContent="center" position="relative">
         <ImageContainer ref={containerRef} direction="column" justifyContent="center" alignItems="center">
-          <Image width={props.windowWidth} zoom={zoom} draggable={false} adjustedX={adjustedX} adjustedY={adjustedY} ref={imageRef} src={props.imageUrl}></Image>
+          <Image onLoad={onImageLoad} width={props.windowWidth} zoom={zoom} draggable={false} adjustedX={adjustedX} adjustedY={adjustedY} ref={imageRef} src={props.imageUrl}></Image>
           <ImageWindow width={props.windowWidth} height={props.windowHeight} ref={windowRef} display="flex"></ImageWindow>
         </ImageContainer>
       </FlexBox>

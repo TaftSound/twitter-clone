@@ -206,7 +206,7 @@ const ProfileEditForm = (props) => {
     setBannerImageAdjustment({})
   }
 
-  if (bannerImageAdjuster) {
+  if (bannerImageAdjuster && bannerImageUrl) {
     return (
       <ImageAdjuster applyFunction={applyBannerAdjustment} 
                      backFunction={hideImageAdjuster}
@@ -215,7 +215,7 @@ const ProfileEditForm = (props) => {
                      windowHeight={183} />
     )
   }
-  if (profileImageAdjuster) {
+  if (profileImageAdjuster && profileImageUrl) {
     return (
       <ImageAdjuster applyFunction={applyProfileImageAdjustment}
                      backFunction={hideImageAdjuster}

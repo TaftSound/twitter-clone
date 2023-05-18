@@ -120,6 +120,14 @@ export const SidebarScrollContent = styled.div`
   padding-left: 20px;
   padding-bottom: 100px;
   position: relative;
+
+  visibility: hidden;
+  display: none;
+
+  @media (min-width: 690px) {
+    visibility: visible;
+    display: block;
+  }
 `
 
 export const SidebarSearchContainer = styled.div`

@@ -1,8 +1,9 @@
-import { doc, collection, writeBatch } from "firebase/firestore";
+import { doc, collection, writeBatch, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firestore";
 
 import { createFakeUser } from "./user-functions";
 import { storeTweetImages } from "../storage/store-image";
+import { auth } from "../auth";
 
 export const createNewTweet = async (newTweetText, imageFilesArray, userObject, followers) => {
   try {
@@ -11,7 +12,11 @@ export const createNewTweet = async (newTweetText, imageFilesArray, userObject, 
       const imageUrls = await storeTweetImages(imageFilesArray, tweetDataObject.tweetId)
       tweetDataObject.tweet.data.imageUrls = imageUrls
     }
-    await batchWriteTweet(tweetDataObject, followers);
+    
+    userObject.guest
+    ? await writeGuestTweet(tweetDataObject)
+    : await batchWriteTweet(tweetDataObject, followers);
+
     return {
       ...tweetDataObject.tweet.data,
       tweetId: tweetDataObject.tweetId,
@@ -20,6 +25,12 @@ export const createNewTweet = async (newTweetText, imageFilesArray, userObject, 
     console.error("Failure to store new tweet in database", error);
   }
 };
+
+const writeGuestTweet = async (data) => {
+  const userDocRef = doc(db, 'guestUsers', auth.currentUser.uid)
+  const dotNotationPath = `tweets.${data.tweetId}`
+  updateDoc(userDocRef, { [dotNotationPath]: data.tweet.data })
+}
 
 const batchWriteTweet = async (data, followers) => {
   const tweetLedgerRef = doc(db, 'tweets', 'tweetLedger');

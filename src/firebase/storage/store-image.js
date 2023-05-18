@@ -1,5 +1,6 @@
 import { storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth } from "../auth";
 
 const storageRef = ref(storage)
 
@@ -8,7 +9,10 @@ const storageRef = ref(storage)
 
 export const storeTweetImages = async (imageFiles, tweetId) => {
   try {
-    const tweetImagesRef = ref(storageRef, `tweets/${tweetId}/images`)
+    const tweetImagesRef = auth.currentUser.isAnonymous
+    ? ref(storageRef, `guestTweets/${tweetId}/images`)
+    : ref(storageRef, `tweets/${tweetId}/images`)
+    
     const uploadPromises = imageFiles.map((file, index) => {
       const imageRef = ref(tweetImagesRef, `${index}${file.name}`)
       return uploadBytes(imageRef, file)
@@ -38,7 +42,9 @@ const storeSingleImage = async (ref, imageFile) => {
 
 export const storeProfileImage = async (userId, imageFile) => {
   try {
-    const profileImageRef = ref(storageRef, `users/${userId}/images/profileImage/${imageFile.name}`)
+    const profileImageRef = auth.currentUser.isAnonymous
+    ? ref(storageRef, `guestUsers/${userId}/images/profileImage/${imageFile.name}`)
+    : ref(storageRef, `users/${userId}/images/profileImage/${imageFile.name}`)
     const imageUrl = await storeSingleImage(profileImageRef, imageFile)
     
     return imageUrl
@@ -49,7 +55,9 @@ export const storeProfileImage = async (userId, imageFile) => {
 
 export const storeBannerImage = async (userId, imageFile) => {
   try {
-    const bannerImageRef = ref(storageRef, `users/${userId}/images/bannerImage/${imageFile.name}`)
+    const bannerImageRef = auth.currentUser.isAnonymous
+    ? ref(storageRef, `guestUsers/${userId}/images/bannerImage/${imageFile.name}`)
+    : ref(storageRef, `users/${userId}/images/bannerImage/${imageFile.name}`)
     const imageUrl = await storeSingleImage(bannerImageRef, imageFile)
     
     return imageUrl

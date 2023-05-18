@@ -1,7 +1,12 @@
+import PubSub from "pubsub-js";
+import { useContext } from "react";
+import { FollowContext, UserContext } from "../../App";
 import { unfollowUser } from "../../firebase/firestore/follower-list-functions";
 import ConfirmationPopup from "../ConfirmationPopup/ConfirmationPopup";
 
 const UnfollowWarning = (props) => {
+  const userContext = useContext(UserContext)
+  const followContext = useContext(FollowContext)
   const { userId, userName, cancelFunction, confirmFunction, hideFunction } = props;
 
   const unfollowThisUser = confirmFunction
@@ -14,7 +19,12 @@ const UnfollowWarning = (props) => {
     try {
       if (hideFunction) { hideFunction() }
       await unfollowUser(userId);
-      // PubSub.publish('update follow list');
+      if (userContext.guest) {
+        const followingDataArray = [...followContext.following]
+        const userToRemove = userId
+        const updatedfollowingArray = followingDataArray.filter(user => user !== userToRemove)
+        PubSub.publish('update follow list', { following: updatedfollowingArray })
+      }
     } catch (error) {
       console.error("Failure to unfollow user:", error);
       alert("Failure to unfollow user, fake twitter apologizes for this inconvenience");

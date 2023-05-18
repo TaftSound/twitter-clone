@@ -51,7 +51,6 @@ const TweetDisplay = ({ tweetData }) => {
   const hideTweet = (boolean) => {
     setHidden(boolean)
   }
-
   if (hidden) { return false }
   return (
     <OuterContainer>

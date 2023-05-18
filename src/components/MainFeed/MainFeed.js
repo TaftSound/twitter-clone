@@ -1,12 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
+import PubSub from "pubsub-js";
 import { getForYouFeed, getFollowingFeed } from "../../firebase/firestore/user-feed";
 import { getUsersToFollow } from "../../firebase/firestore/follower-list-functions";
 import { LoadingContainer } from "../LoadingPage/LoadingPage";
 import TweetDisplay from "../TweetDisplay/TweetDisplay";
-import PubSub from "pubsub-js";
 import WhoToFollow from "../WhoToFollow/WhoToFollow";
-import { useMemo } from "react";
+
+import { useContext } from "react";
+import { UserContext } from "../../App";
+import { useLocation } from "react-router-dom";
 
 const CenterWhoToFollow = styled(WhoToFollow)`
   display: block;
@@ -22,38 +25,24 @@ const MainFeed = (props) => {
   const [tweetFeed, setTweetFeed] = useState([])
   const [whoToFollowFeed, setWhoToFollowFeed] = useState([])
   const [hasLoaded, setHasLoaded] = useState(false)
-  const [currentTab, setCurrentTab] = useState("For you")
+
+  const userContext = useContext(UserContext)
   
   const sentinelRef = useRef(null)
   const observer = useRef(null)
   const loadCount = useRef(0)
 
   useEffect(() => {
-    const tabChangeToken = PubSub.subscribe('set current tab', (msg, data) => {
-      setCurrentTab(data)
-    })
+    if (!props.currentTab) { return }
 
-    return () => {
-      PubSub.unsubscribe(tabChangeToken)
-    }
-  }, [])
-
-  const memoizedTabData = useMemo(() => {
-    if (currentTab === "For you") {
-      return "For you"
-    } else if (currentTab === "Following") {
-      return "Following"
-    }
-    
-  }, [currentTab])
-
-  useEffect(() => { 
     loadCount.current = 0
     setTweetFeed([])
     setWhoToFollowFeed([])
 
     const loadUsersToFollow = async (loadCount) => {
-      const newUserData = await getUsersToFollow(loadCount, 3)
+      const newUserData = userContext.guest
+      ? await getUsersToFollow(loadCount, 3, userContext.followData)
+      : await getUsersToFollow(loadCount, 3)
       setWhoToFollowFeed((oldFeed) => {
         return [...oldFeed, newUserData]
       })
@@ -62,7 +51,7 @@ const MainFeed = (props) => {
     const startLoadCycle = async () => {
       setHasLoaded(false)
       observer.current.disconnect()
-      return memoizedTabData === "For you"
+      return props.currentTab === "For you"
       ? await getForYouFeed(loadCount.current)
       : await getFollowingFeed(loadCount.current)
     }
@@ -71,7 +60,7 @@ const MainFeed = (props) => {
       setHasLoaded(true)
       if (!newTweets[0]) { return }
       setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
-      if (memoizedTabData === "For you") { await loadUsersToFollow(loadCount.current) }
+      if (props.currentTab === "For you") { await loadUsersToFollow(loadCount.current) }
       loadCount.current = loadCount.current + 1
       if (sentinelRef.current) observer.current.observe(sentinelRef.current)
     }
@@ -89,12 +78,12 @@ const MainFeed = (props) => {
     if (sentinelRef.current) { observer.current.observe(sentinelRef.current) }
 
     return () => { observer.current.disconnect() }
-  }, [memoizedTabData])
+  }, [props.currentTab])
 
   const isWhoToFollowPlacement = (index) => {
     if (index !== 0 
         && (index + 1) % 5 === 0
-        && currentTab === "For you") {
+        && props.currentTab === "For you") {
       return true
     } else {
       return false

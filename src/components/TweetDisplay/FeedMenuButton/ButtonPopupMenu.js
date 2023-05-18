@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import PubSub from "pubsub-js";
 import { BACKGROUND_COLOR, SECONDARY_FONT_COLOR, MAIN_FONT_COLOR, BUTTON_HOVER_BACKGROUND, PRIMARY_COLOR } from "../../constants";
 import { useContext, useState } from "react";
 import { FollowContext, UserContext } from "../../../App";
@@ -65,7 +66,12 @@ const ButtonPopupMenu = (props) => {
 
   const followThisUser = async () => {
     try {
-      await followUser(userId);
+      await followUser(userId)
+      if (userData.guest) {
+        const followingDataArray = [...following]
+        followingDataArray.push(userId)
+        PubSub.publish('update follow list', { following: followingDataArray })
+      }
     } catch (error) {
       console.error("Failure to follow user:", error);
       alert("Failure to follow user, fake twitter apologizes for this inconvenience");

@@ -1,4 +1,4 @@
-import { arrayRemove, arrayUnion, deleteField, doc, getDoc, onSnapshot, runTransaction } from "firebase/firestore";
+import { arrayRemove, arrayUnion, deleteField, doc, getDoc, onSnapshot, runTransaction, writeBatch } from "firebase/firestore";
 import { auth } from "../auth";
 import { db } from "./firestore";
 
@@ -20,6 +20,10 @@ export const getFollowerList = async (userId = auth.currentUser.uid) => {
 
 export const listenForFollowerData = () => {
   if (!followDocRef) {
+      if (auth.currentUser.isAnonymous) {
+        followDocRef = true
+        return
+      }
       followDocRef = doc(db, 'followData', auth.currentUser.uid);
       unsubFollowSnap = onSnapshot(
         followDocRef, 
@@ -36,8 +40,31 @@ export const unsubscribeFromFollowerData = () => {
 }
 
 export const followUser = async (userIdToFollow) => {
-  // do this whole write with a transaction write
   try {
+    if (auth.currentUser.isAnonymous) {
+      await runTransaction(db, async (transaction) => {
+        const userToFollow = {}
+
+        userToFollow.followDataRef = doc(db, 'followData', userIdToFollow)
+
+        const guestUserDocRef = doc(db, 'guestUsers', auth.currentUser.uid)
+
+        userToFollow.tweetReferencesRef = doc(db, 'tweetReferences', userIdToFollow)
+        userToFollow.tweetReferencesSnap = await transaction.get(userToFollow.tweetReferencesRef)
+        userToFollow.userTweetsData = userToFollow.tweetReferencesSnap.data().userTweets
+        
+        const userFeedTweetsToAdd = {}
+        Object.entries(userToFollow.userTweetsData).forEach(([key, value]) => {
+          const fieldNameArray = ['userFeed', key]
+          const dotNotationPath = fieldNameArray.join('.')
+          userFeedTweetsToAdd[dotNotationPath] = value
+        })
+
+        transaction.update(guestUserDocRef, { ...userFeedTweetsToAdd })
+        transaction.update(guestUserDocRef, { 'followData.following': arrayUnion(userIdToFollow) })
+      })
+      return
+    }
     await runTransaction(db, async (transaction) => {
       const currentUser = {}
       const userToFollow = {}
@@ -80,6 +107,27 @@ export const followUser = async (userIdToFollow) => {
 
 export const unfollowUser = async(userIdToUnfollow) => {
   try {
+    if (auth.currentUser.isAnonymous) {
+      await runTransaction(db, async (transaction) => {
+        const userToUnfollow = {}
+        const guestUserDocRef = doc(db, 'guestUsers', auth.currentUser.uid)
+
+        userToUnfollow.tweetReferencesRef = doc(db, 'tweetReferences', userIdToUnfollow)
+        userToUnfollow.tweetReferencesSnap = await transaction.get(userToUnfollow.tweetReferencesRef)
+        userToUnfollow.userTweetsData = userToUnfollow.tweetReferencesSnap.data().userTweets
+  
+        Object.entries(userToUnfollow.userTweetsData).forEach(([key, value]) => {
+          const fieldNameArray = ['userFeed', key]
+          const dotNotationPath = fieldNameArray.join('.')
+          transaction.update(guestUserDocRef, {
+            [dotNotationPath]: deleteField()
+          })
+        })
+
+        transaction.update(guestUserDocRef, { 'followData.following': arrayRemove(userIdToUnfollow) })
+      })
+      return
+    }
     await runTransaction(db, async (transaction) => {
       const currentUser = {}
       const userToUnfollow = {}
@@ -97,7 +145,6 @@ export const unfollowUser = async(userIdToUnfollow) => {
       userToUnfollow.tweetReferencesSnap = await transaction.get(userToUnfollow.tweetReferencesRef)
       // store 'userTweets' object from userToFollow
       userToUnfollow.userTweetsData = userToUnfollow.tweetReferencesSnap.data().userTweets
-      
 
       // Remove 'userTweets' from 'userFeed' object of current user with dot notation
       Object.entries(userToUnfollow.userTweetsData).forEach(([key, value]) => {
@@ -107,12 +154,10 @@ export const unfollowUser = async(userIdToUnfollow) => {
           [dotNotationPath]: deleteField()
         })
       })
-
       // write userIdToFollow into the 'following' array with arrayRemove
       transaction.update(currentUser.followDataRef, { following: arrayRemove(userIdToUnfollow) })
       // write current user's id into the userToFollow 'followers' array with arrayRemove
       transaction.update(userToUnfollow.followDataRef, { followers: arrayRemove(auth.currentUser.uid) })
-      
     })
   } catch (error) {
     console.error("Failure to unfollow new user:", error)
@@ -122,17 +167,23 @@ export const unfollowUser = async(userIdToUnfollow) => {
 
 let userIdList = []
 
-export const getUsersToFollow = async(loadCount, chunkSize = 2) => {
+export const getUsersToFollow = async (loadCount, chunkSize, guestFollowData) => {
   try {
     if (loadCount === 0) {
       const idListDocRef = doc(db, 'users', 'userIdList')
       const followDataDocRef = doc(db, 'followData', auth.currentUser.uid)
 
       const userIdListSnap = await getDoc(idListDocRef)
-      const followDataSnap = await getDoc(followDataDocRef)
-
       const userIdListData = userIdListSnap.data()
-      const followData = followDataSnap.data()
+      
+      let followData = null
+      if (guestFollowData) {
+        followData = guestFollowData
+      } else {
+        const followDataSnap = await getDoc(followDataDocRef)
+        followData = followDataSnap.data()
+      }
+
       const usersToFilter = [...followData.following, auth.currentUser.uid]
 
       const unfilteredIdList = Object.keys(userIdListData)

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants";
 import { UserCircle } from "../styled-components";
-import FollowButton from "./FollowButton";
+import FollowButton from "../StyledButtons/FollowButton";
 
 const OuterContainer = styled.div`
   width: 100%;
@@ -60,7 +60,7 @@ const UserDisplayTab = (props) => {
           <UserName>@{userObject.userName}</UserName>
         </UserInfoContainer>
       </UserContainer>
-      <FollowButton userId={userObject.userId} userName={userObject.userName}></FollowButton>
+      <FollowButton small={true} userId={userObject.userId} userName={userObject.userName}></FollowButton>
     </OuterContainer>
   )
 };

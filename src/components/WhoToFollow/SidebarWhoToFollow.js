@@ -13,9 +13,13 @@ const SidebarWhoToFollow = (props) => {
 
   useEffect(() => {
     const loadUsersToFollow = async () => {
-      const usersOne = await getUsersToFollow(0)
-      const usersTwo = await getUsersToFollow(1)
-      const usersThree = await getUsersToFollow(2)
+      const guestFollowData = userContext.guest 
+      ? userContext.followData
+      : false
+      
+      const usersOne = await getUsersToFollow(0, 2, guestFollowData)
+      const usersTwo = await getUsersToFollow(1, 2, guestFollowData)
+      const usersThree = await getUsersToFollow(2, 2, guestFollowData)
       const usersArray = [usersOne, usersTwo, usersThree]
 
       setUsersToFollow(usersArray)

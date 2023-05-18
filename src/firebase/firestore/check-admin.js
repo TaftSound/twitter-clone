@@ -4,12 +4,11 @@ import { db } from "./firestore"
 
 const checkIfAdmin = async () => {
   try {
-    const adminDocRef = doc(db, 'users', 'adminList')
+    const adminDocRef = doc(db, 'adminList', auth.currentUser.uid)
     const docSnap = await getDoc(adminDocRef)
-    if (docSnap.data()[auth.currentUser.uid]) {
+    if (docSnap.exists()) {
       return true
     }
-    
   } catch (error) {
     console.log('no admin rights')
     return false

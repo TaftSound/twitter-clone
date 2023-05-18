@@ -8,29 +8,19 @@ import { LoadingContainer } from "../LoadingPage/LoadingPage"
 
 import { getLikedTweets, getUserTweets } from "../../firebase/firestore/user-feed"
 
-
 const ProfileFeed = (props) => {
   const userContext = useContext(UserContext)
   const [tweetsFeed, setTweetsFeed] = useState([])
-  const [currentTab, setCurrentTab] = useState("Tweets")
   const [hasLoaded, setHasLoaded] = useState(false)
   const { targetUserId } = props
 
   const loadCount = useRef(0)
   const sentinelRef = useRef(null)
   const observer = useRef(null)
-  
-  useEffect(() => {
-    const tabChangeToken = PubSub.subscribe('set current tab', (msg, data) => {
-      setCurrentTab(data)
-    })
-
-    return () => {
-      PubSub.unsubscribe(tabChangeToken)
-    }
-  }, [])
 
   useEffect(() => {
+    if (!props.currentTab) { return }
+
     loadCount.current = 0
     setTweetsFeed([])
     setHasLoaded(false)
@@ -40,9 +30,9 @@ const ProfileFeed = (props) => {
         setHasLoaded(false)
         observer.current.disconnect()
         const userId = targetUserId ? targetUserId : userContext.userId
-        const newTweets = currentTab === "Tweets"
+        const newTweets = props.currentTab === "Tweets"
         ? await getUserTweets(userId, loadCount.current)
-        : currentTab === "Likes"
+        : props.currentTab === "Likes"
         ? await getLikedTweets(userId, loadCount.current)
         : []
         setHasLoaded(true)
@@ -67,7 +57,7 @@ const ProfileFeed = (props) => {
     if (sentinelRef.current) { observer.current.observe(sentinelRef.current) }
 
     return () => { observer.current.disconnect() }
-  }, [currentTab, targetUserId, userContext.userId])
+  }, [targetUserId, props.currentTab])
   
   return (
     <>
