@@ -1,5 +1,6 @@
 import { deleteTweet } from "../../firebase/firestore/delete-user-tweet";
 import ConfirmationPopup from "../ConfirmationPopup/ConfirmationPopup";
+import PubSub from "pubsub-js";
 
 const DeleteWarning = (props) => {
   const { tweetData, cancelFunction, followers, hideTweet } = props;

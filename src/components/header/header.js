@@ -176,9 +176,18 @@ export const ProfileHeader = (props) => {
     const unsubToken = PubSub.subscribe('set user tweet count', (msg, count) => {
       setTweetCount(count)
     })
+    const unsubTokenTwo = PubSub.subscribe('increase tweet count', (msg, count) => {
+      setTweetCount((oldCount) => { return oldCount + 1 })
+    })
+
+    const unsubTokenThree = PubSub.subscribe('decrease tweet count', (msg, count) => {
+      setTweetCount((oldCount) => { return oldCount - 1 })
+    })
 
     return () => {
       PubSub.unsubscribe(unsubToken)
+      PubSub.unsubscribe(unsubTokenTwo)
+      PubSub.unsubscribe(unsubTokenThree)
     }
   }, [])
 

@@ -2,6 +2,7 @@ import { deleteField, doc, runTransaction, updateDoc, } from "firebase/firestore
 import { auth } from "../auth"
 import { deleteTweetImages } from "../storage/delete-image"
 import { db } from "./firestore"
+import PubSub from "pubsub-js"
 
 
 const getFollowerDocRefs = (followers) => {
@@ -22,7 +23,7 @@ export const deleteTweet = async (tweetId, followers) => {
     if (auth.currentUser.isAnonymous) {
       const userDocRef = doc(db, 'guestUsers', auth.currentUser.uid)
       const tweetPath = `tweets.${tweetId}`
-      updateDoc(userDocRef, {
+      await updateDoc(userDocRef, {
         [tweetPath]: deleteField()
       })
     } else {
@@ -52,6 +53,7 @@ export const deleteTweet = async (tweetId, followers) => {
       })
     }
     await deleteTweetImages(tweetId)
+    PubSub.publish('decrease tweet count')
   } catch (error) {
     console.error("Failure to delete user tweet:", error)
   }

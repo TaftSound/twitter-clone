@@ -19,6 +19,21 @@ const ProfileFeed = (props) => {
   const observer = useRef(null)
 
   useEffect(() => {
+    const unsubToken = PubSub.subscribe('increase tweet count', () => {
+      if (props.currentTab === 'Tweets') {
+        loadCount.current = 0
+        setHasLoaded(false)
+        setTweetsFeed([])
+        if (sentinelRef.current) { observer.current.observe(sentinelRef.current) }
+      }
+    })
+
+    return () => {
+      PubSub.unsubscribe(unsubToken)
+    }
+  }, [])
+
+  useEffect(() => {
     if (!props.currentTab) { return }
 
     loadCount.current = 0

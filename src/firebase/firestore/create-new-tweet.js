@@ -1,5 +1,6 @@
 import { doc, collection, writeBatch, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firestore";
+import PubSub from "pubsub-js";
 
 import { createFakeUser } from "./user-functions";
 import { storeTweetImages } from "../storage/store-image";
@@ -17,6 +18,8 @@ export const createNewTweet = async (newTweetText, imageFilesArray, userObject, 
     ? await writeGuestTweet(tweetDataObject)
     : await batchWriteTweet(tweetDataObject, followers);
 
+    PubSub.publish('increase tweet count')
+    
     return {
       ...tweetDataObject.tweet.data,
       tweetId: tweetDataObject.tweetId,
