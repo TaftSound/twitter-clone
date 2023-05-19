@@ -13,6 +13,7 @@ import TweetDisplay from "../TweetDisplay/TweetDisplay";
 import { CloseButton } from "../StyledButtons/CloseButton";
 
 import { FollowContext, UserContext } from "../../App";
+import { VisitContext, VisitFollowContext } from "../AppPage/AppPage";  
 import { DIVIDER_COLOR, PRIMARY_COLOR } from "../constants";
 
 import { createNewTweet } from "../../firebase/firestore/create-new-tweet";
@@ -91,8 +92,10 @@ const LoadingBar = styled.div`
 `
 
 const NewTweetEntry = (props) => {
-  const userContext = useContext(UserContext) 
+  const userContext = useContext(UserContext)
+  const visitContext = useContext(VisitContext)
   const followContext = useContext(FollowContext)
+  const visitFollowContext = useContext(VisitFollowContext)
   const { followers } = followContext
 
   const [currentTextState, setCurrentTextState] = useState('')
@@ -143,8 +146,12 @@ const NewTweetEntry = (props) => {
 
   const submitTweet = async () => {
     setTweetUploadingState(true)
-    const tweetData = await createNewTweet(currentTextState, imageFiles, userContext, followers)
-    const newTweet = <TweetDisplay tweetData={{...tweetData, ...userContext}} key={tweetData.tweetId}></TweetDisplay>
+    const tweetData = props.fakeUser
+    ? await createNewTweet(currentTextState, imageFiles, visitContext, visitFollowContext.followers)
+    : await createNewTweet(currentTextState, imageFiles, userContext, followers)
+    const newTweet = props.fakeUser
+    ? <TweetDisplay tweetData={{...tweetData, ...visitContext}} key={tweetData.tweetId}></TweetDisplay>
+    : <TweetDisplay tweetData={{...tweetData, ...userContext}} key={tweetData.tweetId}></TweetDisplay>
     newTweetRef.current = newTweet
     setCurrentTextState('')
     setInputExpandedState(false)

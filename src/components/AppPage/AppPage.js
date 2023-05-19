@@ -13,7 +13,7 @@ import ProfileFeed from "../MainFeed/ProfileFeed"
 import VisitProfileDetails from "../ProfileDetails/VisitProfileDetails"
 import { useLocation } from "react-router-dom"
 import { getUserDataById } from "../../firebase/firestore/current-user-data"
-import { getFollowerList } from "../../firebase/firestore/follower-list-functions"
+import { getFollowList } from "../../firebase/firestore/follower-list-functions"
 import { createContext } from "react"
 import PubSub from "pubsub-js"
 
@@ -37,7 +37,7 @@ const AppPage = (props) => {
 
     const getVisitedUserData = async (userId) => {
       const userData = await getUserDataById(userId)
-      const userFollowData = await getFollowerList(userId)
+      const userFollowData = await getFollowList(userId)
       setVisitData(userData)
       setVisitFollowData(userFollowData)
     }
@@ -127,7 +127,7 @@ const AppPage = (props) => {
   }
 
   if (props.current === 'visit-profile') {
-    return visitData && visitFollowData
+    return visitData && visitFollowData && userContext
     ? (
       <VisitFollowContext.Provider value={visitFollowData}>
         <VisitContext.Provider value={visitData}>
@@ -137,6 +137,7 @@ const AppPage = (props) => {
             centerContent={[
               <VisitProfileDetails></VisitProfileDetails>,
               <Header defaultTab="Tweets" currentTab={currentTab} tabsArray={["Tweets", "Likes"]} ></Header>,
+              userContext.isAdmin && <NewTweetEntry fakeUser={true}/>,
               pageDisplayed ? <ProfileFeed targetUserId={visitData.userId} currentTab={currentTab}></ProfileFeed> : false
             ]}
             sidebarContent={[

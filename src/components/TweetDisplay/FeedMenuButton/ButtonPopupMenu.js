@@ -102,11 +102,14 @@ const ButtonPopupMenu = (props) => {
           : following.includes(userId)
             ? warnAboutUnfollow
             : followThisUser}>
+
           {userId === userData.userId ? <DeleteIcon></DeleteIcon>
             : following.includes(userId) ? <UnfollowIcon></UnfollowIcon> : <FollowIcon></FollowIcon>}
           {userId === userData.userId ? 'Delete this tweet'
             : following.includes(userId) ? `Unfollow @${userName}` : `Follow @${userName}`}
         </InnerContainer>
+        {userData.isAdmin && userId !== userData.userId 
+        && <InnerContainer onClick={warnAboutDelete}><DeleteIcon></DeleteIcon>'Delete this tweet'</InnerContainer>}
       </FrontContainer>
       {displayUnfollowWarning
         ? <UnfollowWarning userName={props.tweetData.userName}

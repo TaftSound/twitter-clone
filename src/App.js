@@ -9,7 +9,7 @@ import LogoutPage from './components/LogoutPage/LogoutPage';
 
 import { auth } from './firebase/auth';
 import { getUserData } from "./firebase/firestore/current-user-data";
-import { getFollowerList, listenForFollowerData, unsubscribeFromFollowerData } from './firebase/firestore/follower-list-functions';
+import { getFollowList, listenForFollowerData, unsubscribeFromFollowerData } from './firebase/firestore/follower-list-functions';
 import checkIfAdmin from './firebase/firestore/check-admin';
 import { useRef } from 'react';
 import { deepEqual } from './deep-equal';
@@ -70,7 +70,7 @@ const ContextProvider = (props) => {
           const currentUserData = await getUserData(user)
           if (!currentUserData) { return }
           const currentFollowData = currentUserData.guest
-          ? currentUserData.followData : await getFollowerList()
+          ? currentUserData.followData : await getFollowList()
           const followers = currentFollowData.followers ? currentFollowData.followers : []
           const following = currentFollowData.following ? currentFollowData.following : []
           const isAdmin = await checkIfAdmin()

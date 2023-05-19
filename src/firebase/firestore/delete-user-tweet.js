@@ -18,7 +18,7 @@ const getFollowerTweetData = async (transaction, docRefs) => {
   }))
 }
 
-export const deleteTweet = async (tweetId, followers) => {
+export const deleteTweet = async (tweetId, followers, userId = auth.currentUser.uid) => {
   try {
     if (auth.currentUser.isAnonymous) {
       const userDocRef = doc(db, 'guestUsers', auth.currentUser.uid)
@@ -29,7 +29,7 @@ export const deleteTweet = async (tweetId, followers) => {
     } else {
       await runTransaction(db, async (transaction) => {
         const tweetDocRef = doc(db, 'tweets', tweetId)
-        const tweetReferencesDocRef = doc(db, 'tweetReferences', auth.currentUser.uid)
+        const tweetReferencesDocRef = doc(db, 'tweetReferences', userId)
         const tweetLedgerRef = doc(db, 'tweets', 'tweetLedger')
         const followerDocRefs = getFollowerDocRefs(followers)
 

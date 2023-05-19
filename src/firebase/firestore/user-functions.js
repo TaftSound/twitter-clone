@@ -32,7 +32,8 @@ export const createFakeUser = async (userName, displayName) => {
     batch.set(userDocRef, {
       displayName: displayName,
       userName: userName,
-      userId: userName
+      userId: userName,
+      timestamp: Date.now()
     });
     batch.set(followerListRef, {
       following: [],
@@ -120,7 +121,7 @@ export const updateUserProfile = async (newData, userId = auth.currentUser.uid) 
     if (newData.profileImageAdjustment) {
       userData.profileImageAdjustment = newData.profileImageAdjustment
     }
-    
+
     const userDocRef = auth.currentUser.isAnonymous
     ? doc(db, 'guestUsers', userId)
     : doc(db, 'users', userId)

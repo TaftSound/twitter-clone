@@ -8,7 +8,7 @@ import PubSub from "pubsub-js";
 let followDocRef = null
 let unsubFollowSnap = null
 
-export const getFollowerList = async (userId = auth.currentUser.uid) => {
+export const getFollowList = async (userId = auth.currentUser.uid) => {
   try {
     const followerDocRef = doc(db, 'followData', userId);
     const followListSnap = await getDoc(followerDocRef);
