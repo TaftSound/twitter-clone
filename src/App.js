@@ -11,9 +11,8 @@ import { auth } from './firebase/auth';
 import { getUserData } from "./firebase/firestore/current-user-data";
 import { getFollowerList, listenForFollowerData, unsubscribeFromFollowerData } from './firebase/firestore/follower-list-functions';
 import checkIfAdmin from './firebase/firestore/check-admin';
-import { useContext } from 'react';
 import { useRef } from 'react';
-import { deepEqual } from './deep-equal'
+import { deepEqual } from './deep-equal';
 
 
 export const UserContext = createContext()
@@ -56,7 +55,6 @@ const ContextProvider = (props) => {
   }, [userData])
 
   useEffect(() => {
-    
     const unsubToken = PubSub.subscribe('update guest data', async (msg, data) => {
       if (deepEqual(data, userData)) return
       setUserData(data)

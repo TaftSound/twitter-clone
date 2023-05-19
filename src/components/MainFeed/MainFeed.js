@@ -46,6 +46,7 @@ const MainFeed = (props) => {
 
   useEffect(() => {
     if (!hasUserInfoChanged()) { return }
+    if (!userContext || !userContext.guest || !userContext.tweets) { return }
 
     const userData = {
       userId: userContext.userId,
@@ -55,10 +56,8 @@ const MainFeed = (props) => {
       profileImageAdjustment: userContext.profileImageAdjustment,
     }
 
-    if (!userContext || !userContext.guest) { return }
-    const guestTweets = userContext.tweets
-      ? Object.entries(userContext.tweets)
-      : false
+    const tweetsTemp = JSON.parse(JSON.stringify(userContext.tweets))
+    const guestTweets = Object.entries(tweetsTemp)
     
     const formattedGuestTweets = guestTweets.map((tweetEntry) => {
       const tweetContent = tweetEntry[1]
