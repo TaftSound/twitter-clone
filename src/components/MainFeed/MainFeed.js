@@ -60,12 +60,16 @@ const MainFeed = (props) => {
       ? Object.entries(userContext.tweets)
       : false
     
-    guestTweetsRef.current = guestTweets.map((tweetEntry) => {
+    const formattedGuestTweets = guestTweets.map((tweetEntry) => {
       const tweetContent = tweetEntry[1]
       tweetContent.tweetId = tweetEntry[0]
       const tweet = { ...tweetContent, ...userData }
       return tweet
     })
+
+    formattedGuestTweets.sort((a, b) => { return b.timestamp - a.timestamp })
+
+    guestTweetsRef.current = formattedGuestTweets
   }, [userContext])
 
   useEffect(() => {
