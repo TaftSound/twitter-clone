@@ -10,6 +10,7 @@ import WhoToFollow from "../WhoToFollow/WhoToFollow";
 import { useContext } from "react";
 import { UserContext } from "../../App";
 import { useLocation } from "react-router-dom";
+import { deepEqual } from "../../deep-equal";
 
 const CenterWhoToFollow = styled(WhoToFollow)`
   display: block;
@@ -31,6 +32,41 @@ const MainFeed = (props) => {
   const sentinelRef = useRef(null)
   const observer = useRef(null)
   const loadCount = useRef(0)
+  const guestTweetsRef = useRef(false)
+  const lastContextRef = useRef(null)
+
+  const hasUserInfoChanged = () => {
+    if (deepEqual(userContext, lastContextRef.current)) {
+      return false
+    } else {
+      lastContextRef.current = userContext
+      return true
+    }
+  }
+
+  useEffect(() => {
+    if (!hasUserInfoChanged()) { return }
+
+    const userData = {
+      userId: userContext.userId,
+      userName: userContext.userName,
+      displayName: userContext.displayName,
+      profileImageUrl: userContext.profileImageUrl,
+      profileImageAdjustment: userContext.profileImageAdjustment,
+    }
+
+    if (!userContext || !userContext.guest) { return }
+    const guestTweets = userContext.tweets
+      ? Object.entries(userContext.tweets)
+      : false
+    
+    guestTweetsRef.current = guestTweets.map((tweetEntry) => {
+      const tweetContent = tweetEntry[1]
+      tweetContent.tweetId = tweetEntry[0]
+      const tweet = { ...tweetContent, ...userData }
+      return tweet
+    })
+  }, [userContext])
 
   useEffect(() => {
     if (!props.currentTab) { return }
@@ -58,7 +94,28 @@ const MainFeed = (props) => {
   
     const finishLoadCycle = async (newTweets) => {
       setHasLoaded(true)
-      if (!newTweets[0]) { return }
+      if (!newTweets[0]) {
+        if (guestTweetsRef.current[0]) {
+          const finalGuestTweets = guestTweetsRef.current
+          guestTweetsRef.current = false
+          setTweetFeed((oldFeed) => { return [ ...oldFeed, ...finalGuestTweets ] })
+        }
+        return
+      }
+      if (props.currentTab === "Following" && userContext.guest) {
+        const firstTimestamp = newTweets[newTweets.length - 1].timestamp
+        if (guestTweetsRef.current[0]) {
+          const userTweets = guestTweetsRef.current
+          for (let i = userTweets.length - 1; i >= 0; i--) {
+            if (userTweets[i].timestamp > firstTimestamp) {
+              const tweet = userTweets.splice(i, 1)[0]
+              newTweets.push(tweet)
+            }
+          }
+          guestTweetsRef.current = userTweets
+        }
+        newTweets.sort((a, b) => { return b.timestamp - a.timestamp })
+      }
       setTweetFeed((oldFeed) => { return [ ...oldFeed, ...newTweets ] })
       if (props.currentTab === "For you") { await loadUsersToFollow(loadCount.current) }
       loadCount.current = loadCount.current + 1

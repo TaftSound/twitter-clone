@@ -142,7 +142,7 @@ export const getFollowingFeed = async (loadCount) => {
     const mergedReferences = mergeTweetReferences(tweetReferences)
     sortedKeys = convertToSortedArray(mergedReferences)
   }
-  return getFeedChunk(sortedKeys, loadCount)
+  return await getFeedChunk(sortedKeys, loadCount)
 }
 
 let currentUserId = ''
