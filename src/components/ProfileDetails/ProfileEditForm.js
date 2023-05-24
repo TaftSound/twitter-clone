@@ -18,6 +18,7 @@ import { useContext } from "react"
 import { UserContext } from "../../App"
 import { VisitContext } from "../AppPage/AppPage"
 import compressImage from "../compress-image"
+import { LoadingContainer } from "../LoadingPage/LoadingPage"
 
 const SaveButton = styled(FormButton)`
   height: 32px;
@@ -113,6 +114,7 @@ const ProfileEditForm = (props) => {
     transformY: 0,
     zoom: 1
   })
+  const [editsUploading, setEditsUploading] = useState(false)
 
   useEffect(() => {
     if (props.visit) {
@@ -150,6 +152,7 @@ const ProfileEditForm = (props) => {
 
   const updateUserInfo = async () => {
     try {
+      setEditsUploading(true)
       const newProfileData = {}
       if (nameValue !== savedUserData.displayName) { newProfileData.displayName = nameValue }
       if (bioValue !== savedUserData.bio) { newProfileData.bio = bioValue }
@@ -174,7 +177,9 @@ const ProfileEditForm = (props) => {
         PubSub.publish('update visit data', newProfileData)
       }
       props.finishProfileEdit()
+      setEditsUploading(false)
     } catch (error) {
+      setEditsUploading(false)
       console.error("Failure to update profile info", error)
     }
   }
@@ -202,7 +207,7 @@ const ProfileEditForm = (props) => {
     const image = new Image()
 
     image.onload = async (event) => {
-      const compressedImage = await compressImage(event.target, 750)
+      const compressedImage = await compressImage(event.target, 1250)
       const compressedUrl = URL.createObjectURL(compressedImage)
 
       setProfileImageFile(compressedImage)
@@ -210,21 +215,6 @@ const ProfileEditForm = (props) => {
     }
     image.src = rawUrl
     setProfileImageAdjuster(true)
-
-    // new Compressor(imgFile, {
-    //   quality: 0.2,
-    //   maxWidth: 2000,
-    //   success(result) {
-    //     const imgUrl = URL.createObjectURL(result)
-    //     setProfileImageFile(result)
-    //     setProfileImageUrl(imgUrl)
-    //     console.log(result) 
-    //   },
-    //   error(err) {
-    //     console.error("Failure to compress image:", err)
-    //   }
-    // })
-    // setProfileImageAdjuster(true)
   }
   const applyProfileImageAdjustment = async (profileDisplayData) => {
     setProfileImageAdjustment(profileDisplayData)
@@ -261,7 +251,9 @@ const ProfileEditForm = (props) => {
   
   return (
     <PopupModal removePopup={props.finishProfileEdit}
-                headerButton={<SaveButton onClick={updateUserInfo}>Save</SaveButton>}
+                headerButton={<SaveButton dark={editsUploading} onClick={updateUserInfo}>
+                                {editsUploading ? <LoadingContainer></LoadingContainer> : 'Save'}
+                              </SaveButton>}
                 title="Edit profile">
       <FlexBox height="198px" direction="column" alignItems="center" justifyContent="center" overflow="hidden" position="relative">
         {bannerImageUrl && <BannerImage src={bannerImageUrl} 
