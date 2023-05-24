@@ -9,6 +9,7 @@ import { TweetButtonBar } from "./TweetButtonBar";
 import { TweetHeader } from "./TweetHeader";
 import { TweetText } from "./TweetText";
 import { TweetUserCircle } from "./TweetUserCircle";
+import { LoadingContainer } from "../LoadingPage/LoadingPage";
 
 const OuterContainer = styled.div`
   display: grid;
@@ -38,12 +39,35 @@ const BottomDividerLine = styled(DividerLine)`
   right: 0;
 `
 
-const TweetImage = styled.img`
-  max-width: 100%;
+const ImageContainer = styled.div`
+  display: flex;
+  width: 100%;
   border: solid 1px ${DIVIDER_COLOR_LIGHT};
   border-radius: 16px;
   margin-top: 12px;
+  overflow: hidden;
+  ${props => !props.imageLoaded && 'height: 380px;'}
 `
+
+const Image = styled.img`
+  width: 100%;
+  ${props => !props.imageLoaded && 'display: none;'}
+`
+
+const TweetImage = (props) => {
+  const [imageLoaded, setImageLoaded] = useState(false)
+
+  const setLoaded = () => {
+    setImageLoaded(true)
+  }
+  
+  return (
+    <ImageContainer imageLoaded={imageLoaded}>
+      {!imageLoaded && <LoadingContainer height="100%"></LoadingContainer>}
+      <Image imageLoaded={imageLoaded} onLoad={setLoaded} src={props.src} alt='user uploaded image' className={props.className}></Image>
+    </ImageContainer>
+  )
+}
 
 const TweetDisplay = ({ tweetData }) => {
   const { text, imageUrls } = tweetData

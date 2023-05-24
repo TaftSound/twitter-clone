@@ -43,5 +43,6 @@ export default LoadingPage
 
 export const LoadingContainer = styled(LoadingPage)`
   height: 100px;
+  ${props => props.height && `height: ${props.height};`}
   width: 100%;
 `
