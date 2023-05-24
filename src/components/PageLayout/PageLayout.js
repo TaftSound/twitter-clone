@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import PubSub from 'pubsub-js'
 import PropTypes from 'prop-types'
 import LeftSidebar from "../LeftSidebar/LeftSidebar"
 import uniqid from 'uniqid'
@@ -15,6 +16,7 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useRef } from 'react'
 import SearchBar from '../SearchBar/SearchBar'
+import { useState } from 'react'
 
 
 const structureContent = (elementArray) => {
@@ -59,8 +61,13 @@ const PageLayout = (props) => {
 
     scrollable.addEventListener('scroll', handleScroll)
 
+    const unsubToken = PubSub.subscribe('tweet image loaded', () => {
+
+    })
+
     return () => {
       scrollable.removeEventListener('scroll', handleScroll)
+      PubSub.unsubscribe(unsubToken)
     }
   }, [])
 

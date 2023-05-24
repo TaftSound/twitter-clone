@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useRef, useEffect, useContext } from "react";
 import autoAnimate from "@formkit/auto-animate";
 
-import { SmallUserCircle, TooltipContainer } from "../styled-components";
+import { FlexBox, SmallUserCircle, TooltipContainer } from "../styled-components";
 import { BACKGROUND_COLOR, BUTTON_HOVER_BACKGROUND, DIVIDER_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -97,17 +97,56 @@ const UserAccountMenu = (props) => {
 const OuterContainer = styled.div`
   position: relative;
   margin: 12px 0px;
+
+  @media (min-width: 1265px) {
+    width: 100%;
+  }
 `
 const ButtonContainer = styled(TooltipContainer)`
   padding: 12px;
   border-radius: 1000px;
   transition: background-color 200ms;
+  display: flex;
+  cursor: pointer;
 
   ${props => props.clickable ? '' : 'pointer-events: none;'}
   
   &:hover {
     transition: background-color 200ms;
     ${props => props.linkTitle ?  `background-color: ${BUTTON_HOVER_BACKGROUND}` : ""}
+  }
+`
+const DisplayName = styled.h3`
+  width: 100%;
+  margin: 0px;
+  font-size: 16px;
+  font-weight: 700;
+  color: ${MAIN_FONT_COLOR};
+  display: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (min-width: 1265px) {
+    display: block;
+  }
+`
+const UserName = styled(DisplayName)`
+  font-weight: 400;
+  color: ${SECONDARY_FONT_COLOR};
+`
+
+const StyledSvg = styled.svg`
+  height: 18.75px;
+  width: 18.75px;
+  fill: ${MAIN_FONT_COLOR};
+`
+
+const UserDetails = styled(FlexBox)`
+  display: none;
+
+  @media (min-width: 1265px) {
+    display: flex;
   }
 `
 
@@ -140,8 +179,17 @@ const UserAccountButton = (props) => {
 
   if (userContext) return (
     <OuterContainer>
-      <ButtonContainer clickable={clickable} linkTitle={menuDisplayed ? "" : "Accounts"} displayAbove={true} ref={parent}>
-        <SmallUserCircle userData={userContext} onClick={toggleAccountMenu}></SmallUserCircle>
+      <ButtonContainer clickable={clickable} onClick={toggleAccountMenu} linkTitle={menuDisplayed ? "" : "Accounts"} displayAbove={true} ref={parent}>
+        <SmallUserCircle userData={userContext} onClick={() => {}}></SmallUserCircle>
+        <UserDetails alignItems="center" width="195px" justifyContent="space-between">
+          <FlexBox direction="column" margin="0px 4px 0px 12px" width="calc(100% - 34.75px)">
+            <DisplayName>{userContext.displayName}</DisplayName>
+            <UserName>@{userContext.userName}</UserName>
+          </FlexBox>
+          <StyledSvg viewBox="0 0 24 24">
+            <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+          </StyledSvg>
+        </UserDetails>
       </ButtonContainer>
       {menuDisplayed ? <UserAccountMenu></UserAccountMenu> : false }
     </OuterContainer>

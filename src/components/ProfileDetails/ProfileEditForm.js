@@ -1,6 +1,8 @@
 import styled from "styled-components"
 import PubSub from "pubsub-js"
 import { useEffect, useState } from "react"
+import Compressor from "compressorjs"
+import pica from "pica"
 
 import { updateUserProfile } from "../../firebase/firestore/user-functions"
 
@@ -15,6 +17,7 @@ import { BACKGROUND_COLOR, IMAGE_OVERLAY_GREY, TRANSPARENT_DARK_GREY } from "../
 import { useContext } from "react"
 import { UserContext } from "../../App"
 import { VisitContext } from "../AppPage/AppPage"
+import compressImage from "../compress-image"
 
 const SaveButton = styled(FormButton)`
   height: 32px;
@@ -176,10 +179,18 @@ const ProfileEditForm = (props) => {
     }
   }
 
-  const uploadBannerImage = async (imgFile) => {
-    const imgUrl = URL.createObjectURL(imgFile)
-    setBannerImageFile(imgFile)
-    setBannerImageUrl(imgUrl)
+  const uploadBannerImage = (imgFile) => {
+    const rawUrl = URL.createObjectURL(imgFile)
+    const image = new Image()
+
+    image.onload = async (event) => {
+      const compressedImage = await compressImage(event.target, 1250)
+      const compressedUrl = URL.createObjectURL(compressedImage)
+
+      setBannerImageFile(compressedImage)
+      setBannerImageUrl(compressedUrl)
+    }
+    image.src = rawUrl
     setBannerImageAdjuster(true)
   }
   const applyBannerAdjustment = async (bannerDisplayData) => {
@@ -187,10 +198,33 @@ const ProfileEditForm = (props) => {
     setBannerImageAdjuster(false)
   }
   const uploadProfileImage = async (imgFile) => {
-    const imgUrl = URL.createObjectURL(imgFile)
-    setProfileImageFile(imgFile)
-    setProfileImageUrl(imgUrl)
+    const rawUrl = URL.createObjectURL(imgFile)
+    const image = new Image()
+
+    image.onload = async (event) => {
+      const compressedImage = await compressImage(event.target, 750)
+      const compressedUrl = URL.createObjectURL(compressedImage)
+
+      setProfileImageFile(compressedImage)
+      setProfileImageUrl(compressedUrl)
+    }
+    image.src = rawUrl
     setProfileImageAdjuster(true)
+
+    // new Compressor(imgFile, {
+    //   quality: 0.2,
+    //   maxWidth: 2000,
+    //   success(result) {
+    //     const imgUrl = URL.createObjectURL(result)
+    //     setProfileImageFile(result)
+    //     setProfileImageUrl(imgUrl)
+    //     console.log(result) 
+    //   },
+    //   error(err) {
+    //     console.error("Failure to compress image:", err)
+    //   }
+    // })
+    // setProfileImageAdjuster(true)
   }
   const applyProfileImageAdjustment = async (profileDisplayData) => {
     setProfileImageAdjustment(profileDisplayData)

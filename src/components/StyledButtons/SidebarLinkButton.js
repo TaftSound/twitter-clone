@@ -1,7 +1,9 @@
 import styled from "styled-components";
 import { MAIN_FONT_COLOR, BUTTON_HOVER_BACKGROUND } from "../constants";
 import { TooltipContainer } from "../styled-components";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const ButtonContainer = styled(TooltipContainer)`
   height: 50.25px;
@@ -15,25 +17,72 @@ const ButtonContainer = styled(TooltipContainer)`
   &:hover {
     background-color: ${BUTTON_HOVER_BACKGROUND};
   }
+
+  @media (min-height: 705px) {
+    margin: 4px 0px;
+  }
+  @media (min-width: 1265px) {
+    width: max-content;
+  }
 `;
+
+const StyledLink = styled(Link)`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  text-decoration: none;
+`
 
 const StyledSvg = styled.svg`
   fill: ${MAIN_FONT_COLOR};
   height: 26.25px;
   width: 26.25px;
-  margin-bottom: -4px;
-  padding: 12px;
+  /* margin-bottom: -4px; */
   opacity: ${props => props.url ? "100%" : "60%"};
+
+  @media (min-width: 1265px) {
+    margin-bottom: 0px;
+  }
+`
+const ButtonText = styled.h2`
+  color: ${MAIN_FONT_COLOR};
+  display: none;
+  font-size: 21px;
+  font-weight: 400;
+  margin: 0px 16px 0px 20px;
+  text-decoration: none;
+
+  ${props => props.currentPage && 'font-weight: 700;'}
+  opacity: ${props => props.url ? "100%" : "60%"};
+
+  @media (min-width: 1265px) {
+    display: block;
+  }
 `
 
 export const SidebarLinkButton = (props) => {
+  const location = useLocation()
+  const [current, setCurrent] = useState(false)
+
+  useEffect(() => {
+    if (!props.url) { return }
+
+    if (location.pathname === props.url) {
+      setCurrent(true)
+    } else {
+      setCurrent(false)
+    }
+  }, [location])
+
   return (
     <ButtonContainer linkTitle={props.title} className={props.className}>
-      <Link to={props.url} aria-label={props.title}>
+      <StyledLink to={props.url} aria-label={props.title}>
         <StyledSvg viewBox="0 0 24 24" url={props.url}>
           <path d={props.path}></path>
         </StyledSvg>
-      </Link>
+        <ButtonText currentPage={current} url={props.url}>{props.title}</ButtonText>
+      </StyledLink>
     </ButtonContainer>
   );
 }

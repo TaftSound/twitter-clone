@@ -41,6 +41,7 @@ const ProfileFeed = (props) => {
     setHasLoaded(false)
 
     const loadTweets = async () => {
+      if (!userContext) { return }
       try {
         setHasLoaded(false)
         observer.current.disconnect()
@@ -60,6 +61,7 @@ const ProfileFeed = (props) => {
         if (sentinelRef.current) observer.current.observe(sentinelRef.current)
       } catch (error) {
         console.error("Failure to retrieve tweet feed:", error)
+        setHasLoaded(true)
       }
     }
 
@@ -72,7 +74,7 @@ const ProfileFeed = (props) => {
     if (sentinelRef.current) { observer.current.observe(sentinelRef.current) }
 
     return () => { observer.current.disconnect() }
-  }, [targetUserId, props.currentTab])
+  }, [targetUserId, props.currentTab, userContext])
   
   return (
     <>

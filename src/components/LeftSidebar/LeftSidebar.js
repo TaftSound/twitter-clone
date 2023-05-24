@@ -42,12 +42,20 @@ const Container = styled.div`
   @media (min-width: 1200px) {
     
   }
+  @media (min-width: 1265px) {
+    width: 259px;
+  }
 `
 
 const InnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (min-width: 1265px) {
+    width: 259px;
+    align-items: flex-start;
+  }
 `
 
 const LeftSidebar = (props) => {

@@ -70,15 +70,35 @@ export const UserCircle = (props) => {
 export const LargeUserCircle = styled(UserCircle)`
   box-sizing: content-box;
   padding: 0px;
-  height: 133.5px;
-  width: 133.5px;
+  height: 44px;
+  width: 44px;
   font-size: 75px;
   ${props => props.userData.profileImageUrl ? `background-color: ${BACKGROUND_COLOR};` : ''}
-  border: solid 4px ${BACKGROUND_COLOR};
+  border: solid 2px ${BACKGROUND_COLOR};
   position: absolute;
   left: 16px;
   transform: translateY(-50%);
   overflow: hidden;
+
+  @media (min-width: 262px) {
+    // Padding bottom trick
+    width: calc(23%);
+    height: 0px;
+    padding-bottom: calc(23%);
+  }
+
+  @media (min-width: 600px) {
+    width: calc(25% - 16px);
+    padding-bottom: calc(25% - 16px);
+    border: solid 4px ${BACKGROUND_COLOR};
+  }
+
+  @media (min-width: 690px) {
+    border: solid 4px ${BACKGROUND_COLOR};
+    height: 133.5px;
+    width: 133.5px;
+    padding-bottom: 0px;
+  }
 `
 
 export const SmallUserCircle = styled(UserCircle)`

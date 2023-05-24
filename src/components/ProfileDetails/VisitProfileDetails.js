@@ -12,39 +12,39 @@ import { VisitContext, VisitFollowContext } from "../AppPage/AppPage"
 import { useEffect } from "react"
 import { UserContext } from "../../App"
 import FollowButton from "../StyledButtons/FollowButton"
+import { ProfileImageBanner, ProfileUserCircle } from "./ProfileImages"
 
+// const BannerContainer = styled.div`
+//   position: relative;
+//   height: 200px;
+//   background-color: ${DIVIDER_COLOR};
+//   overflow: hidden;
+// `
 
-const BannerContainer = styled.div`
-  position: relative;
-  height: 200px;
-  background-color: ${DIVIDER_COLOR};
-  overflow: hidden;
-`
+// const Image = styled.img`
+//   position: absolute;
+//   top: 50%;
+//   left: 50%;
+//   transform: translate(-50%, -50%);
+//   width: 100%;
+//   ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
+//   ${props => props.zoom && `width: ${props.zoom * 100}%;`}
+// `
 
-const Image = styled.img`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
-  ${props => props.zoom && `width: ${props.zoom * 100}%;`}
-`
+// const ProfileImageBanner = (props) => {
+//   const visitContext = useContext(VisitContext)
+//   const { bannerImageAdjustment } = visitContext
 
-const ProfileImageBanner = (props) => {
-  const visitContext = useContext(VisitContext)
-  const { bannerImageAdjustment } = visitContext
-
-  return (
-    <BannerContainer>
-      {visitContext.bannerImageUrl
-       && <Image src={visitContext.bannerImageUrl}
-                   transformX={bannerImageAdjustment.transformX}
-                   transformY={bannerImageAdjustment.transformY}
-                   zoom={bannerImageAdjustment.zoom}></Image>}
-    </BannerContainer>
-  )
-}
+//   return (
+//     <BannerContainer>
+//       {visitContext.bannerImageUrl
+//        && <Image src={visitContext.bannerImageUrl}
+//                    transformX={bannerImageAdjustment.transformX}
+//                    transformY={bannerImageAdjustment.transformY}
+//                    zoom={bannerImageAdjustment.zoom}></Image>}
+//     </BannerContainer>
+//   )
+// }
 
 const UserDetailsContainer = styled.div`
   box-sizing: border-box;
@@ -166,8 +166,8 @@ const VisitProfileDetails = (props) => {
   if (visitContext) {
     return (
       <ProfileDetailsContainer>
-        <ProfileImageBanner></ProfileImageBanner>
-        <LargeUserCircle userData={visitContext}></LargeUserCircle>
+        <ProfileImageBanner context={visitContext}></ProfileImageBanner>
+        <ProfileUserCircle context={visitContext}></ProfileUserCircle>
         <UserDetails></UserDetails>
       </ProfileDetailsContainer>
     )

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import autoAnimate from "@formkit/auto-animate";
 import PubSub from "pubsub-js";
+import Compressor from 'compressorjs';
 
 import { useContext, useEffect, useMemo, useState, useRef } from "react";
 
@@ -17,6 +18,8 @@ import { VisitContext, VisitFollowContext } from "../AppPage/AppPage";
 import { DIVIDER_COLOR, PRIMARY_COLOR } from "../constants";
 
 import { createNewTweet } from "../../firebase/firestore/create-new-tweet";
+import NewTweetImage from "./NewTweetImage";
+import compressImage from "../compress-image";
 
 
 const OuterContainer = styled.div`
@@ -56,18 +59,6 @@ const NewTweetForm = styled.form`
   padding: 4px 0px 0px;
   overflow: visible;
 `
-const ImageContainer = styled.div`
-  max-width: 100%;
-  position: relative;
-`
-const Img = styled.img`
-  width: 100%;
-`
-const ImgDeleteButton = styled(CloseButton)`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-`
 
 
 const LoadingBar = styled.div`
@@ -79,7 +70,8 @@ const LoadingBar = styled.div`
   top: 0px;
   left: -5px;
   background-color: ${PRIMARY_COLOR};
-  animation: loadProgress 2s ease-out;
+  animation: loadProgress 2.25s ease-out;
+  animation-fill-mode: forwards;
 
   @keyframes loadProgress {
     from {
@@ -162,7 +154,7 @@ const NewTweetEntry = (props) => {
       PubSub.publish('display new tweet', newTweet)
       if (props.popup) { props.removePopup() }
       // setNewTweetsArray((oldTweets) => { return [newTweet, ...oldTweets] })
-    }, 250)
+    }, 150)
   }
 
   useEffect(() => {
@@ -177,15 +169,25 @@ const NewTweetEntry = (props) => {
   }, [props.popup])
 
   const uploadImage = (event) => {
-    const imageFile = event.target.files[0]
-    const imgUrl = URL.createObjectURL(imageFile)
-    setImageFiles((oldFiles) => {
-      return [...oldFiles, imageFile]
-    })
-    setImageUrls((imageUrls) => {
-      return [...imageUrls, imgUrl]
-    })
+    const imgFile = event.target.files[0]
+    const rawUrl = URL.createObjectURL(imgFile)
+    const image = new Image()
+
+    image.onload = async (event) => {
+      const compressedImage = await compressImage(event.target, 1250)
+
+      const compressedUrl = URL.createObjectURL(compressedImage)
+      setImageFiles((oldFiles) => {
+        return [...oldFiles, compressedImage]
+      })
+      setImageUrls((imageUrls) => {
+        return [...imageUrls, compressedUrl]
+      })
+    }
+
+    image.src = rawUrl
   }
+
   const removeImage = (index) => {
     const imgUrls = [...imageUrls]
     const imgFiles = [...imageFiles]
@@ -217,10 +219,7 @@ const NewTweetEntry = (props) => {
             popup={props.popup} />
           {imageUrls[0] && imageUrls.map((imageUrl, index) => {
             return (
-              <ImageContainer key={index}>
-                <Img src={imageUrl} alt="uploaded-image"></Img>
-                <ImgDeleteButton onClick={() => { removeImage(index) }}></ImgDeleteButton>
-              </ImageContainer>
+              <NewTweetImage key={imageUrl} index={index} imageUrl={imageUrl} removeImage={removeImage}></NewTweetImage>
             )
           })}
           {tweetUploadingState ? false : <WhoCanReply expanded={inputExpandedState}/>}

@@ -48,6 +48,9 @@ export const LeftSidebarContainer = styled.div`
   @media (min-width: 1200px) {
     
   }
+  @media (min-width: 1265px) {
+    width: calc(51vw - 370px);
+  }
 `
 
 export const ContentContainer = styled.div`

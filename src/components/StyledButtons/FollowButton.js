@@ -24,12 +24,12 @@ const StyledFormButton = styled(FormButton)`
   ${props => props.profile ? `height: 34px;` : ''}
   ${props => props.profile ? `box-sizing: content-box;` : ''}
   margin: 0px;
-  transition: background-color, color, border-color, ease-out 150ms;
+  transition: background-color, color, border-color, ease-out 100ms;
 
-  ${props => props.unfollowColors ? `background-color: ${WHO_TO_FOLLOW_BACKGROUND};` : ''}
+  ${props => props.unfollowColors ? `background-color: transparent;` : ''}
   ${props => props.unfollowColors ? `border-color: ${BUTTON_BORDER_COLOR};` : ''}
   ${props => props.unfollowColors ? `color: ${MAIN_FONT_COLOR};` : ''}
-  ${props => props.unfollowColors ? `width: 101px;` : ''}
+  ${props => props.unfollowColors ? `width: 70px;` : ''}
   
   ${props => props.unfollowColors ? `` : ''}
 

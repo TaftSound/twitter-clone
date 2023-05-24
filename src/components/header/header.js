@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../App";
+import { FlexBox } from "../styled-components";
 
 const HeaderContainerOuter = styled.div`
   position: relative;
@@ -100,6 +101,9 @@ const H1 = styled.h1`
   padding: 0px;
   font-size: 21px;
   color: ${MAIN_FONT_COLOR};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 const SearchBarSettingsContainer = styled.div`
   height: 53px;
@@ -197,12 +201,12 @@ export const ProfileHeader = (props) => {
         <BackButtonContainer>
           <BackButton onClick={navigateBack} title="Back" path="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z" />
         </BackButtonContainer>
-        <div>
+        <FlexBox direction="column" width="calc(100% - 27px)">
           <ProfileH1Container>
             <H1>{props.titleHeader}</H1>
           </ProfileH1Container>
           <TweetCount>{tweetCount} {tweetCount === 1 ? 'Tweet' : 'Tweets'}</TweetCount>
-        </div>
+        </FlexBox>
       </HeaderContainer>
     </HeaderContainerOuter>
   )

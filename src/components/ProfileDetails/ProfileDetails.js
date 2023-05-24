@@ -2,62 +2,15 @@ import { useMemo, useContext } from "react"
 import styled from "styled-components"
 
 import LoadingPage from "../LoadingPage/LoadingPage"
-import { UserCircle, SmallGreyLogo, FlexBox, LargeUserCircle } from "../styled-components"
+import { UserCircle, SmallGreyLogo, FlexBox } from "../styled-components"
 import { FormButton } from "../StyledButtons/FormButton"
-import { BACKGROUND_COLOR, DIVIDER_COLOR, MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants"
+import { MAIN_FONT_COLOR, SECONDARY_FONT_COLOR } from "../constants"
 
 import { FollowContext, UserContext } from "../../App"
 import ProfileEditForm from "./ProfileEditForm"
 import { useState } from "react"
+import { ProfileImageBanner, ProfileUserCircle } from "./ProfileImages"
 
-
-const BannerContainer = styled.div`
-  position: relative;
-  height: 200px;
-  background-color: ${DIVIDER_COLOR};
-  overflow: hidden;
-`
-
-const Image = styled.img`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  ${props => `transform: translate(${-50 + props.transformX}%, ${-50 + props.transformY}%);`}
-  ${props => props.zoom && `width: ${props.zoom * 100}%;`}
-`
-
-const ProfileImageBanner = (props) => {
-  const userContext = useContext(UserContext)
-  const { bannerImageAdjustment } = userContext
-
-  return (
-    <BannerContainer>
-      {userContext.bannerImageUrl
-       && <Image src={userContext.bannerImageUrl}
-                   transformX={bannerImageAdjustment.transformX}
-                   transformY={bannerImageAdjustment.transformY}
-                   zoom={bannerImageAdjustment.zoom}></Image>}
-    </BannerContainer>
-  )
-}
-
-const ProfileUserCircle = (props) => {
-  const userContext = useContext(UserContext)
-  const { profileImageAdjustment } = userContext
-
-  return (
-    <LargeUserCircle userData={userContext}>
-      {!userContext.profileImageUrl && userContext.displayName[0]}
-      {userContext.profileImageUrl
-      && <Image src={userContext.profileImageUrl}
-                   transformX={profileImageAdjustment.transformX}
-                   transformY={profileImageAdjustment.transformY}
-                   zoom={profileImageAdjustment.zoom}></Image>}
-    </LargeUserCircle>
-  )
-}
 
 const UserDetailsContainer = styled.div`
   box-sizing: border-box;
@@ -169,8 +122,8 @@ const ProfileDetails = (props) => {
   if (userContext) {
     return (
       <ProfileDetailsContainer>
-        <ProfileImageBanner></ProfileImageBanner>
-        <ProfileUserCircle userData={userContext}></ProfileUserCircle>
+        <ProfileImageBanner context={userContext}></ProfileImageBanner>
+        <ProfileUserCircle context={userContext}></ProfileUserCircle>
         <UserDetails></UserDetails>
       </ProfileDetailsContainer>
     )
