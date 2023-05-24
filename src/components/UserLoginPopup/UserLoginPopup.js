@@ -104,7 +104,7 @@ export const UserLoginPopup = (props) => {
     setLoginDisplayed(true)
     setSignupDisplayed(true)
     setUserNameInputFocused(true)
-    PubSub.publish('focus username input', currentPopupRef.current)
+    setTimeout(() => {PubSub.publish('focus username input', currentPopupRef.current)}, 200)
     PubSub.publish('clear username alert')
   }
   const removePopup = () => {
@@ -121,7 +121,7 @@ export const UserLoginPopup = (props) => {
     setSignupDisplayed(false)
     setLoginDisplayed(true)
     setUserNameInputFocused(true)
-    PubSub.publish('focus username input', currentPopupRef.current)
+    setTimeout(() => {PubSub.publish('focus username input', currentPopupRef.current)}, 200)
     PubSub.publish('clear username alert')
   }
   const displayExplanation = () => {
@@ -210,11 +210,13 @@ export const UserLoginPopup = (props) => {
     const loginToken = PubSub.subscribe('open user login', displayLoginPopup)
     const userSignupToken = PubSub.subscribe('open user signup', displaySignupPopup)
     const guestLoginToken = PubSub.subscribe('open guest login', displayGuestLogin)
+    const explanationToken = PubSub.subscribe('display explanation', displayExplanation)
 
     return () => {
       PubSub.unsubscribe(loginToken)
       PubSub.unsubscribe(guestLoginToken)
       PubSub.unsubscribe(userSignupToken)
+      PubSub.unsubscribe(explanationToken)
     }
   })
 

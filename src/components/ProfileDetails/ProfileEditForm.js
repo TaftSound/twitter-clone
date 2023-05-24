@@ -184,7 +184,7 @@ const ProfileEditForm = (props) => {
     const image = new Image()
 
     image.onload = async (event) => {
-      const compressedImage = await compressImage(event.target, 1250)
+      const compressedImage = await compressImage(event.target, 1750)
       const compressedUrl = URL.createObjectURL(compressedImage)
 
       setBannerImageFile(compressedImage)

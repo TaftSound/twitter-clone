@@ -186,7 +186,7 @@ export const getUserTweets = async (userId, loadCount) => {
     return tweetData
   }
   
-  if (currentUserId !== userId) {
+  if (loadCount === 0) {
     currentUserId = userId
     await storeUserTweetReferences(userId)
     sortedUserTweetKeys = convertToSortedArray(userTweetReferences)

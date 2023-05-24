@@ -67,7 +67,7 @@ const CallToAction = (props) => {
             </MessageContainer>
             <ButtonContainer>
               <ActionFormButton onClick={loginUser} small={true} colorButton={true}>Login</ActionFormButton>
-              <ActionFormButton onClick={signupUser} small={true}>Sign Up</ActionFormButton>
+              <ActionFormButton onClick={signupUser} small={true}>Sign up</ActionFormButton>
             </ButtonContainer>
           </CallToActionContent>
         </CallToActionContainer>,

@@ -66,7 +66,7 @@ function NavButton(props) {
   const userContext = useContext(UserContext)
 
   const changeTab = () => {
-    if (userContext.guest) {
+    if (userContext && userContext.guest) {
       PubSub.publish('trigger guest update')  
     }
     PubSub.publish('set current tab', props.title)
@@ -118,7 +118,7 @@ const SearchBarSettingsContainer = styled.div`
 `
 
 const displayLogin = () => {
-  PubSub.publish('login user')
+  PubSub.publish('open user login')
 }
 
 
