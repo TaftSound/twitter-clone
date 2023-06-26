@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../App";
 import { FlexBox } from "../styled-components";
+import { TwitterLogo } from "../TwitterLogo";
 
 const HeaderContainerOuter = styled.div`
   position: relative;
@@ -89,8 +90,17 @@ function NavButton(props) {
 const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 53px;
   padding: 0px 16px;
+
+  ${props => props.loginPage && 'visibility: hidden;'}
+  ${props => props.loginPage && 'display: none;'}
+
+  @media (min-width: 600px) {
+    visibility: visible;
+    display: flex;
+  }
 
   @media (min-width: 988px) {
     visibility: hidden;
@@ -100,6 +110,13 @@ const HeaderContainer = styled.div`
 const TabContainer = styled.div`
   height: 53px;
   display: flex;
+  ${props => props.loginPage && 'visibility: hidden;'}
+  ${props => props.loginPage && 'display: none;'}
+
+  @media (min-width: 600px) {
+    visibility: visible;
+    display: flex;
+  }
 `
 const H1 = styled.h1`
   margin: 0px;
@@ -121,6 +138,29 @@ const SearchBarSettingsContainer = styled.div`
   align-items: flex-end;
   margin-right: -9px;
 `
+const HeaderSearchBar = styled(SearchBar)`
+  visibility: hidden;
+  display: none;
+  
+  @media (min-width: 600px) {
+    visibility: visible;
+    display: flex;
+  }
+`
+const HeaderTwitterLogo = styled(TwitterLogo)`
+  position: relative;
+  visibility: visible;
+  display: flex;
+  height: 26.25px;
+  top: 0px;
+  left: 0px;
+  transform: none;
+  
+  @media (min-width: 600px) {
+    visibility: hidden;
+    display: none;
+  }
+`
 
 const displayLogin = () => {
   PubSub.publish('open user login')
@@ -140,13 +180,14 @@ const Header = (props) => {
       {props.titleHeader ? <HeaderContainer><H1>{props.titleHeader}</H1></HeaderContainer> : false }
       {props.searchBar
         ? <HeaderContainer>
-            <SearchBar></SearchBar>
+            <HeaderSearchBar></HeaderSearchBar>
+            <HeaderTwitterLogo loginPage={props.LoginPage}></HeaderTwitterLogo>
             <SearchBarSettingsContainer>
               <SmallMenuButton onClick={displayLogin} title="Settings" path="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zm1.07 2l-.98 1.47C10.05 6.08 9 6.5 7.99 6.27l-1.46-.34-.6.6.33 1.46c.24 1.01-.18 2.07-1.05 2.64l-1.46.98v.78l1.46.98c.87.57 1.29 1.63 1.05 2.64l-.33 1.46.6.6 1.46-.34c1.01-.23 2.06.19 2.64 1.05l.98 1.47h.78l.97-1.47c.58-.86 1.63-1.28 2.65-1.05l1.45.34.61-.6-.34-1.46c-.23-1.01.18-2.07 1.05-2.64l1.47-.98v-.78l-1.47-.98c-.87-.57-1.28-1.63-1.05-2.64l.34-1.46-.61-.6-1.45.34c-1.02.23-2.07-.19-2.65-1.05l-.97-1.47h-.78zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5s-.68-1.5-1.5-1.5zM8.5 12c0-1.93 1.56-3.5 3.5-3.5 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5c-1.94 0-3.5-1.57-3.5-3.5z" />
             </SearchBarSettingsContainer>
           </HeaderContainer>
         : false }
-      <TabContainer columns={props.tabsArray.length}>
+      <TabContainer columns={props.tabsArray.length} loginPage={props.loginPage}>
         {props.tabsArray.map((tab, index) => {
           return <NavButton title={tab} 
                             key={uniqid()} 

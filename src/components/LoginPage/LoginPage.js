@@ -71,7 +71,8 @@ const LoginPage = (props) => {
                     header={<Header searchBar={true}
                               defaultTab="For you"
                               currentTab={currentTab}
-                              tabsArray={["For you", "Trending", "News", "Sports", "Entertainment"]}>
+                              tabsArray={["For you", "Trending", "News", "Sports", "Entertainment"]}
+                              loginPage={true}>
                             </Header>}
                     centerContent={[
                     <FlexBox margin="10px 25px 0px 25px" direction="column">
