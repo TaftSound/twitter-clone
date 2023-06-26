@@ -90,7 +90,7 @@ const SearchBar = (props) => {
   }
 
   return (
-    <OuterSearchBarContainer sidebar={props.sidebar}>
+    <OuterSearchBarContainer sidebar={props.sidebar} className={props.className}>
       <SearchBarContainer isFocused={isFocused} onMouseDown={startInternalClick} onMouseUp={endInternalClick} >
         <SearchIcon isFocused={isFocused}
                     internalClick={internalClick}

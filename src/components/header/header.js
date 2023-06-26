@@ -91,6 +91,11 @@ const HeaderContainer = styled.div`
   align-items: center;
   height: 53px;
   padding: 0px 16px;
+
+  @media (min-width: 988px) {
+    visibility: hidden;
+    display: none;
+  }
 `
 const TabContainer = styled.div`
   height: 53px;
