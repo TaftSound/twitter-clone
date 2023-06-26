@@ -5,12 +5,15 @@ import { BACKGROUND_COLOR, BUTTON_BORDER_COLOR, FONT_FAMILY, MAIN_FONT_COLOR, PR
 const Button = styled.button`
   position: relative;
   height: ${props => props.small ? "36px" : "40px"};
+  ${props => props.mini && "height: 32px;"}
+  ${props => props.flexSize && "flex: 1;"}
   padding: 0px 16px;
   margin: 12px 0px;
   background-color: ${props => props.dark ? `${BACKGROUND_COLOR}` : 'white'};
   ${props => props.colorButton ? `background-color: ${PRIMARY_COLOR};` : ''}
   color: ${props => props.dark ? `${MAIN_FONT_COLOR}` : `${BACKGROUND_COLOR}`};
   ${props => props.colorButton ? `color: white;` : ''}
+  ${props => props.colorText ? `color: ${PRIMARY_COLOR};` : ''}
   border: solid 1px ${props => props.dark ? `${BUTTON_BORDER_COLOR}` : `transparent`};
   ${props => props.colorButton ? `border: solid 1px rgb(255, 255, 255, .35);` : ''}
   border-radius: 1000px;
@@ -120,12 +123,15 @@ export const FormButton = (props) => {
   return (
     <Button dark={props.dark}
             colorButton={props.colorButton}
+            colorText={props.colorText}
             onMouseOver={startHover} 
             onMouseOut={endHover}
             onMouseDown={startClick}
             onMouseUp={endClick}
             onClick={props.onClick}
             small={props.small}
+            mini={props.mini}
+            flexSize={props.flexSize}
             className={props.className}
             ref={props.reference}
             type="button">

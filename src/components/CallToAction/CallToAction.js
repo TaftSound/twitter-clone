@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { createPortal } from "react-dom";
 
-import { PRIMARY_COLOR } from "../constants";
+import { PRIMARY_COLOR, BACKGROUND_COLOR } from "../constants";
 import { FormButton } from "../StyledButtons/FormButton";
 import PubSub from "pubsub-js";
 
@@ -15,7 +15,15 @@ const CallToActionContainer = styled.div`
   max-height: 52px;
   overflow: hidden;
   padding: 10px 0px;
-  background-color: ${PRIMARY_COLOR};
+  background-color: rgb(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+
+  @media (min-width: 600px) {
+    padding: 0px 8px;
+    width: 72px;
+    background-color: ${PRIMARY_COLOR};
+    backdrop-filter: none;
+  }
 `
 const CallToActionContent = styled.div`
   display: flex;
@@ -30,6 +38,13 @@ const MessageContainer = styled.div`
   align-items: flex-start;
   position: relative;
   top: -2px;
+  visibility: hidden;
+  display: none;
+
+  @media (min-width: 600px) {
+    visibility: visible;
+    display: flex;
+  }
 `
 const H1 = styled.h1`
   font-size: 24px;
@@ -47,7 +62,29 @@ const H2 = styled.h2`
 const ButtonContainer = styled.div`
   display: flex;
   gap: 12px;
+
+  visibility: hidden;
+  display: none;
+
+  @media (min-width: 600px) {
+    visibility: visible;
+    display: flex;
+  }
 `
+const MobileButtonContainer = styled.div`
+  width: 100%;
+  visibility: visible;
+  display: flex;
+  padding: 16px;
+  gap: 12px;
+  justify-content: center;
+
+  @media (min-width: 600px) {
+    visibility: hidden;
+    display: none;
+  }
+`
+
 const ActionFormButton = styled(FormButton)`
   margin: 0px;
 `
@@ -69,6 +106,10 @@ const CallToAction = (props) => {
               <ActionFormButton onClick={loginUser} small={true} colorButton={true}>Login</ActionFormButton>
               <ActionFormButton onClick={signupUser} small={true}>Sign up</ActionFormButton>
             </ButtonContainer>
+            <MobileButtonContainer>
+              <ActionFormButton onClick={loginUser} mini={true} flexSize={true} dark={true} colorText={true}>Login</ActionFormButton>
+              <ActionFormButton onClick={signupUser} mini={true} flexSize={true} colorButton={true}>Sign up</ActionFormButton>
+            </MobileButtonContainer>
           </CallToActionContent>
         </CallToActionContainer>,
         document.body

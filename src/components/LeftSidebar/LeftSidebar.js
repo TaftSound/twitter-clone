@@ -15,10 +15,14 @@ const Container = styled.div`
   padding: 0px 4px;
   min-height: 562px;
   height: 100vh;
+  visibility: hidden;
+  display: none;
 
   @media (min-width: 600px) {
     padding: 0px 8px;
     width: 72px;
+    visibility: visible;
+    display: block;
   }
 
   @media (min-width: 690px) {

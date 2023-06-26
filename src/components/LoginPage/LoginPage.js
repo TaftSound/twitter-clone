@@ -15,7 +15,7 @@ const H1 = styled.h1`
   color: ${MAIN_FONT_COLOR};
   font-size: 26px;
   font-weight: 900;
-  margin: 0px 0px 5px;
+  margin: 0px 0px 8px;
 `
 
 const H2 = styled.h2`
