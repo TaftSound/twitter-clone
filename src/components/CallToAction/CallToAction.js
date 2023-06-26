@@ -19,8 +19,6 @@ const CallToActionContainer = styled.div`
   backdrop-filter: blur(12px);
 
   @media (min-width: 600px) {
-    padding: 0px 8px;
-    width: 72px;
     background-color: ${PRIMARY_COLOR};
     backdrop-filter: none;
   }
